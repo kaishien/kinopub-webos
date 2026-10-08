@@ -11,6 +11,7 @@ import { BookmarksScreenViewModel } from './bookmarks-screen.view-model'
 export const BookmarksScreen = observer(function BookmarksScreen() {
   const vm = useViewModel((services) => new BookmarksScreenViewModel(services))
   const folders = vm.folders.data ?? []
+
   return (
     <Page focusKey="PAGE-bookmarks" initialFocusKey="BM-0" ready={!vm.folders.isLoading}>
       <PageTitle>Закладки</PageTitle>

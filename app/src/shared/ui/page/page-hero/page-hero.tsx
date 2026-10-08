@@ -7,6 +7,7 @@ import styles from './page-hero.module.css'
 export const PageHero = observer(function PageHero({ title }: { title?: string }) {
   const { ui } = useServices()
   const focused = ui.focused
+
   return (
     <div className={styles.pageHero}>
       {focused ? <HeroItem item={focused.item} note={focused.note} /> : title && <h1 className={styles.pageHeroTitle}>{title}</h1>}

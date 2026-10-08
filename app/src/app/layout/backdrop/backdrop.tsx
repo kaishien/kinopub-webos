@@ -9,6 +9,7 @@ import styles from './backdrop.module.css'
 export const Backdrop = observer(function Backdrop() {
   const { ui } = useServices()
   const vm = useViewModel((services) => new BackdropViewModel(services.ui, services.images))
+
   return (
     <div className={cx(styles.backdrop, !ui.backdrop && styles.isEmpty)}>
       {vm.layers.map((src, index) =>

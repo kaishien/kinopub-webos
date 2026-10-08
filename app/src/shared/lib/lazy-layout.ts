@@ -18,12 +18,15 @@ function lazyLayout(node: FocusableComponent['node']): FocusableComponentLayout 
   let measuredAt = -Infinity
   const read = () => {
     const now = performance.now()
+
     if (now - measuredAt > FRESH_MS) {
       rect = node ? node.getBoundingClientRect() : EMPTY
       measuredAt = now
     }
+
     return rect
   }
+
   return {
     node,
     get left() {
@@ -40,10 +43,12 @@ function lazyLayout(node: FocusableComponent['node']): FocusableComponentLayout 
     },
     get right() {
       const { left, width } = read()
+
       return left + width
     },
     get bottom() {
       const { top, height } = read()
+
       return top + height
     },
     get x() {

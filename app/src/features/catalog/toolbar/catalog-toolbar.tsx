@@ -20,6 +20,7 @@ export const CatalogToolbar = observer(function CatalogToolbar({ vm }: { vm: Cat
       </FocusGroup>
     )
   }
+
   return (
     <FocusGroup reveal focusKey="CATALOG-toolbar" className={styles.catalogToolbar}>
       <Button

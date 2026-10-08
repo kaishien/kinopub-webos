@@ -27,6 +27,7 @@ export const NextUpCard = observer(function NextUpCard({ nextUp, next, onExit }:
   const asking = nextUp.phase === 'still-watching'
   const counting = nextUp.countdown !== null
   const title = [episodeLabel(next.season, next.video.number), next.video.title].filter(Boolean).join(' · ')
+
   return (
     <FocusGroup focusKey="PLAYER-next" className={styles.nextUp} preferredChildFocusKey={NEXT_UP_FOCUS_KEY} isFocusBoundary>
       {next.video.thumbnail && (

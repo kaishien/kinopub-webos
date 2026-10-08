@@ -7,6 +7,7 @@ import styles from './channels-grid.module.css'
 
 export const ChannelsGrid = observer(function ChannelsGrid({ vm }: { vm: ChannelsScreenViewModel }) {
   const reveal = useReveal()
+
   return (
     <FocusGroup focusKey="GRID-channels" className={styles.channels}>
       {(vm.channels.data ?? []).map((channel, index) => (

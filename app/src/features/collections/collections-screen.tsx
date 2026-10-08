@@ -7,6 +7,7 @@ import { CollectionsScreenViewModel } from './collections-screen.view-model'
 
 export const CollectionsScreen = observer(function CollectionsScreen() {
   const vm = useViewModel((services) => new CollectionsScreenViewModel(services))
+
   return (
     <Page hero title="Подборки" focusKey="PAGE-collections" initialFocusKey="GRID-collections-0" ready={!vm.pages.isLoading}>
       <Status loading={vm.pages.isLoading} error={vm.pages.error?.message} onRetry={() => vm.pages.refetch()} />

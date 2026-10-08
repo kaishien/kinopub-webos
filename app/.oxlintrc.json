@@ -38,7 +38,43 @@
       {
         "allow": ["__APP_VERSION__"]
       }
+    ],
+    "@stylistic/padding-line-between-statements": [
+      "warn",
+      {
+        "blankLine": "always",
+        "prev": ["const", "let"],
+        "next": "*"
+      },
+      {
+        "blankLine": "any",
+        "prev": ["const", "let"],
+        "next": ["const", "let"]
+      },
+      {
+        "blankLine": "always",
+        "prev": ["if", "block-like"],
+        "next": "*"
+      },
+      {
+        "blankLine": "any",
+        "prev": "if",
+        "next": "if"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "return"
+      }
+    ],
+    "@stylistic/lines-between-class-members": [
+      "warn",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
     ]
   },
-  "ignorePatterns": ["dist", "node_modules", "webos"]
+  "ignorePatterns": ["dist", "node_modules", "webos"],
+  "jsPlugins": ["@stylistic/eslint-plugin"]
 }

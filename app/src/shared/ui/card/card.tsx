@@ -24,6 +24,7 @@ export interface CardProps {
 export const Card = memo(function Card({ item, wide, focusKey, progress, subtitle, caption = true, onPress, onFocus, onBlur }: CardProps) {
   const quality = qualityBadge(item.quality)
   const fresh = (item.new ?? 0) > 0
+
   return (
     <Pressable
       focusKey={focusKey}
@@ -53,6 +54,7 @@ export const Card = memo(function Card({ item, wide, focusKey, progress, subtitl
 
 function CardCaption({ item, subtitle }: { item: ItemShort; subtitle?: string }) {
   const sub = subtitle ?? (item.year ? String(item.year) : '')
+
   return (
     <>
       <div className={styles.cardTitle}>{splitTitle(item.title).ru}</div>

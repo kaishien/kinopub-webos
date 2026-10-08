@@ -103,8 +103,10 @@ export const Rail = observer(function Rail() {
   const leaveToContent = (direction: string) => {
     if (direction !== 'right') return true
     if (ui.pageFocusKey) setFocus(ui.pageFocusKey)
+
     return false
   }
+
   return (
     <FocusGroup focusKey={RAIL_FOCUS_KEY} className={styles.rail} preferredChildFocusKey="RAIL-home">
       <div className={styles.railLogo}>К</div>

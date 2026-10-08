@@ -10,6 +10,7 @@ export const FilterSheet = observer(function FilterSheet({ vm }: { vm: CatalogSc
       0,
       SORT_OPTIONS.findIndex((option) => option.id === vm.sort),
     )
+
     return (
       <Sheet title="Сортировка" onClose={vm.closeSheet} initialFocusKey={`SHEET-sort-${active}`} returnFocusKey={TOOLBAR_FOCUS.sort}>
         {SORT_OPTIONS.map((option, index) => (
@@ -28,6 +29,7 @@ export const FilterSheet = observer(function FilterSheet({ vm }: { vm: CatalogSc
   if (vm.sheet === 'genre') {
     const genres = vm.genres.data ?? []
     const active = vm.genre === undefined ? 'all' : String(vm.genre)
+
     return (
       <Sheet title="Жанр" onClose={vm.closeSheet} initialFocusKey={`SHEET-genre-${active}`} returnFocusKey={TOOLBAR_FOCUS.genre}>
         <SheetOption focusKey="SHEET-genre-all" active={vm.genre === undefined} onPress={() => vm.setGenre(undefined)}>
@@ -46,5 +48,6 @@ export const FilterSheet = observer(function FilterSheet({ vm }: { vm: CatalogSc
       </Sheet>
     )
   }
+
   return null
 })

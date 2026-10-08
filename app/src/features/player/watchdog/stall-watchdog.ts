@@ -32,16 +32,20 @@ export class StallWatchdog {
 
   private readonly check = () => {
     const el = this.options.element()
+
     if (!el || !this.options.active() || el.ended) {
       this.reset()
+
       return
     }
     if (Math.abs(el.currentTime - this.lastTime) > 0.05) {
       this.lastTime = el.currentTime
       this.lastProgressAt = performance.now()
+
       return
     }
     if (performance.now() - this.lastProgressAt < STALL_MS) return
+
     this.reset()
     this.options.onStall(classify(el))
   }
@@ -50,11 +54,14 @@ export class StallWatchdog {
 /** Data buffered ahead (contiguous or past a gap) but frames stuck means it isn't decodable; unsupported audio tracks looked like this. */
 function classify(el: HTMLVideoElement): StallKind {
   const { buffered, currentTime } = el
+
   for (let i = 0; i < buffered.length; i++) {
     const start = buffered.start(i)
     const end = buffered.end(i)
+
     if (start <= currentTime + 0.5 && end > currentTime) return end - currentTime < STARVED_BUFFER_S ? 'starved' : 'stuck'
     if (start > currentTime + 0.5) return 'stuck'
   }
+
   return 'starved'
 }

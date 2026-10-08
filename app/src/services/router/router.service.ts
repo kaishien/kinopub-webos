@@ -21,6 +21,7 @@ export class RouterService {
       runInAction(() => {
         if (state.historyAction === 'PUSH' && state.location.key !== this.location?.key) this.depth += 1
         else if (state.historyAction === 'POP' && state.location.key !== this.location?.key) this.depth = Math.max(0, this.depth - 1)
+
         this.location = state.location
       })
     })
@@ -46,7 +47,9 @@ export class RouterService {
 
   back(): boolean {
     if (this.depth <= 0) return false
+
     void this.router?.navigate(-1)
+
     return true
   }
 
@@ -57,6 +60,7 @@ export class RouterService {
         this.depth = 0
       })
     }
+
     await this.router?.navigate(to, { replace: true })
   }
 }

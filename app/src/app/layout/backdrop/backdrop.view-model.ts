@@ -34,14 +34,18 @@ export class BackdropViewModel {
     this.wanted = url
     if (this.timer) clearTimeout(this.timer)
     if (!url) return
+
     this.timer = window.setTimeout(() => void this.load(url), DWELL_MS)
   }
 
   private async load(url: string) {
     const src = await this.images.resized(url, BACKDROP_WIDTH)
+
     if (url !== this.wanted) return
+
     // Decode before showing so the crossfade starts from a ready image without a stutter.
     const image = new Image()
+
     image.src = src
     await image.decode().catch(() => {})
     if (url === this.wanted) this.show(src)
@@ -49,7 +53,9 @@ export class BackdropViewModel {
 
   private show(src: string) {
     if (this.layers[this.top] === src) return
+
     const next = 1 - this.top
+
     this.layers[next] = src
     this.top = next
   }

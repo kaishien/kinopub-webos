@@ -71,6 +71,8 @@ const names = (() => {
 export function languageName(code: string): string {
   const iso = ISO2[code.toLowerCase()] ?? code
   const name = names?.of(iso)
+
   if (!name || name === iso) return code
+
   return name[0].toUpperCase() + name.slice(1)
 }

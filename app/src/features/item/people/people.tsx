@@ -13,6 +13,7 @@ export interface PersonEntry {
 
 export const People = memo(function People({ people }: { people: PersonEntry[] }) {
   const { router } = useServices()
+
   return (
     <section className={styles.people}>
       <h2 className={styles.title}>Режиссёр и актёры</h2>

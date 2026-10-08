@@ -7,7 +7,9 @@ const yesNo = (value: boolean) => (value ? 'Да' : 'Нет')
 
 export const DeviceSettings = observer(function DeviceSettings() {
   const vm = useViewModel((services) => new DeviceSettingsViewModel(services))
+
   if (!vm.settings) return null
+
   return (
     <>
       <Setting

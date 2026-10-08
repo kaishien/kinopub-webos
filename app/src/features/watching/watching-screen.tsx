@@ -10,6 +10,7 @@ export const WatchingScreen = observer(function WatchingScreen() {
   const vm = useViewModel((services) => new WatchingScreenViewModel(services))
   const serials = vm.serials.data ?? []
   const movies = vm.movies.data ?? []
+
   return (
     <Page
       hero

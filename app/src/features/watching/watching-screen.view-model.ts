@@ -51,6 +51,7 @@ export class WatchingScreenViewModel {
 
   static subtitle(item: ItemShort) {
     if (item.new) return `${item.new} ${plural(item.new, 'новая серия', 'новые серии', 'новых серий')}`
+
     return item.total ? `${item.watched ?? 0} из ${item.total}` : undefined
   }
 

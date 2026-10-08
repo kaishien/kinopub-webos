@@ -14,6 +14,7 @@ export function HeroItem({ item, note }: { item: ItemShort; note?: string }) {
     ?.slice(0, 3)
     .map((genre) => genre.title)
     .join(', ')
+
   return (
     <>
       <h1 className={styles.pageHeroTitle}>{ru}</h1>

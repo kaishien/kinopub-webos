@@ -33,6 +33,7 @@ export const Row = observer(function Row({ focusKey, title, count, item, renderI
       }),
   )
   const [navigation] = useState(() => rowNavigation(focusKey))
+
   useEffect(() => vm.setCount(count), [vm, count])
 
   return (

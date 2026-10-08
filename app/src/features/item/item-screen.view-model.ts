@@ -37,6 +37,7 @@ export class ItemScreenViewModel {
     readonly preview?: ItemShort,
   ) {
     const { api, queryClient, ui } = services
+
     makeAutoObservable<this, 'scope'>(
       this,
       {
@@ -94,6 +95,7 @@ export class ItemScreenViewModel {
       mutationFn: (folder) => api.toggleBookmark(id, folder.id),
       onSuccess: (_, folder) => {
         const wasIn = this.isInFolder(folder.id)
+
         ui.showToast(wasIn ? `Убрано из «${folder.title}»` : `Добавлено в «${folder.title}»`)
         void this.itemFolders.invalidate()
         void queryClient.invalidateQueries({ queryKey: ['bookmarks'] })
@@ -146,53 +148,73 @@ export class ItemScreenViewModel {
 
   get episodes(): { videos: Video[]; season: number } | null {
     if (this.isSerial) return this.currentSeason ? { videos: this.currentSeason.episodes, season: this.currentSeason.number } : null
+
     const videos = this.data?.videos ?? []
+
     return videos.length > 1 ? { videos, season: 0 } : null
   }
 
   get next(): PlayTarget | null {
     const item = this.data
+
     if (!item) return null
     if (item.seasons?.length) {
       for (const season of item.seasons) {
         for (const episode of season.episodes)
           if (episode.watched !== 1) return { video: episode, season: season.number, resumeFrom: resumePoint(episode) }
       }
+
       const last = item.seasons[item.seasons.length - 1]
       const video = last.episodes[last.episodes.length - 1]
+
       return { video, season: last.number, resumeFrom: 0 }
     }
+
     const video = item.videos?.find((v) => v.watched !== 1) ?? item.videos?.[0]
+
     return video ? { video, season: 0, resumeFrom: resumePoint(video) } : null
   }
 
   get playLabel(): string {
     const next = this.next
+
     if (!next) return 'Смотреть'
+
     const verb = next.resumeFrom > 0 ? 'Продолжить' : 'Смотреть'
+
     if (this.isSerial) return `${verb} ${episodeLabel(next.season, next.video.number)}`
+
     return next.resumeFrom > 0 ? `Продолжить с ${formatDuration(next.resumeFrom)}` : 'Смотреть'
   }
 
   get metaLine(): string[] {
     const item = this.data
+
     if (!item) return []
+
     const parts: string[] = []
+
     if (item.countries?.length) parts.push(item.countries.map((c) => c.title).join(', '))
     if (item.genres?.length) parts.push(item.genres.map((g) => g.title).join(', '))
+
     const duration = item.duration?.average ?? 0
+
     if (duration > 0) parts.push(this.isSerial ? `серия ${formatDuration(duration)}` : formatDuration(duration))
+
     return parts
   }
 
   /** The API returns directors and cast as comma-separated strings. */
   get people(): PersonEntry[] {
     const item = this.data
+
     if (!item) return []
+
     const directors = splitNames(item.director).map((name) => ({ role: 'director' as const, name }))
     const cast = splitNames(item.cast)
       .slice(0, PEOPLE_CAST_LIMIT)
       .map((name) => ({ role: 'cast' as const, name }))
+
     return [...directors, ...cast]
   }
 
@@ -210,12 +232,15 @@ export class ItemScreenViewModel {
 
   play(target: PlayTarget, fromStart = false) {
     const { router } = this.services
+
     void router.navigate(link.player(this.id, target.video.id, { t: fromStart ? 0 : target.resumeFrom }))
   }
 
   playTrailer() {
     const url = this.data?.trailer?.url
+
     if (!url) return
+
     void this.services.router.navigate(link.player(this.id, 0), { state: { trailer: url } })
   }
 
@@ -233,6 +258,7 @@ export class ItemScreenViewModel {
 
   markMovieWatched() {
     const video = this.data?.videos?.[0]
+
     if (video) void this.toggleWatched.mutate({ video: video.number })
   }
 
@@ -242,8 +268,11 @@ export class ItemScreenViewModel {
 
   private selectSeasonForNext(item: Item) {
     const next = this.next
+
     if (!next || !item.seasons) return
+
     const index = item.seasons.findIndex((s) => s.number === next.season)
+
     if (index >= 0) this.seasonIndex = index
   }
 }
@@ -251,6 +280,7 @@ export class ItemScreenViewModel {
 /** Views of a minute or less don't count as a resume point. */
 function resumePoint(video: Video): number {
   const time = video.watching?.time ?? 0
+
   return video.watched !== 1 && time > 60 ? time : 0
 }
 

@@ -11,6 +11,7 @@ import { CatalogToolbar } from './toolbar/catalog-toolbar'
 /** Sections share one route: keying by type remounts the screen and its view-model when switching. */
 export function CatalogScreen() {
   const { type = 'movie' } = useParams()
+
   return <CatalogContent key={type} type={type} />
 }
 

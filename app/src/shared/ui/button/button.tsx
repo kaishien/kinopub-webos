@@ -16,6 +16,7 @@ export interface ButtonProps extends Omit<PressableProps, 'children'> {
 
 export function Button({ children, icon, trailing, primary, active, size = 'md', variant = 'pill', className, ...rest }: ButtonProps) {
   const list = variant === 'list'
+
   return (
     <Pressable
       {...rest}

@@ -4,6 +4,8 @@ import styles from './toast.module.css'
 
 export const Toast = observer(function Toast() {
   const { ui } = useServices()
+
   if (!ui.toast) return null
+
   return <div className={styles.toast}>{ui.toast}</div>
 })

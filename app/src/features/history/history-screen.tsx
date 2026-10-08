@@ -8,6 +8,7 @@ import { Empty } from '@/shared/ui/empty/empty'
 
 export const HistoryScreen = observer(function HistoryScreen() {
   const vm = useViewModel((services) => new HistoryScreenViewModel(services))
+
   return (
     <Page hero title="История" focusKey="PAGE-history" initialFocusKey="GRID-history-0" ready={!vm.pages.isLoading}>
       <Status loading={vm.pages.isLoading} error={vm.pages.error?.message} onRetry={() => vm.pages.refetch()} />

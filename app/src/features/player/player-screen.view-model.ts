@@ -84,6 +84,7 @@ export class PlayerScreenViewModel {
     readonly params: PlayerParams,
   ) {
     const { api, queryClient, remote, settings, ui } = services
+
     this.time = params.startTime
     this.position = params.startTime
     this.resumeAt = params.startTime > 0 ? params.startTime : null
@@ -151,6 +152,7 @@ export class PlayerScreenViewModel {
         () => (this.usesManifest ? this.bestFile?.url.hls4 : undefined),
         (url) => {
           if (!url) return
+
           this.stream.load(url, this.resumeAt ?? -1)
           this.resumeAt = null
         },
@@ -187,14 +189,19 @@ export class PlayerScreenViewModel {
 
   get video(): Video | undefined {
     const item = this.item.data
+
     if (!item) return undefined
+
     const all = item.seasons ? item.seasons.flatMap((s) => s.episodes) : (item.videos ?? [])
+
     return all.find((v) => v.id === this.params.videoId) ?? all[0]
   }
 
   get season(): number {
     const item = this.item.data
+
     if (!item?.seasons) return 0
+
     return item.seasons.find((s) => s.episodes.some((e) => e.id === this.video?.id))?.number ?? 0
   }
 
@@ -210,20 +217,29 @@ export class PlayerScreenViewModel {
 
   get directFile(): VideoFile | undefined {
     const files = this.files
+
     if (!files.length) return undefined
+
     const preference = this.stream.quality
+
     if (preference === 'max' || preference === 'auto') return files[0]
+
     const wanted = QUALITY_ORDER.indexOf(preference)
+
     return files.find((f) => QUALITY_ORDER.indexOf(f.quality as VideoQuality) >= wanted) ?? files[files.length - 1]
   }
 
   get src(): string | undefined {
     if (this.params.trailerUrl) return this.params.trailerUrl
     if (this.usesManifest) return undefined
+
     const file = this.directFile
+
     if (!file) return ''
     if (this.fallback) return file.url.http || file.url.hls
+
     const kind = this.services.settings.values.stream
+
     return file.url[kind] || file.url.hls4 || file.url.http
   }
 
@@ -249,24 +265,31 @@ export class PlayerScreenViewModel {
 
   get title() {
     const title = splitTitle(this.item.data?.title ?? '').ru
+
     return this.isTrailer ? `Трейлер: ${title}` : title
   }
 
   get subtitle(): string {
     const video = this.video
+
     if (!video || this.isTrailer) return ''
+
     const label = video.snumber || video.number > 0 ? episodeLabel(video.snumber, video.number) : ''
+
     return [label, video.title].filter(Boolean).join(' · ')
   }
 
   get next(): { video: Video; season: number } | null {
     const item = this.item.data
     const current = this.video
+
     if (!item || !current || this.isTrailer) return null
+
     const flat = item.seasons
       ? item.seasons.flatMap((s) => s.episodes.map((video) => ({ video, season: s.number })))
       : (item.videos ?? []).map((video) => ({ video, season: 0 }))
     const index = flat.findIndex((x) => x.video.id === current.id)
+
     return index >= 0 ? (flat[index + 1] ?? null) : null
   }
 
@@ -300,6 +323,7 @@ export class PlayerScreenViewModel {
 
   get selectedSubtitle(): number {
     if (!this.usesStreamSubtitles) return this.subtitles.selected
+
     return this.stream.subtitles.findIndex((track) => track.id === this.stream.subtitleId)
   }
 
@@ -325,12 +349,15 @@ export class PlayerScreenViewModel {
     const selected = this.selectedSubtitle
     // A stream may have several tracks of the same language: number them so rows differ.
     const seen = new Map<string, number>()
+
     return [
       { key: 'off', title: 'Выключены', active: selected === -1, select: () => this.selectSubtitle(-1) },
       ...SubtitleTracks.order(list).map((index) => {
         const label = SubtitleTracks.label(list[index])
         const count = (seen.get(label) ?? 0) + 1
+
         seen.set(label, count)
+
         return {
           key: `${list[index].lang}-${index}`,
           title: count > 1 ? `${label} · ${count}` : label,
@@ -348,30 +375,36 @@ export class PlayerScreenViewModel {
       active: this.stream.quality !== 'auto' && quality === this.currentQuality,
       select: () => this.selectQuality(quality),
     }))
+
     if (this.usesManifest)
       options.unshift({ key: 'auto', title: 'Авто', active: this.stream.quality === 'auto', select: () => this.selectQuality('auto') })
+
     return options
   }
 
   get panelOptions(): PanelOption[] {
     if (this.panel === 'audio') return this.audioOptions
     if (this.panel === 'subtitles') return this.subtitleOptions
+
     return this.qualityOptions
   }
 
   get activePanelIndex() {
     const index = this.panelOptions.findIndex((option) => option.active)
+
     return index < 0 ? 0 : index
   }
 
   get qualityLabel() {
     const current = this.currentQuality
+
     return this.usesManifest && this.stream.quality === 'auto' ? `Авто${current ? ` · ${current}` : ''}` : current
   }
 
   attach(element: HTMLVideoElement | null) {
     if (this.element === element) return
     if (this.element) this.unbind(this.element)
+
     this.element = element
     if (element) this.bind(element)
     if (this.usesManifest) this.stream.attach(element)
@@ -405,12 +438,16 @@ export class PlayerScreenViewModel {
 
   private onTimeUpdate() {
     const el = this.element
+
     if (!el) return
+
     this.time = el.currentTime
     if (el.currentTime > 0.5) this.position = el.currentTime
+
     this.markTime(false)
     if (!this.isTrailer && this.seekPreview === null) {
       const wasVisible = this.nextUp.visible
+
       this.nextUp.onTime(el.currentTime, this.duration || el.duration || 0)
       if (this.nextUp.visible && !wasVisible) this.hideHud()
     }
@@ -447,25 +484,30 @@ export class PlayerScreenViewModel {
     if (this.usesManifest) return // hls.js errors arrive via stream.failure
     // MEDIA_ERR_ABORTED (src change, load()) is not a real failure.
     if (this.element?.error?.code === MediaError.MEDIA_ERR_ABORTED) return
+
     this.recover('network')
   }
 
   private onLoaded() {
     const el = this.element
+
     if (!el) return
     if (this.resumeAt !== null && this.resumeAt > 0) {
       el.currentTime = this.resumeAt
       this.resumeAt = null
     }
+
     this.applyRememberedSubtitles()
     void el.play().catch(() => {})
   }
 
   private applyRememberedSubtitles() {
     if (!this.video || this.isTrailer || this.selectedSubtitle !== -1) return
+
     const remembered = this.services.trackMemory.get(this.params.itemId).subtitle
     const list = this.subtitleList
     let index = -1
+
     if (remembered) index = list.findIndex((track) => SubtitleTracks.key(track) === remembered)
     else if (remembered === undefined && this.services.settings.values.subtitlesByDefault)
       index = list.findIndex((track) => track.lang === 'rus' && !track.forced)
@@ -475,6 +517,7 @@ export class PlayerScreenViewModel {
   private onStreamSubtitles() {
     if (!this.usesStreamSubtitles) return
     if (this.subtitles.selected >= 0) void this.subtitles.select([], -1)
+
     this.applyRememberedSubtitles()
   }
 
@@ -486,8 +529,11 @@ export class PlayerScreenViewModel {
   /** Track indices change between episodes, so match by name. */
   private applyRememberedAudio(audios: StreamAudio[]) {
     const remembered = this.isTrailer ? undefined : this.services.trackMemory.get(this.params.itemId).audio
+
     if (!remembered) return
+
     const match = audios.find((audio) => shortAudioName(audio.name) === remembered)
+
     if (match && match.id !== this.stream.audioId) this.stream.setAudio(match.id)
   }
 
@@ -495,26 +541,33 @@ export class PlayerScreenViewModel {
     this.markWatched()
     if (this.isTrailer || !this.nextUp.onEnded()) {
       this.services.router.back()
+
       return
     }
+
     this.hideHud()
   }
 
   private markWatched() {
     const video = this.video
+
     if (!video || this.isTrailer || this.markedWatched || video.watching.status === 1) return
+
     this.markedWatched = true
     void this.services.api.toggleWatched(this.params.itemId, video.number, this.season || undefined).catch(() => {})
   }
 
   togglePlay() {
     const el = this.element
+
     if (!el) return
     if (el.paused) void el.play().catch(() => {})
     else el.pause()
+
     this.wantsToPlay = !el.paused
     this.flash = el.paused ? 'pause' : 'play'
     if (this.flashTimer) clearTimeout(this.flashTimer)
+
     this.flashTimer = window.setTimeout(() => {
       this.flash = null
     }, FLASH_MS)
@@ -523,19 +576,25 @@ export class PlayerScreenViewModel {
 
   seekBy(delta: number) {
     const el = this.element
+
     if (!el) return
+
     this.showHud(HUD_MS, 'bar')
     const base = this.seekPreview ?? el.currentTime
     const limit = this.duration || el.duration || 0
+
     this.seekPreview = Math.max(0, Math.min(limit, base + delta))
     if (this.seekTimer) clearTimeout(this.seekTimer)
+
     this.seekTimer = window.setTimeout(this.commitSeek, SEEK_COMMIT_MS)
     this.seekStep = Math.min(SEEK_STEP_MAX, this.seekStep + 5)
   }
 
   private commitSeek() {
     const el = this.element
+
     if (el && this.seekPreview !== null) el.currentTime = this.seekPreview
+
     this.seekPreview = null
     this.seekStep = SEEK_STEP_MIN
   }
@@ -556,20 +615,25 @@ export class PlayerScreenViewModel {
       this.resumeAt = this.element?.currentTime ?? this.time
       this.buffering = true
     }
+
     change()
   }
 
   selectAudio(id: number) {
     this.stream.setAudio(id)
     const audio = this.stream.audios.find((track) => track.id === id)
+
     if (audio && !this.isTrailer) this.services.trackMemory.rememberAudio(this.params.itemId, shortAudioName(audio.name))
+
     this.closePanel()
   }
 
   selectSubtitle(index: number) {
     const track = this.subtitleList[index]
+
     this.applySubtitle(index)
     if (!this.isTrailer) this.services.trackMemory.rememberSubtitle(this.params.itemId, track ? SubtitleTracks.key(track) : null)
+
     this.closePanel()
   }
 
@@ -582,19 +646,24 @@ export class PlayerScreenViewModel {
   /** Recovery ladder: starvation tries lower quality, then fresh links; decode failure goes straight to fallback; then the error. */
   private recover(reason: StallKind | StreamFailure) {
     if (this.error || this.isTrailer) return
+
     const at = this.position
     const network = reason === 'starved' || reason === 'network'
+
     if (reason === 'starved' && this.usesManifest) {
       const lower = this.stream.lowerQuality()
+
       if (lower) {
         this.services.ui.showToast(`Медленная сеть — переключаю на ${lower}`)
         this.watchdog.reset()
+
         return
       }
     }
     if (network && !this.linksRefreshed) {
       this.linksRefreshed = true
       void this.refreshLinks(at)
+
       return
     }
     if (!this.fallback && this.files.some((file) => file.url.http)) {
@@ -604,8 +673,10 @@ export class PlayerScreenViewModel {
       this.fallback = true
       this.buffering = true
       this.watchdog.reset()
+
       return
     }
+
     this.error = FAILED_MESSAGE
     this.buffering = false
     // Don't resume behind the error screen if the network comes back by itself; Retry continues.
@@ -618,23 +689,28 @@ export class PlayerScreenViewModel {
     this.buffering = true
     this.watchdog.reset()
     const before = this.usesManifest ? this.bestFile?.url.hls4 : this.src
+
     this.resumeAt = at
     await this.item.refetch()
     runInAction(() => {
       if (this.usesManifest) {
         const url = this.bestFile?.url.hls4
+
         // If the URL changed, the reaction restarts the stream; otherwise restart it here.
         if (url && url === before) this.stream.restart(url, at)
+
         this.resumeAt = null
       } else if (this.element && this.src === before && this.src) {
         this.element.load()
       }
+
       this.watchdog.reset()
     })
   }
 
   retry() {
     const at = this.position
+
     this.error = ''
     this.wantsToPlay = true
     this.linksRefreshed = false
@@ -645,8 +721,10 @@ export class PlayerScreenViewModel {
     void this.item.refetch().then(() =>
       runInAction(() => {
         const url = this.bestFile?.url.hls4
+
         if (this.usesManifest && url) this.stream.restart(url, at)
         else this.element?.load()
+
         this.watchdog.reset()
       }),
     )
@@ -654,9 +732,12 @@ export class PlayerScreenViewModel {
 
   playNext(auto = false) {
     const next = this.next
+
     if (!next) return
     if (this.nextUp.visible) this.markWatched()
+
     const autoplayChain = auto ? this.nextUp.nextChain : 0
+
     void this.services.router.replace(link.player(this.params.itemId, next.video.id), { state: { autoplayChain } })
   }
 
@@ -667,8 +748,10 @@ export class PlayerScreenViewModel {
   showHud(ms = HUD_MS, target?: HudTarget) {
     if (target) this.hudTarget = target
     else if (!this.hudVisible) this.hudTarget = 'controls'
+
     this.hudVisible = true
     if (this.hudTimer) clearTimeout(this.hudTimer)
+
     this.hudTimer = window.setTimeout(this.hideHud, ms)
   }
 
@@ -680,76 +763,99 @@ export class PlayerScreenViewModel {
   private markTime(force: boolean) {
     const video = this.video
     const el = this.element
+
     if (!video || !el || this.isTrailer) return
     if (!force && Date.now() - this.lastMarkAt < MARK_INTERVAL_MS) return
+
     this.lastMarkAt = Date.now()
     void this.services.api.markTime(this.params.itemId, el.currentTime, video.number, this.season || undefined).catch(() => {})
   }
 
   private onKey(event: KeyboardEvent): boolean {
     const back = RemoteService.isBack(event)
+
     this.nextUp.userActive()
     if (this.error) {
       if (back) {
         this.exit()
+
         return true
       }
+
       return false
     }
     if (this.panel) {
       if (back) {
         this.closePanel()
+
         return true
       }
+
       return false
     }
     if (this.nextUp.visible) {
       if (!back) return false
       if (this.nextUp.phase === 'credits') this.nextUp.dismiss()
       else this.exit()
+
       return true
     }
     if (back) {
       this.exit()
+
       return true
     }
+
     switch (event.keyCode) {
       case RemoteKey.Enter:
         if (this.hudVisible) return false
+
         this.togglePlay()
+
         return true
       case RemoteKey.Play:
       case RemoteKey.Pause:
       case RemoteKey.PlayPause:
         this.togglePlay()
+
         return true
       case RemoteKey.Stop:
         this.exit()
+
         return true
       case RemoteKey.FastForward:
         this.seekBy(this.seekStep)
+
         return true
       case RemoteKey.Rewind:
         this.seekBy(-this.seekStep)
+
         return true
       case RemoteKey.Right:
       case RemoteKey.Left:
         if (this.hudVisible) {
           this.showHud() // keep the HUD alive; the focus library handles navigation, the bar handles seeking
+
           return false
         }
+
         this.seekBy(event.keyCode === RemoteKey.Right ? this.seekStep : -this.seekStep)
+
         return true
       case RemoteKey.Up:
       case RemoteKey.Down:
         if (this.hudVisible) {
           this.showHud()
+
           return false
         }
+
         this.showHud(HUD_MS, 'controls')
+
         return true
       default:
         this.showHud()
+
         return false
     }
   }
@@ -757,10 +863,12 @@ export class PlayerScreenViewModel {
   dispose() {
     this.markTime(true)
     if (this.element) this.unbind(this.element)
+
     this.subtitles.dispose()
     if (this.hudTimer) clearTimeout(this.hudTimer)
     if (this.flashTimer) clearTimeout(this.flashTimer)
     if (this.seekTimer) clearTimeout(this.seekTimer)
+
     this.scope.dispose()
     runInAction(() => {
       void this.services.queryClient.invalidateQueries({ queryKey: ['home', 'continue'] })

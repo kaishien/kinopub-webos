@@ -11,6 +11,7 @@ const GRID_FOCUS_KEY = 'GRID-search'
 
 export const SearchScreen = observer(function SearchScreen() {
   const vm = useViewModel((services) => new SearchScreenViewModel(services))
+
   return (
     <Page focusKey="PAGE-search" initialFocusKey={SEARCH_INPUT_FOCUS_KEY}>
       <div className={styles.searchBox}>

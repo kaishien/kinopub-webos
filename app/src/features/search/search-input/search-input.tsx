@@ -17,6 +17,7 @@ export function SearchInput({ value, onChange, resultsFocusKey }: SearchInputPro
     focusKey: SEARCH_INPUT_FOCUS_KEY,
     onEnterPress: () => inputRef.current?.focus(),
   })
+
   return (
     <div ref={ref} className={cx(styles.searchInputWrap, focused && 'is-focused')}>
       <input
@@ -27,6 +28,7 @@ export function SearchInput({ value, onChange, resultsFocusKey }: SearchInputPro
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => {
           if (e.key !== 'Enter' && e.key !== 'ArrowDown') return
+
           inputRef.current?.blur()
           if (resultsFocusKey) setFocus(resultsFocusKey)
         }}

@@ -30,6 +30,7 @@ export class TrackMemoryService {
 
   private update(itemId: number, change: TrackChoice) {
     const next = { ...this.choices.get(itemId), ...change }
+
     this.choices.delete(itemId)
     this.choices.set(itemId, next)
     while (this.choices.size > LIMIT) this.choices.delete(this.choices.keys().next().value!)

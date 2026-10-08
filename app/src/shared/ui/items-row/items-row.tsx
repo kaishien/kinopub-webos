@@ -24,7 +24,9 @@ export const ItemsRow = memo(function ItemsRow({ title, items, focusKey, moreLin
   const renderItem = useCallback(
     (index: number, cellFocusKey: string) => {
       const item = items[index]
+
       if (!item) return <RowMoreCard index={index} to={moreLink!} focusKey={cellFocusKey} />
+
       return (
         <RowCard
           index={index}
@@ -39,6 +41,7 @@ export const ItemsRow = memo(function ItemsRow({ title, items, focusKey, moreLin
     [items, moreLink, hero, progressOf, subtitleOf],
   )
   const imageOf = useCallback((index: number) => items[index]?.posters.medium, [items])
+
   return (
     <Row title={title} focusKey={focusKey} count={count} item={hero ? POSTER_BARE : POSTER} renderItem={renderItem} imageOf={imageOf} />
   )
@@ -61,6 +64,7 @@ const RowCard = memo(function RowCard({
 }) {
   const { router, ui } = useServices()
   const notify = useRowItemFocus()
+
   return (
     <Card
       item={item}
@@ -82,5 +86,6 @@ const RowCard = memo(function RowCard({
 function RowMoreCard({ index, to, focusKey }: { index: number; to: string; focusKey: string }) {
   const { router } = useServices()
   const notify = useRowItemFocus()
+
   return <MoreCard focusKey={focusKey} onPress={() => router.navigate(to)} onFocus={() => notify(index)} />
 }

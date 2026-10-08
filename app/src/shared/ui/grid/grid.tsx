@@ -62,6 +62,7 @@ export const Grid = observer(function Grid({
       ),
   )
   const [navigation] = useState(() => gridNavigation(focusKey, vm.columns, () => vm.count))
+
   useEffect(() => vm.setItems(items), [vm, items])
 
   return (
@@ -74,10 +75,12 @@ export const Grid = observer(function Grid({
       <div className={styles.gridBody} ref={vm.setRoot} style={{ height: vm.list.totalSize }}>
         {vm.list.items.map((row) => {
           const first = row.index * vm.columns
+
           return (
             <div key={vm.list.slot(row.index)} className={styles.gridRow} style={{ top: row.start }}>
               {items.slice(first, first + vm.columns).map((item, column) => {
                 const index = first + column
+
                 return (
                   <GridCell
                     key={column}

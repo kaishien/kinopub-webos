@@ -8,7 +8,9 @@ export interface ViewModel {
 export function useViewModel<T extends ViewModel>(factory: (services: Services) => T): T {
   const services = useServices()
   const [vm] = useState(() => factory(services))
+
   useEffect(() => () => vm.dispose?.(), [vm])
+
   return vm
 }
 

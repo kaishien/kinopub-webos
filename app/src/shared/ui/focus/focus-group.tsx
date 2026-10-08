@@ -50,6 +50,7 @@ export function FocusGroup({
     nextFocusResolver,
     measureChildrenLayout: !nextFocusResolver,
   })
+
   return (
     <FocusContext.Provider value={key}>
       <div ref={ref} className={cx(className, hasFocusedChild && 'has-focus')} style={style}>

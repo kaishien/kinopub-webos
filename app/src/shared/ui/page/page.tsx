@@ -56,12 +56,15 @@ export const Page = observer(function Page({
   useEffect(() => {
     // Place initial focus only once: a filter change makes the screen not ready again, but the user already has focus.
     if (!ready || vm.initialFocusPlaced) return
+
     const remembered = focusMemory.restore(locationKey)
     const timer = window.setTimeout(() => {
       const target = [remembered, initialFocusKey].find((key) => key && doesFocusableExist(key))
+
       setFocus(target ?? focusKey)
       vm.markInitialFocusPlaced()
     }, FOCUS_DELAY_MS)
+
     return () => clearTimeout(timer)
     // Re-run only when the screen becomes ready, not on every initialFocusKey change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,7 +78,9 @@ export const Page = observer(function Page({
   useEffect(
     () => () => {
       const current = getCurrentFocusKey()
+
       if (current) focusMemory.save(locationKey, current)
+
       focusMemory.saveOffset(locationKey, PAGE_AREA, vm.offset)
     },
     [focusMemory, locationKey, vm],

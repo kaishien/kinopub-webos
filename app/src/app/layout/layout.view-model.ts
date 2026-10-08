@@ -31,21 +31,27 @@ export class LayoutViewModel {
 
   private onKey(event: KeyboardEvent): boolean {
     if (!RemoteService.isBack(event)) return false
+
     const { router, ui } = this.services
+
     if (router.back()) return true
     if (router.pathname !== link.home()) {
       void router.reset(link.home())
+
       return true
     }
     if (this.exitArmed) {
       window.close()
+
       return true
     }
+
     this.exitArmed = true
     ui.showToast('Нажмите «назад» ещё раз, чтобы выйти')
     this.exitTimer = window.setTimeout(() => {
       this.exitArmed = false
     }, EXIT_ARM_MS)
+
     return true
   }
 

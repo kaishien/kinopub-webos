@@ -14,6 +14,7 @@ export class CollectionsScreenViewModel {
 
   constructor(private readonly services: Services) {
     const { api, queryClient } = services
+
     this.pages = new InfiniteQuery<CollectionsPage, Error, number>({
       queryClient,
       abortSignal: this.scope.signal,
@@ -37,6 +38,7 @@ export class CollectionsScreenViewModel {
 
   subtitle(card: ItemShort) {
     const views = (card as ItemShort & { views?: number }).views ?? 0
+
     return `${views} ${plural(views, 'просмотр', 'просмотра', 'просмотров')}`
   }
 

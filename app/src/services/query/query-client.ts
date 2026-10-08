@@ -14,6 +14,7 @@ export function createQueryClient() {
         structuralSharing: false,
         retry: (failureCount, error) => {
           if (error instanceof ApiError && !error.isNetwork) return false
+
           return failureCount < 1
         },
       },

@@ -30,6 +30,7 @@ export function createServices(): Services {
   const api = new ApiService()
   const settings = new SettingsService(storage, api)
   const auth = new AuthService(storage, api)
+
   return {
     storage,
     api,
@@ -49,6 +50,8 @@ export const ServicesContext = createContext<Services | null>(null)
 
 export function useServices(): Services {
   const services = useContext(ServicesContext)
+
   if (!services) throw new Error('ServicesContext не предоставлен')
+
   return services
 }

@@ -84,10 +84,13 @@ export class HlsStream {
 
   get variant(): StreamVariant | undefined {
     const sorted = this.sortedVariants
+
     if (!sorted.length) return undefined
     if (this.quality === 'auto') return sorted.find((v) => v.level === this.activeLevel) ?? sorted[0]
     if (this.quality === 'max') return sorted[0]
+
     const wanted = QUALITY_ORDER.indexOf(this.quality)
+
     return sorted.find((v) => QUALITY_ORDER.indexOf(v.quality) >= wanted) ?? sorted[sorted.length - 1]
   }
 
@@ -105,12 +108,14 @@ export class HlsStream {
 
   attach(element: HTMLVideoElement | null) {
     if (this.element === element) return
+
     this.element = element
     this.start()
   }
 
   load(url: string, startPosition = -1) {
     if (this.url === url) return
+
     this.url = url
     this.startPosition = startPosition
     this.start()
@@ -125,8 +130,11 @@ export class HlsStream {
   lowerQuality(): VideoQuality | null {
     const current = this.variant?.quality
     const lower = this.qualities.find((quality) => QUALITY_ORDER.indexOf(quality) > QUALITY_ORDER.indexOf(current ?? '2160p'))
+
     if (!lower) return null
+
     this.setQuality(lower)
+
     return lower
   }
 
@@ -143,6 +151,7 @@ export class HlsStream {
   setSubtitle(id: number) {
     this.subtitleId = id
     if (!this.hls) return
+
     this.hls.subtitleTrack = id
     this.hls.subtitleDisplay = id >= 0
   }
@@ -155,7 +164,9 @@ export class HlsStream {
 
   private start() {
     const { element, url } = this
+
     if (!element || !url) return
+
     this.hls?.destroy()
     this.hls = null
     this.failure = null
@@ -164,8 +175,10 @@ export class HlsStream {
     // oxlint-disable-next-line import/no-named-as-default-member -- hls.js types only declare isSupported as static
     if (!Hls.isSupported()) {
       element.src = url
+
       return
     }
+
     const hls = new Hls({
       enableWorker: false,
       maxBufferLength: 40,
@@ -173,6 +186,7 @@ export class HlsStream {
       startLevel: -1,
       startPosition: this.startPosition,
     })
+
     this.hls = hls
     hls.on(Events.MANIFEST_PARSED, this.onManifest)
     hls.on(Events.AUDIO_TRACKS_UPDATED, (_: Events.AUDIO_TRACKS_UPDATED, data: AudioTracksUpdatedData) =>
@@ -193,7 +207,9 @@ export class HlsStream {
 
   private onManifest() {
     const hls = this.hls
+
     if (!hls) return
+
     this.variants = hls.levels.map(toVariant)
     // No buffer before the first fragment, so pin the chosen level now; Auto starts low and climbs on its own.
     this.applyQuality()
@@ -203,9 +219,11 @@ export class HlsStream {
   private onAudioTracks(tracks: MediaPlaylist[]) {
     this.audios = tracks.filter(isPlayable).map(toAudio)
     const current = this.hls?.audioTrack ?? -1
+
     if (!this.audios.length) {
       // Every track is multichannel: this path can't play it, the fallback is needed.
       this.failure = 'audio'
+
       return
     }
     if (this.audios.some((audio) => audio.id === current)) this.audioId = current
@@ -236,7 +254,9 @@ export class HlsStream {
 
   private applyQuality() {
     const hls = this.hls
+
     if (!hls || !this.variants.length) return
+
     hls.currentLevel = this.level
   }
 
@@ -245,13 +265,16 @@ export class HlsStream {
     if (data.type === ErrorTypes.NETWORK_ERROR && this.networkRetries < SELF_RECOVERY_ATTEMPTS) {
       this.networkRetries++
       this.hls.startLoad()
+
       return
     }
     if (data.type === ErrorTypes.MEDIA_ERROR && this.mediaRetries < SELF_RECOVERY_ATTEMPTS) {
       this.mediaRetries++
       this.hls.recoverMediaError()
+
       return
     }
+
     runInAction(() => {
       this.failure = data.type === ErrorTypes.NETWORK_ERROR ? 'network' : 'media'
     })

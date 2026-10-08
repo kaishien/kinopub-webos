@@ -9,9 +9,11 @@ import styles from './bookmarks-sheet.module.css'
 
 export const BookmarksSheet = observer(function BookmarksSheet({ vm }: { vm: ItemScreenViewModel }) {
   const folders = vm.folders.data ?? []
+
   useEffect(() => {
     if (folders.length) setFocus('SHEET-folder-0')
   }, [folders.length])
+
   return (
     <Sheet title="Закладки" onClose={vm.closeBookmarks}>
       {vm.folders.isLoading && <Spinner />}

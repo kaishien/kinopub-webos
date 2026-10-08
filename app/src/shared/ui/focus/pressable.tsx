@@ -40,6 +40,7 @@ export const Pressable = memo(function Pressable({
     onFocus: onFocus ? (layout) => onFocus({ node: layout.node as HTMLElement | null }) : undefined,
     onBlur: onBlur ? () => onBlur() : undefined,
   })
+
   return (
     <div ref={ref} className={cx(className, focused && 'is-focused')} style={style} onMouseEnter={focusSelf} onClick={onPress}>
       {children}

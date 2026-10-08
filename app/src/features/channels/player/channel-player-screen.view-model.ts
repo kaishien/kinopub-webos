@@ -31,6 +31,7 @@ export class ChannelPlayerScreenViewModel {
     readonly channelId: number,
   ) {
     const { api, queryClient, remote } = services
+
     this.channels = new Query<TvChannel[]>({
       queryClient,
       abortSignal: this.scope.signal,
@@ -80,6 +81,7 @@ export class ChannelPlayerScreenViewModel {
   showHud() {
     this.hudVisible = true
     if (this.hudTimer) clearTimeout(this.hudTimer)
+
     this.hudTimer = window.setTimeout(() => {
       this.hudVisible = false
     }, HUD_MS)
@@ -105,25 +107,33 @@ export class ChannelPlayerScreenViewModel {
 
   private switchBy(delta: number) {
     const list = this.list
+
     if (!list.length) return
+
     const next = list[(this.index + delta + list.length) % list.length]
+
     void this.services.router.replace(link.channel(next.id))
   }
 
   private onKey(event: KeyboardEvent): boolean {
     if (RemoteService.isBack(event)) {
       this.services.router.back()
+
       return true
     }
     if (event.keyCode === RemoteKey.Up || event.keyCode === RemoteKey.ChannelUp) {
       this.switchBy(1)
+
       return true
     }
     if (event.keyCode === RemoteKey.Down || event.keyCode === RemoteKey.ChannelDown) {
       this.switchBy(-1)
+
       return true
     }
+
     this.showHud()
+
     return false
   }
 

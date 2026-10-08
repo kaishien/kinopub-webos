@@ -11,17 +11,22 @@ const optionKey = (index: number) => `PANEL-${index}`
 
 export const PlayerPanel = observer(function PlayerPanel({ vm }: { vm: PlayerScreenViewModel }) {
   const panel = vm.panel!
+
   // Options register with navigation asynchronously, so focus the selected one on the next frame.
   useEffect(() => {
     const frame = requestAnimationFrame(() => setFocus(optionKey(vm.activePanelIndex)))
+
     return () => cancelAnimationFrame(frame)
   }, [panel, vm])
 
   const closeOnLeft = (direction: string) => {
     if (direction !== 'left') return true
+
     vm.closePanel()
+
     return false
   }
+
   return (
     <div className={styles.playerPanel}>
       <FocusGroup focusKey="PANEL" className={styles.playerPanelBody} isFocusBoundary preferredChildFocusKey={optionKey(0)}>

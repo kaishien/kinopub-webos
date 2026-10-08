@@ -36,6 +36,7 @@ export class CatalogScreenViewModel {
     initial: { sort?: string; genre?: number },
   ) {
     const { api, queryClient } = services
+
     this.section = findSection(sectionId)
     this.sort = initial.sort ?? 'updated-'
     this.genre = initial.genre
@@ -47,6 +48,7 @@ export class CatalogScreenViewModel {
     )
 
     const { type, genre, fresh, quality } = this.section
+
     this.genres = new Query<Genre[]>({
       queryClient,
       abortSignal: this.scope.signal,

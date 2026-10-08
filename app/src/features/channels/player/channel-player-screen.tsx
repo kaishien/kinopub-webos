@@ -9,12 +9,14 @@ import { Spinner } from '@/shared/ui/spinner/spinner'
 /** Switching channels replaces the route; keying by channel recreates the screen and its view-model. */
 export function ChannelPlayerScreen() {
   const { id = '0' } = useParams()
+
   return <ChannelPlayerContent key={id} channelId={Number(id)} />
 }
 
 const ChannelPlayerContent = observer(function ChannelPlayerContent({ channelId }: { channelId: number }) {
   const vm = useViewModel((services) => new ChannelPlayerScreenViewModel(services, channelId))
   const channel = vm.channel
+
   return (
     <div className={styles.player}>
       {channel && <video ref={vm.attach} autoPlay playsInline onPlaying={vm.onPlaying} onError={vm.onVideoError} />}

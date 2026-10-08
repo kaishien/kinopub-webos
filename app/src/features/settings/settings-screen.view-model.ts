@@ -42,8 +42,11 @@ export class SettingsScreenViewModel {
 
   get subscriptionLine(): string {
     const user = this.user
+
     if (!user) return ''
+
     const sub = user.subscription
+
     return sub?.active ? `${user.username} · подписка ещё ${Math.floor(sub.days)} дн.` : `${user.username} · подписка не активна`
   }
 
@@ -74,6 +77,7 @@ export class SettingsScreenViewModel {
   cycleHost() {
     const hosts = ['', ...this.services.settings.hosts]
     const index = hosts.indexOf(this.values.apiHost)
+
     this.services.settings.set('apiHost', hosts[(index + 1) % hosts.length])
     this.services.ui.showToast('Сервер переключён')
   }
@@ -93,5 +97,6 @@ export class SettingsScreenViewModel {
 
 function cycle<T extends { id: string }>(list: T[], current: string, direction: 1 | -1): T {
   const index = list.findIndex((o) => o.id === current)
+
   return list[(index + direction + list.length) % list.length]
 }

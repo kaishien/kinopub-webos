@@ -12,7 +12,9 @@ export class GlideDetector {
   step(): boolean {
     const now = performance.now()
     const gliding = now - this.lastStepAt < GLIDE_WINDOW_MS
+
     this.lastStepAt = now
+
     return gliding
   }
 }

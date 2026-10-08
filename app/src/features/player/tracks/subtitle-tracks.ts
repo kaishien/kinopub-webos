@@ -43,10 +43,13 @@ export class SubtitleTracks {
     this.revoke()
     if (index < 0) {
       this.url = ''
+
       return
     }
+
     try {
       const vtt = await toVtt(tracks[index].url)
+
       runInAction(() => {
         this.objectUrl = vtt
         this.url = vtt
@@ -63,6 +66,7 @@ export class SubtitleTracks {
 
   private revoke() {
     if (this.objectUrl) URL.revokeObjectURL(this.objectUrl)
+
     this.objectUrl = ''
   }
 
@@ -73,11 +77,13 @@ export class SubtitleTracks {
 
 function rank(track: SubtitleKind) {
   const priority = PRIORITY.indexOf(track.lang)
+
   return (priority < 0 ? PRIORITY.length : priority) * 2 + (track.forced ? 1 : 0)
 }
 
 async function toVtt(url: string): Promise<string> {
   const text = await (await fetch(url)).text()
   const vtt = text.startsWith('WEBVTT') ? text : `WEBVTT\n\n${text.replace(/\r/g, '').replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2')}`
+
   return URL.createObjectURL(new Blob([vtt], { type: 'text/vtt' }))
 }

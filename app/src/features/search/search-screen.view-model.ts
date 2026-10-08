@@ -14,6 +14,7 @@ export class SearchScreenViewModel {
 
   constructor(private readonly services: Services) {
     const { api, queryClient, storage } = services
+
     this.query = storage.get(STORAGE_KEY, '')
     makeAutoObservable<this, 'scope'>(this, { scope: false, results: false }, { autoBind: true })
 

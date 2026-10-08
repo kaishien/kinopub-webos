@@ -16,12 +16,15 @@ export interface SheetProps {
 
 export function Sheet({ title, children, onClose, focusKey = 'SHEET', initialFocusKey, returnFocusKey }: SheetProps) {
   const { remote } = useServices()
+
   useEffect(
     () =>
       remote.push((event) => {
         // The sheet slides in from the right, so Left closes it like Back.
         if (!RemoteService.isBack(event) && event.keyCode !== RemoteKey.Left) return false
+
         onClose()
+
         return true
       }),
     [remote, onClose],
@@ -32,6 +35,7 @@ export function Sheet({ title, children, onClose, focusKey = 'SHEET', initialFoc
       if (initialFocusKey && doesFocusableExist(initialFocusKey)) setFocus(initialFocusKey)
       else setFocus(focusKey)
     })
+
     return () => {
       cancelAnimationFrame(frame)
       if (returnFocusKey) setFocus(returnFocusKey)
@@ -39,6 +43,7 @@ export function Sheet({ title, children, onClose, focusKey = 'SHEET', initialFoc
     // Run only on open and close.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
   return (
     <div className={styles.sheet}>
       <FocusGroup focusKey={focusKey} className={styles.sheetPanel} isFocusBoundary>

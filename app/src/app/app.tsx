@@ -21,13 +21,16 @@ initSpatialNavigation({
 function bootstrap(): { services: Services; router: ReturnType<typeof createAppRouter> } {
   const services = createServices()
   const router = createAppRouter()
+
   services.router.attach(router)
   void services.auth.init()
+
   return { services, router }
 }
 
 export function App() {
   const [{ services, router }] = useState(bootstrap)
+
   return (
     <ServicesContext.Provider value={services}>
       <RouterProvider router={router} />

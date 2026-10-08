@@ -5,6 +5,7 @@ const CREDITS_S = 30
 const MIN_DURATION_S = 300
 /** Seeking back this far before the credits zone re-arms a dismissed card. */
 const REARM_S = 10
+
 export const COUNTDOWN_S = 10
 const STILL_WATCHING_AFTER = 3
 
@@ -39,7 +40,9 @@ export class NextUp {
 
   onTime(time: number, duration: number) {
     if (duration < MIN_DURATION_S || !this.options.hasNext()) return
+
     const remaining = duration - time
+
     if (this.phase === 'credits' && remaining > CREDITS_S) this.hide()
     if (this.dismissed && remaining > CREDITS_S + REARM_S) this.dismissed = false
     if (this.phase === 'hidden' && !this.dismissed && remaining <= CREDITS_S && remaining > 1) this.show('credits')
@@ -48,6 +51,7 @@ export class NextUp {
   onEnded(): boolean {
     if (!this.options.hasNext()) return false
     if (this.phase !== 'still-watching') this.show('ended')
+
     return true
   }
 
@@ -78,6 +82,7 @@ export class NextUp {
 
   private start() {
     if (this.countdown !== null) return
+
     this.countdown = COUNTDOWN_S
     this.run += 1
     this.timer = window.setInterval(this.tick, 1000)
@@ -85,20 +90,25 @@ export class NextUp {
 
   private stop() {
     if (this.timer) clearInterval(this.timer)
+
     this.timer = null
     this.countdown = null
   }
 
   private tick() {
     if (this.countdown === null) return
+
     this.countdown -= 1
     if (this.countdown > 0) return
+
     this.stop()
     if (this.chain >= STILL_WATCHING_AFTER) {
       this.phase = 'still-watching'
       this.options.pause()
+
       return
     }
+
     this.options.advance(true)
   }
 

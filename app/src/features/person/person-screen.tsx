@@ -11,6 +11,7 @@ import { PersonScreenViewModel } from './person-screen.view-model'
 export const PersonScreen = observer(function PersonScreen() {
   const { role = 'cast', name = '' } = useParams()
   const vm = useViewModel((services) => new PersonScreenViewModel(services, role as PersonRole, name))
+
   return (
     <Page hero title={vm.name} focusKey={`PAGE-person-${role}-${name}`} initialFocusKey="GRID-person-0" ready={!vm.pages.isLoading}>
       <Status loading={vm.pages.isLoading} error={vm.pages.error?.message} onRetry={() => vm.pages.refetch()} />

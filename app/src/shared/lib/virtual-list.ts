@@ -25,6 +25,7 @@ export class VirtualList {
     const rect = horizontal ? { width: viewport, height: 0 } : { width: 0, height: viewport }
     // The virtualizer requires a scroll element; it's never scrolled, so a detached node is enough.
     const host = document.createElement('div')
+
     this.poolSize = Math.ceil(viewport / step) + 2 * overscan + 2
 
     this.virtualizer = new Virtualizer<HTMLDivElement, HTMLDivElement>({
@@ -37,11 +38,13 @@ export class VirtualList {
       initialOffset: offset(),
       observeElementRect: (_, notify) => {
         notify(rect)
+
         return () => {}
       },
       observeElementOffset: (_, notify) => {
         this.emitOffset = notify
         notify(offset(), false)
+
         return () => {
           this.emitOffset = null
         }
@@ -65,6 +68,7 @@ export class VirtualList {
 
   get items(): VirtualItem[] {
     void this.version
+
     return this.virtualizer.getVirtualItems()
   }
 
@@ -78,11 +82,13 @@ export class VirtualList {
 
   get lastIndex(): number {
     const items = this.items
+
     return items.length ? items[items.length - 1].index : -1
   }
 
   get totalSize(): number {
     void this.version
+
     return this.virtualizer.getTotalSize()
   }
 

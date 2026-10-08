@@ -22,6 +22,7 @@ export const EpisodesRow = memo(function EpisodesRow({ videos, season, onPlay }:
     [videos, season, onPlay],
   )
   const imageOf = useCallback((index: number) => videos[index]?.thumbnail, [videos])
+
   return <Row focusKey={`ROW-episodes-${season}`} count={videos.length} item={WIDE} renderItem={renderItem} imageOf={imageOf} />
 })
 
@@ -42,6 +43,7 @@ const EpisodeCard = memo(function EpisodeCard({
   const watched = video.watched === 1
   const time = watched ? 0 : (video.watching?.time ?? 0)
   const progress = watched ? 1 : video.duration ? time / video.duration : 0
+
   return (
     <Pressable className={styles.episode} focusKey={focusKey} onPress={() => onPlay(video, season)} onFocus={() => notify(index)}>
       <div className={styles.episodeImg}>

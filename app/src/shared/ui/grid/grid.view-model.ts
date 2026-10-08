@@ -52,6 +52,7 @@ export class GridViewModel {
       ([lastRow, list]) => {
         const from = (lastRow + 1) * columns
         const ahead = list.slice(from, from + IMAGE_AHEAD_ROWS * columns)
+
         images.prefetch(ahead.map((item) => item.posters.medium))
       },
     )
@@ -68,11 +69,13 @@ export class GridViewModel {
   /** Grid position is re-read from the DOM on every page scroll: filters and headers above it change height as data loads. */
   get localOffset() {
     const offset = this.page.offset
+
     return this.root ? Math.max(0, offset - this.page.offsetOf(this.root)) : offset
   }
 
   get firstVisible() {
     const row = Math.ceil(this.localOffset / this.step)
+
     return Math.min(row * this.columns, Math.max(0, this.count - 1))
   }
 
@@ -91,6 +94,7 @@ export class GridViewModel {
   focus(item: ItemShort, index: number, node: HTMLElement | null, note?: string) {
     this.callbacks.onFocus(item, node, note)
     const row = Math.floor(index / this.columns)
+
     if (row >= this.rows - NEXT_PAGE_ROWS) this.callbacks.onReachEnd?.()
   }
 

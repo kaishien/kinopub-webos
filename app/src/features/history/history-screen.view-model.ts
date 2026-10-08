@@ -32,9 +32,13 @@ export class HistoryScreenViewModel {
 
   subtitle(item: ItemShort): string | undefined {
     const entry = this.entries.find((e) => e.item.id === item.id)
+
     if (!entry) return undefined
+
     const media = entry.media
+
     if (media?.snumber) return `${episodeLabel(media.snumber, media.number)} · ${formatClock(entry.time)}`
+
     return formatClock(entry.time)
   }
 

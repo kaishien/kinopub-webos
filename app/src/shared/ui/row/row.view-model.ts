@@ -49,11 +49,15 @@ export class RowViewModel {
       () => [this.list.lastIndex, this.count] as const,
       ([last, total]) => {
         if (!imageOf) return
+
         const urls: string[] = []
+
         for (let index = last + 1; index < Math.min(total, last + 1 + IMAGE_AHEAD); index++) {
           const url = imageOf(index)
+
           if (url) urls.push(url)
         }
+
         images.prefetch(urls)
       },
       { fireImmediately: true },
@@ -78,7 +82,9 @@ export class RowViewModel {
 
   focusItem(index: number) {
     const next = Math.min(index * this.step, this.maxOffset)
+
     if (next === this.offset) return
+
     this.gliding = this.glide.step()
     this.offset = next
   }

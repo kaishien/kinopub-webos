@@ -99,11 +99,13 @@ export class ApiService {
       const controller = new AbortController()
       const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
       const onOuterAbort = () => controller.abort()
+
       signal?.addEventListener('abort', onOuterAbort, { once: true })
 
       try {
         const payload = form ? new URLSearchParams(Object.entries(form).map(([key, value]) => [key, String(value)])) : undefined
         const response = await fetch(url, { method, signal: controller.signal, body: payload })
+
         this.hostIndex = index
         const text = await response.text()
         const body = parseJson(text)
@@ -113,18 +115,22 @@ export class ApiService {
         }
         if (!response.ok) {
           const err = body as ErrorBody | null
+
           throw new ApiError(response.status, err?.error_description || err?.message || err?.error || `HTTP ${response.status}`, body)
         }
+
         return body as T
       } catch (error) {
         if (error instanceof ApiError) throw error
         if (signal?.aborted) throw error
+
         lastError = error
       } finally {
         clearTimeout(timer)
         signal?.removeEventListener('abort', onOuterAbort)
       }
     }
+
     throw new ApiError(0, 'Сервер не отвечает', lastError)
   }
 
@@ -275,15 +281,19 @@ export class ApiService {
 
 function toQueryString(params: Query): string {
   const parts: string[] = []
+
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null || value === '') continue
+
     parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
   }
+
   return parts.length ? `?${parts.join('&')}` : ''
 }
 
 function parseJson(text: string): unknown {
   if (!text) return null
+
   try {
     return JSON.parse(text)
   } catch {

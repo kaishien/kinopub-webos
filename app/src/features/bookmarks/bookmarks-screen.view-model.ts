@@ -10,6 +10,7 @@ export class BookmarksScreenViewModel {
 
   constructor(private readonly services: Services) {
     const { api, queryClient } = services
+
     this.folders = new Query<BookmarkFolder[]>({
       queryClient,
       abortSignal: this.scope.signal,

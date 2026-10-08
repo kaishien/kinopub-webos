@@ -12,6 +12,7 @@ export const BookmarkFolderScreen = observer(function BookmarkFolderScreen() {
   const location = useLocation()
   const vm = useViewModel((services) => new BookmarkFolderScreenViewModel(services, Number(id)))
   const title = vm.title ?? (location.state as { title?: string } | null)?.title ?? 'Закладки'
+
   return (
     <Page hero title={title} focusKey={`PAGE-bm-${id}`} initialFocusKey="GRID-bm-0" ready={!vm.pages.isLoading}>
       <Status loading={vm.pages.isLoading} error={vm.pages.error?.message} onRetry={() => vm.pages.refetch()} />

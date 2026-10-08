@@ -11,6 +11,7 @@ import styles from './settings-screen.module.css'
 export const SettingsScreen = observer(function SettingsScreen() {
   const vm = useViewModel((services) => new SettingsScreenViewModel(services))
   const v = vm.values
+
   return (
     <Page focusKey="PAGE-settings" initialFocusKey="SET-quality">
       <PageTitle>Настройки</PageTitle>

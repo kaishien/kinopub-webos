@@ -11,7 +11,9 @@ export const PageContext = createContext<PageContextValue | null>(null)
 
 export function usePage(): PageContextValue {
   const context = useContext(PageContext)
+
   if (!context) throw new Error('Компонент должен быть внутри Page')
+
   return context
 }
 

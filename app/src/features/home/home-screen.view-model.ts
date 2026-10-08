@@ -36,6 +36,7 @@ export class HomeScreenViewModel {
       }),
       ...extra,
     })
+
     this.shelves = [
       shelf(CONTINUE_SHELF_KEY, 'Продолжить', (s) => api.watchingSerials(1, s)),
       shelf('fresh-movie', 'Новые фильмы', (s) => api.shelf('fresh', 'movie', s), {
@@ -61,6 +62,7 @@ export class HomeScreenViewModel {
 
   get visibleShelves(): HomeShelf[] {
     const hideContinue = this.services.settings.values.hideContinueRow
+
     return this.shelves.filter((s) => (s.query.data?.length ?? 0) > 0 && !(hideContinue && s.key === CONTINUE_SHELF_KEY))
   }
 
@@ -70,12 +72,15 @@ export class HomeScreenViewModel {
 
   get error(): string | null {
     if (this.visibleShelves.length > 0 || this.isLoading) return null
+
     const failed = this.shelves.find((s) => s.query.error)
+
     return failed ? (failed.query.error as Error).message : null
   }
 
   get firstShelfFocusKey() {
     const first = this.visibleShelves[0]
+
     return first ? `ROW-${first.key}` : undefined
   }
 

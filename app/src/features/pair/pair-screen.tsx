@@ -9,6 +9,7 @@ export const PairScreen = observer(function PairScreen() {
   const { auth } = useServices()
   const device = auth.device
   const site = device?.verification_uri?.replace(/^https?:\/\//, '') ?? 'kino.pub/device'
+
   return (
     <FocusGroup focusKey="PAIR" className={styles.pair} preferredChildFocusKey="PAIR-refresh">
       <div>

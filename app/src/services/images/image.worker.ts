@@ -20,11 +20,15 @@ self.addEventListener('message', (event: MessageEvent<ResizeRequest>) => {
 async function resize({ id, url, width, quality }: ResizeRequest): Promise<ResizeResponse> {
   try {
     const response = await fetch(url)
+
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
     const bitmap = await createImageBitmap(await response.blob(), { resizeWidth: width, resizeQuality: 'medium' })
     const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
+
     canvas.getContext('2d')!.drawImage(bitmap, 0, 0)
     bitmap.close()
+
     return { id, blob: await canvas.convertToBlob({ type: 'image/jpeg', quality }) }
   } catch (error) {
     return { id, error: error instanceof Error ? error.message : String(error) }

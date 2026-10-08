@@ -14,6 +14,7 @@ export class DeviceSettingsViewModel {
 
   constructor(private readonly services: Services) {
     const { api, queryClient, ui } = services
+
     this.device = new Query<Device>({
       queryClient,
       abortSignal: this.scope.signal,
@@ -56,9 +57,12 @@ export class DeviceSettingsViewModel {
 
   cycleServer(direction: 1 | -1 = 1) {
     const servers = this.servers
+
     if (servers.length < 2) return
+
     const index = servers.findIndex((option) => option.selected === 1)
     const next = servers[(index + direction + servers.length) % servers.length]
+
     this.apply({ serverLocation: next.id }, (settings) => ({
       ...settings,
       serverLocation: {
@@ -71,11 +75,13 @@ export class DeviceSettingsViewModel {
 
   toggle(key: DeviceToggle) {
     const value = this.isOn(key) ? 0 : 1
+
     this.apply({ [key]: value }, (settings) => ({ ...settings, [key]: { ...settings[key], value } }))
   }
 
   private apply(change: DeviceChange, optimistic: (settings: DeviceSettings) => DeviceSettings) {
     if (!this.device.data) return
+
     this.device.setData((device) => device && { ...device, settings: optimistic(device.settings) })
     void this.save.mutate(change)
   }

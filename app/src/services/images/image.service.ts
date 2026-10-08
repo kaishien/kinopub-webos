@@ -26,23 +26,31 @@ export class ImageService {
   resized(url: string, width: number): Promise<string> {
     const key = `${width}:${url}`
     const cached = this.ready.get(key)
+
     if (cached) {
       this.ready.delete(key)
       this.ready.set(key, cached)
+
       return Promise.resolve(cached)
     }
+
     const inFlight = this.pending.get(key)
+
     if (inFlight) return inFlight
 
     const promise = this.request({ url, width, quality: JPEG_QUALITY })
       .then((blob) => {
         const objectUrl = URL.createObjectURL(blob)
+
         this.remember(key, objectUrl)
+
         return objectUrl
       })
       .catch(() => url)
       .finally(() => this.pending.delete(key))
+
     this.pending.set(key, promise)
+
     return promise
   }
 
@@ -51,15 +59,18 @@ export class ImageService {
     for (const url of urls) {
       if (url && !this.prefetched.has(url) && !this.prefetchQueue.includes(url)) this.prefetchQueue.push(url)
     }
+
     this.pumpPrefetch()
   }
 
   private pumpPrefetch() {
     while (this.prefetchActive < PREFETCH_PARALLEL && this.prefetchQueue.length) {
       const url = this.prefetchQueue.shift()!
+
       this.prefetchActive++
       requestIdleCallback(() => {
         const image = new Image()
+
         image.decoding = 'async'
         image.src = url
         this.keepPrefetched(url, image)
@@ -81,8 +92,11 @@ export class ImageService {
 
   private request(payload: Omit<ResizeRequest, 'id'>): Promise<Blob> {
     const worker = this.ensureWorker()
+
     if (!worker) return Promise.reject(new Error('Воркер недоступен'))
+
     const id = ++this.nextId
+
     return new Promise<Blob>((resolve, reject) => {
       this.jobs.set(id, { resolve, reject })
       // oxlint-disable-next-line unicorn/require-post-message-target-origin -- Worker.postMessage has no targetOrigin
@@ -92,18 +106,22 @@ export class ImageService {
 
   private ensureWorker(): Worker | null {
     if (this.worker) return this.worker
+
     try {
       this.worker = new ImageWorker()
       this.worker.addEventListener('message', (event: MessageEvent<ResizeResponse>) => this.onResult(event.data))
     } catch {
       this.worker = null
     }
+
     return this.worker
   }
 
   private onResult(response: ResizeResponse) {
     const job = this.jobs.get(response.id)
+
     if (!job) return
+
     this.jobs.delete(response.id)
     if ('blob' in response) job.resolve(response.blob)
     else job.reject(new Error(response.error))
@@ -113,6 +131,7 @@ export class ImageService {
     this.ready.set(key, objectUrl)
     while (this.ready.size > CACHE_LIMIT) {
       const [oldestKey, oldestUrl] = this.ready.entries().next().value!
+
       this.ready.delete(oldestKey)
       URL.revokeObjectURL(oldestUrl)
     }

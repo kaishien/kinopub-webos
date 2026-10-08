@@ -8,6 +8,7 @@ import { PageTitle } from '@/shared/ui/page-title/page-title'
 
 export const ChannelsScreen = observer(function ChannelsScreen() {
   const vm = useViewModel((services) => new ChannelsScreenViewModel(services))
+
   return (
     <Page focusKey="PAGE-channels" initialFocusKey="CH-0" ready={!vm.channels.isLoading}>
       <PageTitle>Каналы</PageTitle>

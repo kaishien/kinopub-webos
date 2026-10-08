@@ -30,14 +30,17 @@ export class RemoteService {
 
   push(handler: KeyHandler): () => void {
     this.stack.push(handler)
+
     return () => {
       const index = this.stack.lastIndexOf(handler)
+
       if (index >= 0) this.stack.splice(index, 1)
     }
   }
 
   static isBack(event: KeyboardEvent) {
     if (event.keyCode === RemoteKey.Back || event.key === 'GoBack' || event.key === 'Escape') return true
+
     return event.key === 'Backspace' && !isTextInput(event.target)
   }
 
@@ -46,6 +49,7 @@ export class RemoteService {
       if (this.stack[i](event) === true) {
         event.preventDefault()
         event.stopPropagation()
+
         return
       }
     }
@@ -58,5 +62,6 @@ export class RemoteService {
 
 function isTextInput(target: EventTarget | null) {
   const tag = (target as HTMLElement | null)?.tagName
+
   return tag === 'INPUT' || tag === 'TEXTAREA'
 }

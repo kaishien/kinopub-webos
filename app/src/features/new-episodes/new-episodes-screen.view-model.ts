@@ -38,6 +38,7 @@ export class NewEpisodesScreenViewModel {
 
   static subtitle(item: ItemShort) {
     const count = item.new ?? 0
+
     return `${count} ${plural(count, 'новая серия', 'новые серии', 'новых серий')}`
   }
 

@@ -20,7 +20,9 @@ export function Setting({ name, description, value, onPress, onCycle, focusKey }
       onPress={onPress}
       onArrow={(direction) => {
         if (!onCycle || (direction !== 'left' && direction !== 'right')) return true
+
         onCycle(direction === 'right' ? 1 : -1)
+
         return false
       }}
     />

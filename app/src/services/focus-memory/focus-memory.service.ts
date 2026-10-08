@@ -29,10 +29,12 @@ export class FocusMemoryService {
 
   private screen(locationKey: string): ScreenMemory {
     let screen = this.screens.get(locationKey)
+
     if (!screen) {
       screen = { offsets: new Map() }
       this.screens.set(locationKey, screen)
     }
+
     return screen
   }
 }

@@ -12,6 +12,7 @@ export class ChannelsScreenViewModel {
 
   constructor(private readonly services: Services) {
     const { api, queryClient } = services
+
     this.channels = new Query<TvChannel[]>({
       queryClient,
       abortSignal: this.scope.signal,

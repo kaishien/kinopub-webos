@@ -46,10 +46,13 @@ export class AuthService {
   async init() {
     if (!this.tokens) {
       await this.startPairing()
+
       return
     }
+
     try {
       const user = await this.api.user()
+
       runInAction(() => {
         this.user = user
         this.status = 'ready'
@@ -58,8 +61,10 @@ export class AuthService {
     } catch (error) {
       if (error instanceof ApiError && error.isAuth) {
         this.logout()
+
         return
       }
+
       // Offline: proceed with the saved token, screens will show their own errors.
       runInAction(() => {
         this.status = 'ready'
@@ -73,16 +78,20 @@ export class AuthService {
     this.pairingError = ''
     this.device = null
     const controller = new AbortController()
+
     this.pairingController = controller
     try {
       const device = await this.api.requestDeviceCode(controller.signal)
+
       if (controller.signal.aborted) return
+
       runInAction(() => {
         this.device = device
       })
       this.schedulePoll(device, controller)
     } catch (error) {
       if (controller.signal.aborted) return
+
       runInAction(() => {
         this.pairingError = error instanceof Error ? error.message : 'Не удалось получить код'
       })
@@ -96,13 +105,17 @@ export class AuthService {
       if (controller.signal.aborted) return
       if (Date.now() > deadline) {
         this.startPairing()
+
         return
       }
+
       try {
         const token = await this.api.pollDeviceToken(device.code, controller.signal)
+
         this.setTokens(token)
         this.stopPairing()
         await this.init()
+
         return
       } catch (error) {
         // 400 means the user hasn't entered the code yet; keep polling
@@ -112,13 +125,16 @@ export class AuthService {
           })
         }
       }
+
       this.pollTimer = window.setTimeout(poll, interval)
     }
+
     this.pollTimer = window.setTimeout(poll, interval)
   }
 
   private stopPairing() {
     if (this.pollTimer) clearTimeout(this.pollTimer)
+
     this.pollTimer = null
     this.pairingController?.abort()
     this.pairingController = null
@@ -132,19 +148,25 @@ export class AuthService {
 
   refresh(): Promise<boolean> {
     if (this.refreshing) return this.refreshing
+
     this.refreshing = (async () => {
       const refreshToken = this.tokens?.refresh
+
       if (!refreshToken) return false
+
       try {
         this.setTokens(await this.api.refreshToken(refreshToken))
+
         return true
       } catch (error) {
         if (error instanceof ApiError && !error.isNetwork) this.logout()
+
         return false
       } finally {
         this.refreshing = null
       }
     })()
+
     return this.refreshing
   }
 

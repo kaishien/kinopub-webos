@@ -8,6 +8,7 @@ import { Empty } from '@/shared/ui/empty/empty'
 
 export const NewEpisodesScreen = observer(function NewEpisodesScreen() {
   const vm = useViewModel((services) => new NewEpisodesScreenViewModel(services))
+
   return (
     <Page hero title="Новые эпизоды" focusKey="PAGE-new-episodes" initialFocusKey="GRID-new-0" ready={!vm.serials.isLoading}>
       <Status loading={vm.serials.isLoading} error={vm.error} onRetry={vm.retry} />

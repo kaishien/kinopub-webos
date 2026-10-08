@@ -26,9 +26,12 @@ export const link = {
   newEpisodes: () => routes.newEpisodes,
   catalog: (type: string, params?: { sort?: string; genre?: number }) => {
     const qs = new URLSearchParams()
+
     if (params?.sort) qs.set('sort', params.sort)
     if (params?.genre) qs.set('genre', String(params.genre))
+
     const query = qs.toString()
+
     return `/catalog/${type}${query ? `?${query}` : ''}`
   },
   bookmarks: () => routes.bookmarks,
@@ -43,9 +46,12 @@ export const link = {
   person: (role: PersonRole, name: string) => `/person/${role}/${encodeURIComponent(name)}`,
   player: (id: number, videoId: number, params?: { t?: number; q?: string }) => {
     const qs = new URLSearchParams()
+
     if (params?.t) qs.set('t', String(Math.floor(params.t)))
     if (params?.q) qs.set('q', params.q)
+
     const query = qs.toString()
+
     return `/item/${id}/play/${videoId}${query ? `?${query}` : ''}`
   },
 }

@@ -22,6 +22,7 @@ const FOCUS = { play: 'PLAYER-play', bar: 'PLAYER-bar', next: NEXT_UP_FOCUS_KEY,
 /** Quality and episode changes replace the route; keying by history entry recreates the player and its view-model. */
 export function PlayerScreen() {
   const location = useLocation()
+
   return <PlayerContent key={location.key} />
 }
 
@@ -47,10 +48,12 @@ const PlayerContent = observer(function PlayerContent() {
     // Buttons register with navigation asynchronously, so focus on the next frame.
     if (vm.error) {
       const frame = requestAnimationFrame(() => setFocus(FOCUS.retry))
+
       return () => cancelAnimationFrame(frame)
     }
     if (vm.nextUp.visible) {
       const frame = requestAnimationFrame(() => setFocus(FOCUS.next))
+
       return () => cancelAnimationFrame(frame)
     }
     if (vm.panel) return
@@ -111,8 +114,10 @@ const PlayerContent = observer(function PlayerContent() {
             onArrow={(direction) => {
               if (direction === 'left' || direction === 'right') {
                 vm.seekBy(direction === 'right' ? vm.seekStepValue : -vm.seekStepValue)
+
                 return false
               }
+
               return direction === 'down'
             }}
           >
