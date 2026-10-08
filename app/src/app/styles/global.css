@@ -1,0 +1,74 @@
+@import '@fontsource-variable/unbounded';
+@import '@fontsource-variable/golos-text';
+
+:root {
+  /* OLED: pure black turns the pixels off */
+  --black: #000000;
+  --smoke: #141519;
+  --ash: #26282f;
+  --paper: #ece9e2;
+  --mute: #8d8f98;
+  --amber: #f5b82e;
+  --amber-ink: #1a1200;
+  --ember: #d7452b;
+
+  --font-display: 'Unbounded Variable', system-ui, sans-serif;
+  --font-text: 'Golos Text Variable', system-ui, sans-serif;
+
+  --screen-w: 1920px;
+  --screen-h: 1080px;
+  --rail: 112px;
+  --gutter: 80px;
+  --card-w: 232px;
+  --card-h: 348px;
+  --wide-w: 400px;
+  --wide-h: 225px;
+  --radius: 10px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Must match the held-arrow step in shared/ui/motion.ts */
+  --glide: 140ms;
+  /* Must match card-metrics.ts */
+  --hero-h: 310px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  width: var(--screen-w);
+  height: var(--screen-h);
+  overflow: hidden;
+  background: var(--black);
+  color: var(--paper);
+  font-family: var(--font-text);
+  font-size: 28px;
+  line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  cursor: none;
+}
+
+img {
+  display: block;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

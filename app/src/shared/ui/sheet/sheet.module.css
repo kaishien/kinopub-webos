@@ -1,0 +1,36 @@
+.sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.sheet-panel {
+  display: flex;
+  flex-direction: column;
+  width: 640px;
+  height: 100%;
+  padding: 70px 56px 40px;
+  background: var(--smoke);
+}
+
+.sheet-panel h2 {
+  font-size: 36px;
+  margin-bottom: 30px;
+}
+
+.sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding: 6px 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.sheet-list::-webkit-scrollbar {
+  display: none;
+}

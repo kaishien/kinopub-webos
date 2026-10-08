@@ -1,0 +1,14 @@
+.catalog-toolbar {
+  display: flex;
+  gap: 16px;
+  margin: 0 var(--gutter) 28px;
+}
+
+.catalog-toolbar-label {
+  color: var(--mute);
+}
+
+.catalog-toolbar :global(.is-focused) .catalog-toolbar-label {
+  color: inherit;
+  opacity: 0.7;
+}

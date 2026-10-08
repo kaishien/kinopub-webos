@@ -1,0 +1,35 @@
+.player-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.player-panel-body {
+  display: flex;
+  flex-direction: column;
+  width: 760px;
+  height: 100%;
+  padding: 70px 56px 40px;
+  background: var(--smoke);
+}
+
+.player-panel-body h2 {
+  margin-bottom: 30px;
+  font-size: 36px;
+}
+
+.player-panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding: 6px 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.player-panel-list::-webkit-scrollbar {
+  display: none;
+}

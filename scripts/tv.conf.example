@@ -1,0 +1,5 @@
+# Copy to scripts/tv.conf and fill in. Used by renew-devmode.sh.
+TV_HOST=192.168.0.10
+TV_PORT=9922
+# Passphrase-less private key, see README
+KEY="$HOME/.ssh/tv_webos_nopass"

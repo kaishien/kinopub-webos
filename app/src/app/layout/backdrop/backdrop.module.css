@@ -1,0 +1,35 @@
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  transition: opacity 500ms var(--ease);
+}
+
+.backdrop.is-empty {
+  opacity: 0;
+}
+
+/* 16:9 frame on a 16:9 screen: stretch without object-fit so the image is composited directly. */
+.backdrop-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 800ms ease-in-out;
+}
+
+.backdrop-layer.is-top {
+  opacity: 1;
+}
+
+.backdrop-shade {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.75) 32%, rgba(0, 0, 0, 0.25) 62%, rgba(0, 0, 0, 0.05) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.2) 45%, rgba(0, 0, 0, 0.95) 85%, #000 100%);
+}

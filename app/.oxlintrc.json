@@ -1,0 +1,44 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc", "unicorn", "import"],
+  "env": {
+    "browser": true,
+    "es2024": true
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "react/only-export-components": [
+      "warn",
+      {
+        "allowConstantExport": true
+      }
+    ],
+    "typescript/no-explicit-any": "error",
+    "typescript/consistent-type-imports": "error",
+    "import/no-cycle": "error",
+    "no-console": "warn",
+    "unicorn/filename-case": [
+      "error",
+      {
+        "case": "kebabCase"
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": "off",
+    "react/no-array-index-key": "off",
+    "no-await-in-loop": "off",
+    "no-underscore-dangle": [
+      "warn",
+      {
+        "allow": ["__APP_VERSION__"]
+      }
+    ]
+  },
+  "ignorePatterns": ["dist", "node_modules", "webos"]
+}

@@ -1,0 +1,83 @@
+.pair {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 0 140px;
+  background: var(--black);
+}
+
+.pair-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  margin-bottom: 36px;
+  border-radius: 22px;
+  background: var(--amber);
+  color: var(--amber-ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 46px;
+}
+
+.pair h1 {
+  font-size: 72px;
+  margin-bottom: 20px;
+}
+
+.pair-lead {
+  max-width: 640px;
+  margin-bottom: 40px;
+  font-size: 30px;
+  color: var(--mute);
+}
+
+.pair-steps {
+  max-width: 680px;
+  margin: 0 0 44px 36px;
+  font-size: 30px;
+  line-height: 1.5;
+}
+
+.pair-steps li {
+  padding-left: 10px;
+  margin-bottom: 8px;
+}
+
+.pair-steps b {
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.pair-error {
+  margin-bottom: 24px;
+  color: var(--ember);
+}
+
+.pair-right {
+  text-align: center;
+}
+
+.pair-code-label {
+  margin-bottom: 18px;
+  font-size: 28px;
+  color: var(--mute);
+}
+
+.pair-code {
+  font-family: var(--font-display);
+  font-size: 180px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.pair-hint {
+  margin-top: 30px;
+  font-size: 24px;
+  color: var(--mute);
+}

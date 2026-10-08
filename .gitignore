@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/
+*.ipk
+.DS_Store
+*.log
+.claude/
+scripts/tv.conf

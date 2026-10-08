@@ -1,0 +1,68 @@
+.control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 150px;
+  transition: transform 160ms var(--ease);
+}
+
+.control-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--paper);
+  backdrop-filter: blur(12px);
+  transition:
+    background 120ms var(--ease),
+    color 120ms var(--ease),
+    transform 160ms var(--ease);
+}
+
+.control-circle svg {
+  width: 38px;
+  height: 38px;
+}
+
+.control-primary .control-circle {
+  width: 100px;
+  height: 100px;
+  background: var(--paper);
+  color: #111;
+}
+
+.control-primary .control-circle svg {
+  width: 46px;
+  height: 46px;
+}
+
+.control:global(.is-focused) .control-circle {
+  background: var(--amber);
+  color: var(--amber-ink);
+  transform: scale(1.1);
+}
+
+.control-label {
+  font-size: 22px;
+  color: var(--paper);
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.control-value {
+  margin-top: -6px;
+  font-size: 20px;
+  color: var(--mute);
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.control:global(.is-focused) .control-label {
+  opacity: 1;
+}

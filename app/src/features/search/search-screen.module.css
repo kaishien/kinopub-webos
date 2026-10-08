@@ -1,0 +1,10 @@
+.search-box {
+  display: flex;
+  margin: 56px var(--gutter) 36px;
+}
+
+.search-hint {
+  margin: 0 var(--gutter) 24px;
+  font-size: 24px;
+  color: var(--mute);
+}

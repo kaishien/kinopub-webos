@@ -1,0 +1,31 @@
+.row {
+  position: relative;
+  padding: 0 0 36px;
+}
+
+.row-title {
+  margin: 0 0 18px var(--gutter);
+  font-size: 34px;
+}
+
+.row-viewport {
+  padding: 10px 0 10px var(--gutter);
+  /* Hide cards scrolled past the gutter; the 16px slack leaves room for the scaled focused card. */
+  clip-path: inset(-20px -20px -20px calc(var(--gutter) - 16px));
+}
+
+.row-track {
+  position: relative;
+  will-change: transform;
+  transition: transform 260ms var(--ease);
+}
+
+.row-track.is-gliding {
+  transition-duration: var(--glide);
+  transition-timing-function: linear;
+}
+
+.row-cell {
+  position: absolute;
+  top: 0;
+}

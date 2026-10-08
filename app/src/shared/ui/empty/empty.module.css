@@ -1,0 +1,6 @@
+.empty {
+  max-width: 1100px;
+  margin: 120px var(--gutter);
+  color: var(--mute);
+  font-size: 30px;
+}

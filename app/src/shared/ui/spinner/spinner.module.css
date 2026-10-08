@@ -1,0 +1,22 @@
+.spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 5px solid var(--ash);
+  border-top-color: var(--amber);
+  animation: spin 900ms linear infinite;
+}
+
+.area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,16 @@
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--paper);
+}
+
+.rating svg {
+  width: 26px;
+  height: 26px;
+  color: var(--amber);
+}
+
+.rating-source {
+  color: var(--mute);
+}

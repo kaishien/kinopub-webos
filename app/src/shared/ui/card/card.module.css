@@ -1,0 +1,111 @@
+.card {
+  flex: none;
+  position: relative;
+}
+
+.card-poster {
+  width: var(--card-w);
+}
+
+.card-wide {
+  width: var(--wide-w);
+}
+
+/*
+ * Scale only the poster, not the caption: re-rasterizing text on every scale step cost the TV dozens of frames.
+ * The poster is kept on its own layer ahead of time.
+ */
+.card-img {
+  position: relative;
+  will-change: transform;
+  transition: transform 160ms var(--ease);
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--smoke);
+}
+
+.card-poster .card-img {
+  height: var(--card-h);
+}
+
+.card-wide .card-img {
+  height: var(--wide-h);
+}
+
+.card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 4px var(--amber);
+  opacity: 0;
+}
+
+.card:global(.is-focused) {
+  z-index: 2;
+}
+
+.card:global(.is-focused) .card-img {
+  transform: scale(1.06);
+}
+
+.card:global(.is-focused) .card-img::after {
+  opacity: 1;
+}
+
+.card-q {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+
+.card-new {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.card-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.card-progress > div {
+  height: 100%;
+  background: var(--amber);
+}
+
+.card-title {
+  margin-top: 12px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #d4d1ca;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-sub {
+  margin-top: 2px;
+  font-size: 21px;
+  color: var(--mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card:global(.is-focused) .card-title {
+  color: var(--paper);
+}

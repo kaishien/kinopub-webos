@@ -1,0 +1,142 @@
+.rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+  width: var(--rail);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 0 0;
+  overflow: hidden;
+  contain: strict;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 0));
+  transition:
+    width 220ms var(--ease),
+    background 220ms var(--ease);
+}
+
+.rail:global(.has-focus) {
+  width: 440px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.97) 82%, rgba(0, 0, 0, 0));
+}
+
+.rail-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 0 20px 28px;
+  flex: none;
+  border-radius: 14px;
+  background: var(--amber);
+  color: var(--amber-ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+}
+
+.rail-items {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 28px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.rail-items::-webkit-scrollbar {
+  display: none;
+}
+
+.rail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 10px;
+}
+
+.rail-section-title {
+  height: 36px;
+  margin: 0 0 0 36px;
+  color: var(--mute);
+  font-size: 20px;
+  line-height: 36px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 180ms var(--ease);
+}
+
+.rail:global(.has-focus) .rail-section-title {
+  opacity: 1;
+}
+
+.rail-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 64px;
+  height: 56px;
+  margin: 0 24px;
+  padding: 0 12px;
+  border-radius: 28px;
+  color: var(--mute);
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    width 220ms var(--ease),
+    background 120ms var(--ease),
+    color 120ms var(--ease);
+}
+
+.rail:global(.has-focus) .rail-item {
+  width: 340px;
+  padding-right: 28px;
+}
+
+.rail-item.is-active {
+  color: var(--paper);
+}
+
+.rail-item.is-active .rail-icon::after {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  width: 5px;
+  height: 24px;
+  margin-top: -12px;
+  border-radius: 3px;
+  background: var(--amber);
+}
+
+.rail-item:global(.is-focused) {
+  background: var(--amber);
+  color: var(--amber-ink);
+}
+
+.rail-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
+
+.rail-label {
+  font-size: 26px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity 180ms var(--ease),
+    transform 180ms var(--ease);
+}
+
+.rail:global(.has-focus) .rail-label {
+  opacity: 1;
+  transform: none;
+}

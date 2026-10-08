@@ -1,0 +1,72 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: 76px;
+  padding: 0 34px;
+  border-radius: 38px;
+  background: var(--smoke);
+  color: var(--paper);
+  font-size: 28px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    background 120ms var(--ease),
+    color 120ms var(--ease),
+    transform 160ms var(--ease);
+}
+
+.btn-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn svg {
+  width: 32px;
+  height: 32px;
+  flex: none;
+}
+
+.btn-sm {
+  height: 60px;
+  padding: 0 26px;
+  font-size: 24px;
+}
+
+.btn-primary {
+  background: var(--paper);
+  color: #111;
+}
+
+.btn.is-active {
+  box-shadow: inset 0 0 0 3px var(--amber);
+}
+
+.btn:global(.is-focused) {
+  background: var(--amber);
+  color: var(--amber-ink);
+  transform: scale(1.04);
+}
+
+.list {
+  flex: none;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  font-size: 26px;
+}
+
+/* The list scrolls and clips its edges, so a scaled-up row would overflow it. */
+.list:global(.is-focused) {
+  transform: none;
+}
+
+.mark {
+  opacity: 0;
+}
+
+.is-active .mark {
+  opacity: 1;
+}

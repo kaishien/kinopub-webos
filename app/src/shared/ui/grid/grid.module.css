@@ -1,0 +1,20 @@
+.grid {
+  padding: 10px var(--gutter) 120px;
+}
+
+.grid-body {
+  position: relative;
+}
+
+.grid-row {
+  position: absolute;
+  left: 0;
+  display: flex;
+  gap: 28px;
+}
+
+.grid-loading {
+  display: flex;
+  justify-content: center;
+  height: 120px;
+}

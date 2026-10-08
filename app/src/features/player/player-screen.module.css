@@ -1,0 +1,232 @@
+.player {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: #000;
+}
+
+.player video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.player video::cue {
+  font-family: var(--font-text);
+  font-size: 42px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  /* webOS ignores the cue background: the outline keeps text readable on bright frames. */
+  text-shadow:
+    0 0 4px #000,
+    0 0 4px #000,
+    0 2px 6px #000;
+}
+
+/* Cues render at the bottom edge: lift them above the controls while the HUD or next-up card is open. */
+.player video::-webkit-media-text-track-container {
+  transition: transform 220ms var(--ease);
+}
+
+.hud-open video::-webkit-media-text-track-container {
+  transform: translateY(-300px);
+}
+
+.player-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.player-flash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--paper);
+  animation: flash 700ms var(--ease) forwards;
+}
+
+.player-flash svg {
+  width: 64px;
+  height: 64px;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+
+.player-hud {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 24%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.9) 100%);
+  transition: opacity 220ms var(--ease);
+}
+
+.player-hud.is-visible {
+  opacity: 1;
+}
+
+.player-head {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  top: 52px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.player-title {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.player-subtitle {
+  margin-top: 6px;
+  font-size: 26px;
+  color: var(--mute);
+}
+
+.player-chip {
+  padding: 6px 16px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.player-dock {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 48px;
+}
+
+.player-bar-hit {
+  padding: 14px 0 8px;
+}
+
+.player-bar {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.22);
+  transition: height 120ms var(--ease);
+}
+
+.player-bar-hit:global(.is-focused) .player-bar {
+  height: 10px;
+}
+
+.player-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--amber);
+}
+
+.player-bar-knob {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  background: var(--amber);
+  transition:
+    transform 120ms var(--ease),
+    box-shadow 120ms var(--ease);
+}
+
+.player-bar-hit:global(.is-focused) .player-bar-knob {
+  transform: scale(1.5);
+  box-shadow: 0 0 0 8px rgba(245, 184, 46, 0.25);
+}
+
+.player-bar-tip {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.66);
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: var(--paper);
+  color: #111;
+  font-size: 24px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.player-times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper);
+}
+
+.player-times-remaining {
+  color: var(--mute);
+}
+
+.player-controls {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.player-error {
+  position: absolute;
+  left: var(--gutter);
+  top: 50%;
+  max-width: 1000px;
+  padding: 40px 48px;
+  border-radius: 24px;
+  background: var(--smoke);
+  transform: translateY(-50%);
+}
+
+.player-error h3 {
+  margin-bottom: 12px;
+  font-size: 36px;
+}
+
+.player-error p {
+  margin-bottom: 28px;
+  color: var(--mute);
+}
+
+.player-error-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.player-hint {
+  color: var(--mute);
+  font-size: 24px;
+}

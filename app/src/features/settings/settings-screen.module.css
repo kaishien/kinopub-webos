@@ -1,0 +1,11 @@
+.settings-user {
+  margin: 0 var(--gutter) 30px;
+  font-size: 26px;
+  color: var(--mute);
+}
+
+.settings-version {
+  margin: 40px var(--gutter);
+  font-size: 24px;
+  color: var(--mute);
+}

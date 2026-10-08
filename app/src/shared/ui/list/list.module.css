@@ -1,0 +1,41 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 1100px;
+  margin: 0 var(--gutter);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 96px;
+  padding: 0 34px;
+  border-radius: 20px;
+  background: var(--smoke);
+  transition:
+    background 120ms var(--ease),
+    color 120ms var(--ease);
+}
+
+.item:global(.is-focused) {
+  background: var(--amber);
+  color: var(--amber-ink);
+}
+
+.name {
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.description {
+  margin-top: 2px;
+  font-size: 22px;
+  opacity: 0.7;
+}
+
+.value {
+  font-size: 28px;
+  font-weight: 600;
+}

@@ -1,0 +1,96 @@
+.episode {
+  position: relative;
+  flex: none;
+  width: var(--wide-w);
+}
+
+.episode:global(.is-focused) {
+  z-index: 2;
+}
+
+.episode:global(.is-focused) .episode-img {
+  transform: scale(1.05);
+}
+
+/* Like posters: only the image scales, so the text isn't re-rasterized. */
+.episode-img {
+  position: relative;
+  will-change: transform;
+  transition: transform 160ms var(--ease);
+  width: 100%;
+  height: var(--wide-h);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--smoke);
+}
+
+.episode-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.episode-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 4px var(--amber);
+  opacity: 0;
+}
+
+.episode:global(.is-focused) .episode-img::after {
+  opacity: 1;
+}
+
+.episode-num {
+  position: absolute;
+  left: 12px;
+  top: 10px;
+}
+
+.episode-watched {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--amber-ink);
+}
+
+.episode-watched svg {
+  width: 24px;
+  height: 24px;
+}
+
+.episode-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.episode-progress > div {
+  height: 100%;
+  background: var(--amber);
+}
+
+.episode-title {
+  margin-top: 10px;
+  font-size: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.episode-sub {
+  font-size: 21px;
+  color: var(--mute);
+}

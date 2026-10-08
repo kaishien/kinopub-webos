@@ -1,0 +1,20 @@
+.people {
+  margin: 8px var(--gutter) 48px;
+}
+
+.title {
+  margin-bottom: 18px;
+  font-size: 34px;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  max-width: 1600px;
+}
+
+.role {
+  font-size: 20px;
+  opacity: 0.6;
+}
