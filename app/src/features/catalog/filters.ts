@@ -13,6 +13,14 @@ export const FILTER_TITLES: Record<FilterKind, string> = {
   country: 'Страна',
 }
 
+/** Toolbar label while a filter is not narrowed: the button shows only its value, so «Все» alone would be ambiguous. */
+export const FILTER_ANY: Record<Exclude<FilterKind, 'sort'>, string> = {
+  genre: 'Все жанры',
+  quality: 'Любое качество',
+  year: 'Любой год',
+  country: 'Все страны',
+}
+
 export const DEFAULT_SORT = 'updated-'
 
 export const SORT_OPTIONS: FilterOption<string>[] = [

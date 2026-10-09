@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import type { CatalogScreenViewModel } from '@/features/catalog/catalog-screen.view-model'
-import { FILTER_TITLES, type FilterKind } from '@/features/catalog/filters'
+import type { FilterKind } from '@/features/catalog/filters'
 import { FRESH_TYPES } from '@/features/catalog/sections'
 import { Button } from '@/shared/ui/button/button'
 import { FocusGroup } from '@/shared/ui/focus/focus-group'
@@ -34,7 +34,7 @@ export const CatalogToolbar = observer(function CatalogToolbar({ vm }: { vm: Cat
           active={vm.isNarrowed(kind)}
           onPress={() => vm.openSheet(kind)}
         >
-          <span className={styles.catalogToolbarLabel}>{FILTER_TITLES[kind]}</span> {vm.titleOf(kind)}
+          {vm.titleOf(kind)}
         </Button>
       ))}
     </FocusGroup>

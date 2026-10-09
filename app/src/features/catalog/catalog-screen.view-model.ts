@@ -3,7 +3,7 @@ import { InfiniteQuery, Query } from 'mobx-tanstack-query'
 import type { Country, Genre, ItemShort, ItemsPage } from '@/services/api/api.types'
 import type { Services } from '@/services/services'
 import { Scope } from '@/shared/view-model/use-view-model'
-import { DEFAULT_SORT, QUALITY_OPTIONS, SORT_OPTIONS, yearOptions, type FilterKind, type FilterOption } from './filters'
+import { DEFAULT_SORT, FILTER_ANY, QUALITY_OPTIONS, SORT_OPTIONS, yearOptions, type FilterKind, type FilterOption } from './filters'
 import { FRESH_TYPES, findSection, type CatalogSection } from './sections'
 
 interface FilterValues {
@@ -148,6 +148,8 @@ export class CatalogScreenViewModel {
   }
 
   titleOf(kind: FilterKind) {
+    if (kind !== 'sort' && !this.isNarrowed(kind)) return FILTER_ANY[kind]
+
     return this.options(kind)[this.activeIndex(kind)]?.title ?? 'Все'
   }
 

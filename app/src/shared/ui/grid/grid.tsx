@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import type { ItemShort } from '@/services/api/api.types'
 import { link } from '@/app/routes'
 import { widePosterUrl } from '@/shared/lib/format'
 import { gridNavigation, itemFocusKey } from '@/shared/lib/index-navigation'
 import { useViewModel } from '@/shared/view-model/use-view-model'
-import { POSTER, POSTER_BARE, WIDE, WIDE_BARE } from '@/shared/ui/card/card-metrics'
+import { gridCard } from '@/shared/ui/card/card-metrics'
 import { FocusGroup } from '@/shared/ui/focus/focus-group'
 import { usePage } from '@/shared/ui/page/page'
 import { GridCell } from './grid-cell/grid-cell'
@@ -40,14 +40,18 @@ export const Grid = observer(function Grid({
   footer,
 }: GridProps) {
   const { page, hero } = usePage()
-  const metrics = wide ? (hero ? WIDE_BARE : WIDE) : hero ? POSTER_BARE : POSTER
+  const columns = wide ? COLUMNS.wide : COLUMNS.poster
+  const card = gridCard(columns, !!wide, !hero)
+  const cardVars = wide
+    ? { '--wide-w': `${card.width}px`, '--wide-h': `${card.imageHeight}px` }
+    : { '--card-w': `${card.width}px`, '--card-h': `${card.imageHeight}px` }
   const vm = useViewModel(
     ({ router, ui, images }) =>
       new GridViewModel(
         page,
         images,
-        wide ? COLUMNS.wide : COLUMNS.poster,
-        metrics.height + (hero ? ROW_GAP.bare : ROW_GAP.caption),
+        columns,
+        card.height + (hero ? ROW_GAP.bare : ROW_GAP.caption),
         items,
         {
           onPress: onPress ?? ((item) => router.navigate(link.item(item.id), { state: { preview: item } })),
@@ -72,7 +76,7 @@ export const Grid = observer(function Grid({
       preferredChildFocusKey={itemFocusKey(focusKey, vm.firstVisible)}
       className={styles.grid}
     >
-      <div className={styles.gridBody} ref={vm.setRoot} style={{ height: vm.list.totalSize }}>
+      <div className={styles.gridBody} ref={vm.setRoot} style={{ ...cardVars, height: vm.list.totalSize } as CSSProperties}>
         {vm.list.items.map((row) => {
           const first = row.index * vm.columns
 

@@ -15,3 +15,15 @@ export const HERO_HEIGHT = 310
 export const ROW_VIEWPORT = 1920 - 112 - 80
 
 export const SCREEN_HEIGHT = 1080
+
+/** Content width of a full-page grid: the screen minus the rail and both gutters. */
+export const GRID_WIDTH = 1920 - 112 - 80 * 2
+
+/** Card size that makes `columns` cards fill the grid width; the image keeps its aspect, the caption keeps its height. */
+export function gridCard(columns: number, wide: boolean, caption: boolean) {
+  const [full, bare] = wide ? [WIDE, WIDE_BARE] : [POSTER, POSTER_BARE]
+  const width = Math.floor((GRID_WIDTH - CARD_GAP * (columns - 1)) / columns)
+  const imageHeight = Math.round((width * bare.height) / bare.width)
+
+  return { width, imageHeight, height: imageHeight + (caption ? full.height - bare.height : 0) }
+}
