@@ -49,6 +49,12 @@
   top: 10px;
 }
 
+.episode-now {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
 .episode-watched {
   position: absolute;
   right: 10px;

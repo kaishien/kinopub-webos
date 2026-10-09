@@ -7,14 +7,14 @@ import type { QualityPreference } from '@/services/settings/settings.service'
 import { episodeLabel, splitTitle } from '@/shared/lib/format'
 import { Scope } from '@/shared/view-model/use-view-model'
 import { link } from '@/app/routes'
-import { itemQueryKey } from '@/features/item/item-screen.view-model'
+import { itemQueryKey, resumePoint } from '@/features/item/item-screen.view-model'
 import { NextUp } from './next-up/next-up'
 import { HlsStream, type StreamAudio, type StreamFailure } from './stream/hls-stream'
 import { SubtitleTracks, type SubtitleKind } from './tracks/subtitle-tracks'
 import { StallWatchdog, type StallKind } from './watchdog/stall-watchdog'
 
 export type PlayerPanel = null | 'audio' | 'subtitles' | 'quality'
-export type HudTarget = 'controls' | 'bar'
+export type HudTarget = 'controls' | 'bar' | 'episodes'
 
 export interface PlayerParams {
   itemId: number
@@ -59,6 +59,8 @@ export class PlayerScreenViewModel {
   hudTarget: HudTarget = 'controls'
   flash: 'play' | 'pause' | null = null
   panel: PlayerPanel = null
+  /** The season's episode strip under the controls. */
+  episodesOpen = false
   error = ''
   seekPreview: number | null = null
   /** Fallback: the direct file in the TV's native player, which decodes what MSE can't (e.g. multichannel audio). */
@@ -291,6 +293,21 @@ export class PlayerScreenViewModel {
     const index = flat.findIndex((x) => x.video.id === current.id)
 
     return index >= 0 ? (flat[index + 1] ?? null) : null
+  }
+
+  /** Episodes of the playing season; for a multi-part movie, its parts. */
+  get episodeList(): { videos: Video[]; season: number } | null {
+    const item = this.item.data
+    const current = this.video
+
+    if (!item || !current || this.isTrailer) return null
+    if (item.seasons) {
+      const season = item.seasons.find((s) => s.episodes.some((e) => e.id === current.id))
+
+      return season && season.episodes.length > 1 ? { videos: season.episodes, season: season.number } : null
+    }
+
+    return (item.videos?.length ?? 0) > 1 ? { videos: item.videos!, season: 0 } : null
   }
 
   get shownTime() {
@@ -609,6 +626,29 @@ export class PlayerScreenViewModel {
     this.showHud()
   }
 
+  openEpisodes() {
+    if (!this.episodeList) return
+
+    this.episodesOpen = true
+    this.showHud(PANEL_MS)
+  }
+
+  /** Focus goes back to the «Серии» button, so the strip is one press away again. */
+  closeEpisodes() {
+    this.episodesOpen = false
+    this.showHud(HUD_MS, 'episodes')
+  }
+
+  playEpisode(video: Video) {
+    if (video.id === this.video?.id) {
+      this.closeEpisodes()
+
+      return
+    }
+
+    void this.services.router.replace(link.player(this.params.itemId, video.id, { t: resumePoint(video) }))
+  }
+
   /** Direct files switch by changing the URL and seeking back; HLS4 switches level on the fly. */
   private switchStream(change: () => void) {
     if (!this.usesManifest) {
@@ -745,19 +785,20 @@ export class PlayerScreenViewModel {
     this.services.router.back()
   }
 
-  showHud(ms = HUD_MS, target?: HudTarget) {
+  showHud(ms?: number, target?: HudTarget) {
     if (target) this.hudTarget = target
     else if (!this.hudVisible) this.hudTarget = 'controls'
 
     this.hudVisible = true
     if (this.hudTimer) clearTimeout(this.hudTimer)
 
-    this.hudTimer = window.setTimeout(this.hideHud, ms)
+    this.hudTimer = window.setTimeout(this.hideHud, ms ?? (this.episodesOpen ? PANEL_MS : HUD_MS))
   }
 
   private hideHud() {
     this.hudVisible = false
     this.panel = null
+    this.episodesOpen = false
   }
 
   private markTime(force: boolean) {
@@ -799,6 +840,15 @@ export class PlayerScreenViewModel {
       else this.exit()
 
       return true
+    }
+    if (this.episodesOpen) {
+      if (back || event.keyCode === RemoteKey.Up) {
+        this.closeEpisodes()
+
+        return true
+      }
+      // The strip is the lowest row: there is nothing below it to move to.
+      if (event.keyCode === RemoteKey.Down) return true
     }
     if (back) {
       this.exit()

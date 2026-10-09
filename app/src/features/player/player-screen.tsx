@@ -8,8 +8,9 @@ import { cx } from '@/shared/lib/cx'
 import { Button } from '@/shared/ui/button/button'
 import { FocusGroup } from '@/shared/ui/focus/focus-group'
 import { Pressable } from '@/shared/ui/focus/pressable'
-import { IconNext, IconPause, IconPlay, IconSound, IconSpark, IconSubs } from '@/shared/ui/icons/icons'
+import { IconNext, IconPause, IconPlay, IconSeries, IconSound, IconSpark, IconSubs } from '@/shared/ui/icons/icons'
 import { useViewModel } from '@/shared/view-model/use-view-model'
+import { EpisodesRow } from '@/features/item/episodes/episodes-row'
 import { ControlButton } from './controls/control-button'
 import { NEXT_UP_FOCUS_KEY, NextUpCard } from './next-up/next-up-card'
 import { PlayerPanel } from './panel/player-panel'
@@ -17,7 +18,17 @@ import { PlayerScreenViewModel } from './player-screen.view-model'
 import styles from './player-screen.module.css'
 import { Spinner } from '@/shared/ui/spinner/spinner'
 
-const FOCUS = { play: 'PLAYER-play', bar: 'PLAYER-bar', next: NEXT_UP_FOCUS_KEY, back: 'PLAYER-back', retry: 'PLAYER-retry' }
+const FOCUS = {
+  play: 'PLAYER-play',
+  bar: 'PLAYER-bar',
+  episodes: 'PLAYER-episodes-button',
+  episodesRow: 'PLAYER-episodes',
+  next: NEXT_UP_FOCUS_KEY,
+  back: 'PLAYER-back',
+  retry: 'PLAYER-retry',
+}
+
+const HUD_FOCUS = { controls: FOCUS.play, bar: FOCUS.bar, episodes: FOCUS.episodes }
 
 /** Quality and episode changes replace the route; keying by history entry recreates the player and its view-model. */
 export function PlayerScreen() {
@@ -57,11 +68,27 @@ const PlayerContent = observer(function PlayerContent() {
       return () => cancelAnimationFrame(frame)
     }
     if (vm.panel) return
-    if (vm.hudVisible) setFocus(vm.hudTarget === 'bar' ? FOCUS.bar : FOCUS.play)
-  }, [vm.nextUp.visible, vm.hudVisible, vm.hudTarget, vm.hasSource, vm.error, vm.panel])
+    if (vm.episodesOpen) {
+      // The row lands on the playing episode by itself (its preferred child).
+      const frame = requestAnimationFrame(() => setFocus(FOCUS.episodesRow))
+
+      return () => cancelAnimationFrame(frame)
+    }
+    if (vm.hudVisible) setFocus(HUD_FOCUS[vm.hudTarget])
+  }, [vm.nextUp.visible, vm.hudVisible, vm.hudTarget, vm.hasSource, vm.error, vm.panel, vm.episodesOpen])
+
+  const episodes = vm.episodeList
+  // Down from any control opens the strip instead of searching for something below.
+  const openEpisodesOnDown = (direction: string) => {
+    if (direction !== 'down' || !episodes) return true
+
+    vm.openEpisodes()
+
+    return false
+  }
 
   return (
-    <div className={cx(styles.player, (vm.hudVisible || vm.nextUp.visible) && styles.hudOpen)}>
+    <div className={cx(styles.player, (vm.hudVisible || vm.nextUp.visible) && styles.hudOpen, vm.episodesOpen && styles.episodesOpen)}>
       {vm.hasSource && (
         // Fallback needs a fresh element: the old one is bound to hls.js's MediaSource.
         <video key={vm.fallback ? 'file' : 'stream'} ref={vm.attach} src={vm.src} autoPlay playsInline crossOrigin="anonymous">
@@ -141,6 +168,7 @@ const PlayerContent = observer(function PlayerContent() {
             focusBoundaryDirections={['left', 'right']}
           >
             <ControlButton
+              onArrow={openEpisodesOnDown}
               primary
               focusKey={FOCUS.play}
               icon={vm.playing ? <IconPause /> : <IconPlay />}
@@ -148,16 +176,45 @@ const PlayerContent = observer(function PlayerContent() {
               onPress={vm.togglePlay}
             />
             {vm.hasAudioChoice && (
-              <ControlButton icon={<IconSound />} label="Звук" value={vm.audioLabel} onPress={() => vm.openPanel('audio')} />
+              <ControlButton
+                onArrow={openEpisodesOnDown}
+                icon={<IconSound />}
+                label="Звук"
+                value={vm.audioLabel}
+                onPress={() => vm.openPanel('audio')}
+              />
             )}
             {vm.hasSubtitles && (
-              <ControlButton icon={<IconSubs />} label="Субтитры" value={vm.subtitleLabel} onPress={() => vm.openPanel('subtitles')} />
+              <ControlButton
+                onArrow={openEpisodesOnDown}
+                icon={<IconSubs />}
+                label="Субтитры"
+                value={vm.subtitleLabel}
+                onPress={() => vm.openPanel('subtitles')}
+              />
             )}
             {vm.hasQualityChoice && (
-              <ControlButton icon={<IconSpark />} label="Качество" value={vm.qualityLabel} onPress={() => vm.openPanel('quality')} />
+              <ControlButton
+                onArrow={openEpisodesOnDown}
+                icon={<IconSpark />}
+                label="Качество"
+                value={vm.qualityLabel}
+                onPress={() => vm.openPanel('quality')}
+              />
+            )}
+            {episodes && (
+              <ControlButton
+                onArrow={openEpisodesOnDown}
+                focusKey={FOCUS.episodes}
+                icon={<IconSeries />}
+                label="Серии"
+                value={episodes.season ? `${episodes.season} сезон` : undefined}
+                onPress={vm.openEpisodes}
+              />
             )}
             {vm.next && (
               <ControlButton
+                onArrow={openEpisodesOnDown}
                 icon={<IconNext />}
                 label="Следующая"
                 value={episodeLabel(vm.next.season, vm.next.video.number)}
@@ -166,6 +223,19 @@ const PlayerContent = observer(function PlayerContent() {
             )}
           </FocusGroup>
         </div>
+
+        {vm.episodesOpen && episodes && (
+          <div className={styles.playerEpisodes}>
+            <EpisodesRow
+              focusKey={FOCUS.episodesRow}
+              title={episodes.season ? `Сезон ${episodes.season}` : 'Части'}
+              videos={episodes.videos}
+              season={episodes.season}
+              currentId={vm.video?.id}
+              onPlay={vm.playEpisode}
+            />
+          </div>
+        )}
       </div>
 
       {vm.nextUp.visible && vm.next && <NextUpCard nextUp={vm.nextUp} next={vm.next} onExit={vm.exit} />}

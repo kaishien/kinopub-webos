@@ -33,6 +33,10 @@
   transform: translateY(-300px);
 }
 
+.episodes-open video::-webkit-media-text-track-container {
+  transform: translateY(-700px);
+}
+
 .player-center {
   position: absolute;
   inset: 0;
@@ -122,6 +126,31 @@
   left: var(--gutter);
   right: var(--gutter);
   bottom: 48px;
+  transition: transform 260ms var(--ease);
+}
+
+/* The controls make room for the episode strip that slides in under them. */
+.episodes-open .player-dock {
+  transform: translateY(-400px);
+}
+
+.episodes-open .player-hud {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 24%, rgba(0, 0, 0, 0.5) 45%, rgba(0, 0, 0, 0.95) 100%);
+}
+
+.player-episodes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  animation: episodes-in 260ms var(--ease);
+}
+
+@keyframes episodes-in {
+  from {
+    opacity: 0;
+    transform: translateY(80px);
+  }
 }
 
 .player-bar-hit {

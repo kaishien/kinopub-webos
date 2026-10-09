@@ -278,7 +278,7 @@ export class ItemScreenViewModel {
 }
 
 /** Views of a minute or less don't count as a resume point. */
-function resumePoint(video: Video): number {
+export function resumePoint(video: Video): number {
   const time = video.watching?.time ?? 0
 
   return video.watched !== 1 && time > 60 ? time : 0

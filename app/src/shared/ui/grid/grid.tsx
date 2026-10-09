@@ -47,23 +47,16 @@ export const Grid = observer(function Grid({
     : { '--card-w': `${card.width}px`, '--card-h': `${card.imageHeight}px` }
   const vm = useViewModel(
     ({ router, ui, images }) =>
-      new GridViewModel(
-        page,
-        images,
-        columns,
-        card.height + (hero ? ROW_GAP.bare : ROW_GAP.caption),
-        items,
-        {
-          onPress: onPress ?? ((item) => router.navigate(link.item(item.id), { state: { preview: item } })),
-          onFocus: (item, node, note) => {
-            page.reveal(node)
-            ui.focusItem(item, note)
-            if (item.type !== 'collection') ui.setBackdrop(widePosterUrl(item.id, item.posters))
-          },
-          onBlur: ui.blurItem,
-          onReachEnd,
+      new GridViewModel(page, images, columns, card.height + (hero ? ROW_GAP.bare : ROW_GAP.caption), items, {
+        onPress: onPress ?? ((item) => router.navigate(link.item(item.id), { state: { preview: item } })),
+        onFocus: (item, node, note) => {
+          page.reveal(node)
+          ui.focusItem(item, note)
+          if (item.type !== 'collection') ui.setBackdrop(widePosterUrl(item.id, item.posters))
         },
-      ),
+        onBlur: ui.blurItem,
+        onReachEnd,
+      }),
   )
   const [navigation] = useState(() => gridNavigation(focusKey, vm.columns, () => vm.count))
 

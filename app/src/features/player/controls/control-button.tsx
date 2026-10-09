@@ -10,11 +10,13 @@ export interface ControlButtonProps {
   focusKey?: string
   primary?: boolean
   onPress: () => void
+  /** Return `false` to stop the default focus move. */
+  onArrow?: (direction: string) => boolean
 }
 
-export function ControlButton({ icon, label, value, focusKey, primary, onPress }: ControlButtonProps) {
+export function ControlButton({ icon, label, value, focusKey, primary, onPress, onArrow }: ControlButtonProps) {
   return (
-    <Pressable focusKey={focusKey} className={cx(styles.control, primary && styles.controlPrimary)} onPress={onPress}>
+    <Pressable focusKey={focusKey} className={cx(styles.control, primary && styles.controlPrimary)} onPress={onPress} onArrow={onArrow}>
       <span className={styles.controlCircle}>{icon}</span>
       <span className={styles.controlLabel}>{label}</span>
       {value && <span className={styles.controlValue}>{value}</span>}

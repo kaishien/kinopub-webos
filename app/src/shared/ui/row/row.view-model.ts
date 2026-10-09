@@ -8,6 +8,7 @@ export interface RowParams {
   count: number
   width: number
   initialOffset: number
+  initialIndex?: number
   saveOffset: (offset: number) => void
   images: ImageService
   imageOf?: (index: number) => string | undefined
@@ -27,11 +28,11 @@ export class RowViewModel {
   private readonly saveOffset: (offset: number) => void
   private readonly stopPrefetch: () => void
 
-  constructor({ count, width, initialOffset, saveOffset, images, imageOf }: RowParams) {
+  constructor({ count, width, initialOffset, initialIndex, saveOffset, images, imageOf }: RowParams) {
     this.count = count
     this.saveOffset = saveOffset
     this.step = width + CARD_GAP
-    this.offset = initialOffset
+    this.offset = initialIndex === undefined ? initialOffset : Math.min(initialIndex * this.step, this.maxOffset)
     makeAutoObservable<this, 'step' | 'saveOffset' | 'stopPrefetch' | 'glide'>(
       this,
       { list: false, root: false, step: false, saveOffset: false, stopPrefetch: false, glide: false },
