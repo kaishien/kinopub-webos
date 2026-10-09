@@ -3,6 +3,7 @@ import { ApiService } from './api/api.service'
 import { AuthService } from './auth/auth.service'
 import { FocusMemoryService } from './focus-memory/focus-memory.service'
 import { ImageService } from './images/image.service'
+import { PeoplePhotosService } from './people-photos/people-photos.service'
 import { createQueryClient, type AppQueryClient } from './query/query-client'
 import { RemoteService } from './remote/remote.service'
 import { RouterService } from './router/router.service'
@@ -22,6 +23,7 @@ export interface Services {
   ui: UiService
   focusMemory: FocusMemoryService
   images: ImageService
+  peoplePhotos: PeoplePhotosService
   trackMemory: TrackMemoryService
 }
 
@@ -42,6 +44,7 @@ export function createServices(): Services {
     ui: new UiService(),
     focusMemory: new FocusMemoryService(),
     images: new ImageService(),
+    peoplePhotos: new PeoplePhotosService(),
     trackMemory: new TrackMemoryService(storage),
   }
 }

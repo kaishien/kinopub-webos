@@ -1,34 +1,25 @@
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import type { PersonRole } from '@/services/api/api.types'
 import { useServices } from '@/services/services'
 import { link } from '@/app/routes'
-import { Button } from '@/shared/ui/button/button'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import styles from './people.module.css'
+import { Row } from '@/shared/ui/row/row'
+import { PersonCard } from './person-card/person-card'
+import { PERSON_CARD } from './person-card/person-card-metrics'
 
 export interface PersonEntry {
   role: PersonRole
   name: string
+  /** From Wikidata; absent until it loads or when nobody matched. */
+  photo?: string
 }
 
 export const People = memo(function People({ people }: { people: PersonEntry[] }) {
   const { router } = useServices()
-
-  return (
-    <section className={styles.people}>
-      <h2 className={styles.title}>Режиссёр и актёры</h2>
-      <FocusGroup focusKey="ITEM-people" className={styles.list} reveal>
-        {people.map((person) => (
-          <Button
-            key={`${person.role}-${person.name}`}
-            size="sm"
-            trailing={person.role === 'director' ? <span className={styles.role}>режиссёр</span> : undefined}
-            onPress={() => void router.navigate(link.person(person.role, person.name))}
-          >
-            {person.name}
-          </Button>
-        ))}
-      </FocusGroup>
-    </section>
+  const open = useCallback((person: PersonEntry) => void router.navigate(link.person(person.role, person.name)), [router])
+  const renderItem = useCallback(
+    (index: number, focusKey: string) => <PersonCard index={index} focusKey={focusKey} person={people[index]} onPress={open} />,
+    [people, open],
   )
+
+  return <Row title="Режиссёр и актёры" focusKey="ITEM-people" count={people.length} item={PERSON_CARD} renderItem={renderItem} />
 })

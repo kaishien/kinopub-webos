@@ -1,0 +1,80 @@
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  height: 290px;
+  text-align: center;
+}
+
+.person-avatar {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: hsl(var(--avatar-hue) 28% 26%);
+  /* Only the avatar scales on focus, like posters: re-rasterizing the name on every step is expensive on the TV. */
+  will-change: transform;
+  transition: transform 160ms var(--ease);
+}
+
+.person-avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 4px var(--amber);
+  opacity: 0;
+}
+
+.person:global(.is-focused) .person-avatar {
+  transform: scale(1.06);
+}
+
+.person:global(.is-focused) .person-avatar::after {
+  opacity: 1;
+}
+
+.person-initials {
+  font-family: var(--font-display);
+  font-size: 54px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.person-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Portraits are mostly upper-body shots: keep the face, not the chest, in the circle. */
+  object-position: 50% 18%;
+  opacity: 0;
+  transition: opacity 300ms var(--ease);
+}
+
+.person-avatar img.is-loaded {
+  opacity: 1;
+}
+
+.person-name {
+  display: -webkit-box;
+  margin-top: 16px;
+  font-size: 24px;
+  line-height: 1.25;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.person-role {
+  margin-top: 4px;
+  font-size: 20px;
+  color: var(--mute);
+}

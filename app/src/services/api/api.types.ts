@@ -25,6 +25,8 @@ export interface ItemShort {
   duration?: { average: number; total: number }
   quality?: number
   plot?: string
+  /** IMDb id without the «tt» prefix. */
+  imdb?: number
   imdb_rating?: number
   kinopoisk_rating?: number
   rating_percentage?: number

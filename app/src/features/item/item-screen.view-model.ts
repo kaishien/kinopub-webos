@@ -5,10 +5,12 @@ import type { Services } from '@/services/services'
 import { episodeLabel, formatDuration, splitTitle, widePosterUrl } from '@/shared/lib/format'
 import { Scope } from '@/shared/view-model/use-view-model'
 import { link } from '@/app/routes'
+import { findPhoto, type PersonPhoto } from '@/services/people-photos/people-photos.service'
 import type { PersonEntry } from './people/people'
 
 /** Credits can list nearly a hundred actors; only the leading ones fit on screen. */
-const PEOPLE_CAST_LIMIT = 10
+const PEOPLE_CAST_LIMIT = 15
+const PHOTOS_CACHE_MS = 60 * 60 * 1000
 
 export interface PlayTarget {
   video: Video
@@ -22,6 +24,7 @@ export class ItemScreenViewModel {
   private readonly scope = new Scope()
   readonly item: Query<Item>
   readonly similar: Query<ItemShort[]>
+  readonly photos: Query<PersonPhoto[], Error, PersonPhoto[], PersonPhoto[], [string, number | undefined]>
   readonly folders: Query<BookmarkFolder[]>
   readonly itemFolders: Query<BookmarkFolder[]>
   readonly toggleBookmark: Mutation<unknown, BookmarkFolder>
@@ -36,7 +39,7 @@ export class ItemScreenViewModel {
     readonly id: number,
     readonly preview?: ItemShort,
   ) {
-    const { api, queryClient, ui } = services
+    const { api, queryClient, ui, peoplePhotos } = services
 
     makeAutoObservable<this, 'scope'>(
       this,
@@ -46,6 +49,7 @@ export class ItemScreenViewModel {
         preview: false,
         item: false,
         similar: false,
+        photos: false,
         folders: false,
         itemFolders: false,
         toggleBookmark: false,
@@ -70,6 +74,17 @@ export class ItemScreenViewModel {
       abortSignal: this.scope.signal,
       queryKey: ['similar', id],
       queryFn: ({ signal }) => api.similar(id, signal),
+    })
+
+    // Photos are extra: they load after the page, and the cards show initials until then or on failure.
+    this.photos = new Query({
+      queryClient,
+      abortSignal: this.scope.signal,
+      queryFn: ({ signal, queryKey: [, imdb] }) => peoplePhotos.byImdb(imdb!, signal),
+      options: () => ({ queryKey: ['people-photos', this.data?.imdb], enabled: !!this.data?.imdb }),
+      staleTime: Infinity,
+      gcTime: PHOTOS_CACHE_MS,
+      retry: 1,
     })
 
     // enableOnDemand defers the bookmark folders request until first read (the sheet is opened).
@@ -210,10 +225,11 @@ export class ItemScreenViewModel {
 
     if (!item) return []
 
-    const directors = splitNames(item.director).map((name) => ({ role: 'director' as const, name }))
+    const photos = this.photos.data ?? []
+    const directors = splitNames(item.director).map((name) => ({ role: 'director' as const, name, photo: findPhoto(name, photos) }))
     const cast = splitNames(item.cast)
       .slice(0, PEOPLE_CAST_LIMIT)
-      .map((name) => ({ role: 'cast' as const, name }))
+      .map((name) => ({ role: 'cast' as const, name, photo: findPhoto(name, photos) }))
 
     return [...directors, ...cast]
   }
