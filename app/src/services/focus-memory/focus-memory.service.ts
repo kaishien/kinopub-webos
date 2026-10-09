@@ -33,10 +33,6 @@ export class FocusMemoryService {
     return this.screens.get(locationKey)?.state.get(key) as T | undefined
   }
 
-  forget(locationKey: string) {
-    this.screens.delete(locationKey)
-  }
-
   private screen(locationKey: string): ScreenMemory {
     let screen = this.screens.get(locationKey)
 

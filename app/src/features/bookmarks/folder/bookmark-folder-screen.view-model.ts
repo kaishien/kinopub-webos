@@ -3,6 +3,7 @@ import { InfiniteQuery } from 'mobx-tanstack-query'
 import type { BookmarkFolder, ItemShort, Pagination } from '@/services/api/api.types'
 import type { Services } from '@/services/services'
 import { Scope } from '@/shared/view-model/use-view-model'
+import { nextPage } from '@/services/query/next-page'
 
 type FolderPage = { folder: BookmarkFolder; items: ItemShort[]; pagination: Pagination }
 
@@ -20,7 +21,7 @@ export class BookmarkFolderScreenViewModel {
       queryKey: ['bookmarks', 'folder', id],
       queryFn: ({ signal, pageParam }) => api.bookmarkFolderItems(id, pageParam, signal),
       initialPageParam: 1,
-      getNextPageParam: (last) => (last.pagination.current < last.pagination.total ? last.pagination.current + 1 : null),
+      getNextPageParam: nextPage,
       staleTime: 0,
     })
     makeAutoObservable<this, 'scope'>(this, { scope: false, id: false, pages: false }, { autoBind: true })

@@ -18,15 +18,12 @@ export class VirtualList {
   private readonly virtualizer: Virtualizer<HTMLDivElement, HTMLDivElement>
   private readonly disposers: Array<() => void> = []
   private emitOffset: ((offset: number, isScrolling: boolean) => void) | null = null
-  private readonly poolSize: number
 
   constructor(options: VirtualListOptions) {
     const { count, step, viewport, offset, horizontal = false, overscan = 2 } = options
     const rect = horizontal ? { width: viewport, height: 0 } : { width: 0, height: viewport }
     // The virtualizer requires a scroll element; it's never scrolled, so a detached node is enough.
     const host = document.createElement('div')
-
-    this.poolSize = Math.ceil(viewport / step) + 2 * overscan + 2
 
     this.virtualizer = new Virtualizer<HTMLDivElement, HTMLDivElement>({
       count: count(),
@@ -70,14 +67,6 @@ export class VirtualList {
     void this.version
 
     return this.virtualizer.getVirtualItems()
-  }
-
-  /**
-   * The render window is contiguous and no longer than the pool, so `index % poolSize` is a unique key.
-   * Cells that scroll off are reused for new items instead of remounted: less DOM churn and garbage.
-   */
-  slot(index: number): number {
-    return index % this.poolSize
   }
 
   get lastIndex(): number {

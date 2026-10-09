@@ -5,6 +5,7 @@ import type { Services } from '@/services/services'
 import { plural } from '@/shared/lib/format'
 import { Scope } from '@/shared/view-model/use-view-model'
 import { link } from '@/app/routes'
+import { nextPage } from '@/services/query/next-page'
 
 type CollectionsPage = { items: Collection[]; pagination: Pagination }
 
@@ -21,7 +22,7 @@ export class CollectionsScreenViewModel {
       queryKey: ['collections'],
       queryFn: ({ signal, pageParam }) => api.collections(pageParam, signal),
       initialPageParam: 1,
-      getNextPageParam: (last) => (last.pagination.current < last.pagination.total ? last.pagination.current + 1 : null),
+      getNextPageParam: nextPage,
     })
     makeAutoObservable<this, 'scope'>(this, { scope: false, pages: false }, { autoBind: true })
   }

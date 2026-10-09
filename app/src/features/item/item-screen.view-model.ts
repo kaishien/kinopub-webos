@@ -246,6 +246,11 @@ export class ItemScreenViewModel {
     return this.inFolders.includes(folderId)
   }
 
+  /** Stable handler for episode cards: a per-render closure would re-render every card on any screen change. */
+  playEpisode(video: Video, season: number) {
+    this.play({ video, season, resumeFrom: video.watched !== 1 ? (video.watching?.time ?? 0) : 0 })
+  }
+
   play(target: PlayTarget, fromStart = false) {
     const { router } = this.services
 

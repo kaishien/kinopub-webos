@@ -4,6 +4,7 @@ import type { HistoryEntry, HistoryPage, ItemShort } from '@/services/api/api.ty
 import type { Services } from '@/services/services'
 import { episodeLabel, formatClock } from '@/shared/lib/format'
 import { Scope } from '@/shared/view-model/use-view-model'
+import { nextPage } from '@/services/query/next-page'
 
 export class HistoryScreenViewModel {
   private readonly scope = new Scope()
@@ -16,7 +17,7 @@ export class HistoryScreenViewModel {
       queryKey: ['history'],
       queryFn: ({ signal, pageParam }) => api.history(pageParam, signal),
       initialPageParam: 1,
-      getNextPageParam: (last) => (last.pagination.current < last.pagination.total ? last.pagination.current + 1 : null),
+      getNextPageParam: nextPage,
       staleTime: 0,
     })
     makeAutoObservable<this, 'scope'>(this, { scope: false, pages: false }, { autoBind: true })
@@ -30,8 +31,12 @@ export class HistoryScreenViewModel {
     return this.entries.map((e) => e.item)
   }
 
+  private get entryById(): Map<number, HistoryEntry> {
+    return new Map(this.entries.map((e) => [e.item.id, e]))
+  }
+
   subtitle(item: ItemShort): string | undefined {
-    const entry = this.entries.find((e) => e.item.id === item.id)
+    const entry = this.entryById.get(item.id)
 
     if (!entry) return undefined
 

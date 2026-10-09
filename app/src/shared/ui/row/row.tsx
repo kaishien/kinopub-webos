@@ -51,7 +51,7 @@ export const Row = observer(function Row({ focusKey, title, count, item, renderI
             style={{ width: vm.list.totalSize, height: item.height, transform: `translateX(-${vm.offset}px)` }}
           >
             {vm.list.items.map((cell) => (
-              <div key={vm.list.slot(cell.index)} className={styles.rowCell} style={{ left: cell.start }}>
+              <div key={cell.index} className={styles.rowCell} style={{ left: cell.start }}>
                 {renderItem(cell.index, itemFocusKey(focusKey, cell.index))}
               </div>
             ))}

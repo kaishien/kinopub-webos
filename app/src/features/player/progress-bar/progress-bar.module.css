@@ -1,0 +1,65 @@
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 40px;
+  padding: 16px 0;
+}
+
+.bar {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.25);
+  transition: height 120ms var(--ease);
+}
+
+.progress:global(.is-focused) .bar {
+  height: 8px;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--amber);
+}
+
+.bar-knob {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border-radius: 50%;
+  background: var(--amber);
+  opacity: 0;
+  transition:
+    opacity 120ms var(--ease),
+    transform 120ms var(--ease);
+}
+
+.progress:global(.is-focused) .bar-knob {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* Current time rides above the knob while the bar is focused, like Netflix. */
+.bar-tip {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.84);
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.remaining {
+  min-width: 96px;
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}

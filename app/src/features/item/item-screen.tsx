@@ -99,12 +99,7 @@ export const ItemScreen = observer(function ItemScreen() {
         </FocusGroup>
       )}
       {vm.episodes && (
-        <EpisodesRow
-          key={vm.episodes.season}
-          videos={vm.episodes.videos}
-          season={vm.episodes.season}
-          onPlay={(video, season) => vm.play({ video, season, resumeFrom: video.watched !== 1 ? (video.watching?.time ?? 0) : 0 })}
-        />
+        <EpisodesRow key={vm.episodes.season} videos={vm.episodes.videos} season={vm.episodes.season} onPlay={vm.playEpisode} />
       )}
 
       {(vm.similar.data?.length ?? 0) > 0 && <ItemsRow title="Похожее" items={vm.similar.data!} focusKey="ROW-similar" />}

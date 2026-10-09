@@ -78,10 +78,6 @@ export class HlsStream {
     )
   }
 
-  get isReady() {
-    return this.variants.length > 0
-  }
-
   get variant(): StreamVariant | undefined {
     const sorted = this.sortedVariants
 

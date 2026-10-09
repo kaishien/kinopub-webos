@@ -74,7 +74,7 @@ export const Grid = observer(function Grid({
           const first = row.index * vm.columns
 
           return (
-            <div key={vm.list.slot(row.index)} className={styles.gridRow} style={{ top: row.start }}>
+            <div key={row.index} className={styles.gridRow} style={{ top: row.start }}>
               {items.slice(first, first + vm.columns).map((item, column) => {
                 const index = first + column
 

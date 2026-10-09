@@ -372,10 +372,6 @@ export class PlayerScreenViewModel {
     return this.selectedSubtitle >= 0 ? 'Вкл' : 'Выкл'
   }
 
-  get seekStepValue() {
-    return this.seekStep
-  }
-
   get audioOptions(): PanelOption[] {
     return this.stream.audios.map((audio) => ({
       key: String(audio.id),
@@ -616,6 +612,17 @@ export class PlayerScreenViewModel {
     this.showHud()
   }
 
+  /** Left/right on the bar seek; down leaves the bar for the controls, other directions stay. */
+  onBarArrow(direction: string): boolean {
+    if (direction === 'left' || direction === 'right') {
+      this.seekBy(direction === 'right' ? this.seekStep : -this.seekStep)
+
+      return false
+    }
+
+    return direction === 'down'
+  }
+
   seekBy(delta: number) {
     const el = this.element
 
@@ -639,6 +646,18 @@ export class PlayerScreenViewModel {
 
     this.seekPreview = null
     this.seekStep = SEEK_STEP_MIN
+  }
+
+  openEpisodes() {
+    this.openPanel('episodes')
+  }
+
+  openTracks() {
+    this.openPanel('tracks')
+  }
+
+  openQuality() {
+    this.openPanel('quality')
   }
 
   openPanel(panel: PlayerPanelKind) {

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { memo, type ReactNode } from 'react'
 import { Pressable } from '@/shared/ui/focus/pressable'
 import styles from './control-button.module.css'
 
@@ -10,7 +10,8 @@ export interface ControlButtonProps {
   onPress: () => void
 }
 
-export function ControlButton({ icon, label, value, focusKey, onPress }: ControlButtonProps) {
+/** Props are stable (hoisted icons, view-model methods), so the HUD re-rendering never reaches the focusable node. */
+export const ControlButton = memo(function ControlButton({ icon, label, value, focusKey, onPress }: ControlButtonProps) {
   return (
     <Pressable focusKey={focusKey} className={styles.control} onPress={onPress}>
       {icon}
@@ -18,4 +19,4 @@ export function ControlButton({ icon, label, value, focusKey, onPress }: Control
       {value && <span className={styles.controlValue}>{value}</span>}
     </Pressable>
   )
-}
+})

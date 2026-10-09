@@ -3,11 +3,10 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router'
 import type { QualityPreference } from '@/services/settings/settings.service'
-import { episodeLabel, formatClock } from '@/shared/lib/format'
+import { episodeLabel } from '@/shared/lib/format'
 import { cx } from '@/shared/lib/cx'
 import { Button } from '@/shared/ui/button/button'
 import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { Pressable } from '@/shared/ui/focus/pressable'
 import { IconNext, IconPause, IconPlay, IconSpark, IconStack, IconSubs } from '@/shared/ui/icons/icons'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { ControlButton } from './controls/control-button'
@@ -16,8 +15,11 @@ import { NEXT_UP_FOCUS_KEY, NextUpCard } from './next-up/next-up-card'
 import { PauseScreen } from './pause-screen/pause-screen'
 import { PlayerPanel } from './panel/player-panel'
 import { PlayerScreenViewModel } from './player-screen.view-model'
+import { ProgressBar } from './progress-bar/progress-bar'
 import styles from './player-screen.module.css'
 import { Spinner } from '@/shared/ui/spinner/spinner'
+
+const ICON = { episodes: <IconStack />, tracks: <IconSubs />, quality: <IconSpark />, next: <IconNext /> }
 
 const FOCUS = {
   bar: 'PLAYER-bar',
@@ -113,28 +115,7 @@ const PlayerContent = observer(function PlayerContent() {
           <div className={styles.playerTitle}>{vm.title}</div>
           {vm.subtitle && <div className={styles.playerSubtitle}>{vm.subtitle}</div>}
 
-          <Pressable
-            focusKey={FOCUS.bar}
-            className={styles.playerProgress}
-            onPress={vm.togglePlay}
-            onArrow={(direction) => {
-              if (direction === 'left' || direction === 'right') {
-                vm.seekBy(direction === 'right' ? vm.seekStepValue : -vm.seekStepValue)
-
-                return false
-              }
-
-              return direction === 'down'
-            }}
-          >
-            <div className={styles.playerBar}>
-              <div className={styles.playerBarFill} style={{ width: `${vm.progress}%` }} />
-              <div className={styles.playerBarKnob} style={{ left: `${vm.progress}%` }}>
-                <span className={styles.playerBarTip}>{formatClock(vm.shownTime)}</span>
-              </div>
-            </div>
-            <span className={styles.playerRemaining}>{formatClock(vm.remaining)}</span>
-          </Pressable>
+          <ProgressBar vm={vm} focusKey={FOCUS.bar} />
 
           <FocusGroup
             focusKey="PLAYER-controls"
@@ -142,24 +123,20 @@ const PlayerContent = observer(function PlayerContent() {
             isFocusBoundary
             focusBoundaryDirections={['left', 'right', 'down']}
           >
-            {vm.hasEpisodes && (
-              <ControlButton focusKey={FOCUS.episodes} icon={<IconStack />} label="Серии" onPress={() => vm.openPanel('episodes')} />
-            )}
-            {vm.hasTracks && (
-              <ControlButton focusKey={FOCUS.tracks} icon={<IconSubs />} label={vm.tracksLabel} onPress={() => vm.openPanel('tracks')} />
-            )}
+            {vm.hasEpisodes && <ControlButton focusKey={FOCUS.episodes} icon={ICON.episodes} label="Серии" onPress={vm.openEpisodes} />}
+            {vm.hasTracks && <ControlButton focusKey={FOCUS.tracks} icon={ICON.tracks} label={vm.tracksLabel} onPress={vm.openTracks} />}
             {vm.hasQualityChoice && (
               <ControlButton
                 focusKey={FOCUS.quality}
-                icon={<IconSpark />}
+                icon={ICON.quality}
                 label="Качество"
                 value={vm.qualityLabel}
-                onPress={() => vm.openPanel('quality')}
+                onPress={vm.openQuality}
               />
             )}
             {vm.next && (
               <ControlButton
-                icon={<IconNext />}
+                icon={ICON.next}
                 label="Следующая серия"
                 value={episodeLabel(vm.next.season, vm.next.video.number)}
                 onPress={vm.playNext}

@@ -3,6 +3,7 @@ import { InfiniteQuery } from 'mobx-tanstack-query'
 import type { ItemShort, ItemsPage } from '@/services/api/api.types'
 import type { Services } from '@/services/services'
 import { Scope } from '@/shared/view-model/use-view-model'
+import { nextPage } from '@/services/query/next-page'
 
 const MIN_QUERY_LENGTH = 2
 const STORAGE_KEY = 'search-query'
@@ -25,7 +26,7 @@ export class SearchScreenViewModel {
       queryKey: ['search', this.normalized],
       queryFn: ({ signal, pageParam }) => api.search(this.normalized, pageParam, signal),
       initialPageParam: 1,
-      getNextPageParam: (last) => (last.pagination && last.pagination.current < last.pagination.total ? last.pagination.current + 1 : null),
+      getNextPageParam: nextPage,
     }))
   }
 

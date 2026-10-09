@@ -2,7 +2,6 @@ import { makeAutoObservable } from 'mobx'
 import type { StreamKind } from '@/services/api/api.types'
 import type { Services } from '@/services/services'
 import type { QualityPreference, ToggleSetting } from '@/services/settings/settings.service'
-import { Scope } from '@/shared/view-model/use-view-model'
 
 export interface Option<T extends string> {
   id: T
@@ -27,9 +26,8 @@ export const STREAM_OPTIONS: Option<StreamKind>[] = [
 ]
 
 export class SettingsScreenViewModel {
-  private readonly scope = new Scope()
   constructor(private readonly services: Services) {
-    makeAutoObservable<this, 'scope'>(this, { scope: false }, { autoBind: true })
+    makeAutoObservable(this, {}, { autoBind: true })
   }
 
   get values() {
@@ -88,10 +86,6 @@ export class SettingsScreenViewModel {
 
   logout() {
     this.services.auth.logout()
-  }
-
-  dispose() {
-    this.scope.dispose()
   }
 }
 

@@ -5,6 +5,7 @@ import type { Services } from '@/services/services'
 import { Scope } from '@/shared/view-model/use-view-model'
 import { DEFAULT_SORT, FILTER_ANY, QUALITY_OPTIONS, SORT_OPTIONS, yearOptions, type FilterKind, type FilterOption } from './filters'
 import { FRESH_TYPES, findSection, type CatalogSection } from './sections'
+import { nextPage } from '@/services/query/next-page'
 
 interface FilterValues {
   sort: string
@@ -84,7 +85,7 @@ export class CatalogScreenViewModel {
               signal,
             ),
       initialPageParam: 1,
-      getNextPageParam: (last) => (last.pagination && last.pagination.current < last.pagination.total ? last.pagination.current + 1 : null),
+      getNextPageParam: nextPage,
     }))
   }
 

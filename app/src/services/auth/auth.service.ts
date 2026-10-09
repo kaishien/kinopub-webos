@@ -39,10 +39,6 @@ export class AuthService {
     api.onUnauthorized = this.refresh
   }
 
-  get isLogged() {
-    return this.tokens !== null
-  }
-
   async init() {
     if (!this.tokens) {
       await this.startPairing()
