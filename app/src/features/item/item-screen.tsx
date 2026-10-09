@@ -7,6 +7,7 @@ import { FocusGroup } from '@/shared/ui/focus/focus-group'
 import { IconBookmark, IconBookmarkFilled, IconCheck, IconEye, IconFilm, IconPlay } from '@/shared/ui/icons/icons'
 import { ItemsRow } from '@/shared/ui/items-row/items-row'
 import { Page } from '@/shared/ui/page/page'
+import { Plot } from '@/shared/ui/plot/plot'
 import { Status } from '@/shared/ui/status/status'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { BookmarksSheet } from './bookmarks-sheet/bookmarks-sheet'
@@ -48,7 +49,7 @@ export const ItemScreen = observer(function ItemScreen() {
             ))}
           </div>
         )}
-        {item?.plot && <p className={styles.itemPlot}>{item.plot}</p>}
+        {item?.plot && <Plot key={item.id} text={item.plot} title={vm.title.ru} focusKey="ITEM-plot" />}
       </header>
 
       <FocusGroup reveal focusKey="ITEM-actions" className={styles.itemActions}>

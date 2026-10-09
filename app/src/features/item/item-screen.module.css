@@ -34,18 +34,6 @@
   font-weight: 600;
 }
 
-.item-plot {
-  display: -webkit-box;
-  max-width: 1000px;
-  margin-bottom: 40px;
-  font-size: 26px;
-  line-height: 1.5;
-  opacity: 0.85;
-  overflow: hidden;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-}
-
 .item-actions {
   display: flex;
   flex-wrap: wrap;

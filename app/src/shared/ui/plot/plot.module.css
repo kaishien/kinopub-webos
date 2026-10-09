@@ -1,0 +1,41 @@
+.plot {
+  max-width: 1040px;
+  margin: 0 -20px 40px;
+  padding: 12px 20px;
+  border-radius: 16px;
+  transition: background 120ms var(--ease);
+}
+
+.plot-text {
+  display: -webkit-box;
+  font-size: 26px;
+  line-height: 1.5;
+  opacity: 0.85;
+  overflow: hidden;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.plot-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--mute);
+}
+
+.plot-more svg {
+  width: 22px;
+  height: 22px;
+}
+
+.plot:global(.is-focused) {
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 0 0 3px var(--amber);
+}
+
+.plot:global(.is-focused) .plot-more {
+  color: var(--paper);
+}
