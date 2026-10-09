@@ -46,8 +46,9 @@ export class PageViewModel {
     const elementBottom = elementTop + el.offsetHeight + BOTTOM_PADDING
     let next = this.offset
 
-    // Pinned: near the top show everything above (titles, filters); deeper, pin the element to the top.
-    if (this.pinned) next = elementBottom <= this.viewport ? 0 : Math.max(0, elementTop - this.top)
+    // Anything that fits on the first screen scrolls to the very top, so titles and headers above it come back into view.
+    if (elementBottom <= this.viewport) next = 0
+    else if (this.pinned) next = Math.max(0, elementTop - this.top)
     else if (elementTop - this.top < this.offset) next = Math.max(0, elementTop - this.top)
     else if (elementBottom > this.offset + this.viewport) next = Math.max(0, elementBottom - this.viewport)
     if (next === this.offset) return

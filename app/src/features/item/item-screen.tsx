@@ -51,7 +51,7 @@ export const ItemScreen = observer(function ItemScreen() {
         {item?.plot && <p className={styles.itemPlot}>{item.plot}</p>}
       </header>
 
-      <FocusGroup focusKey="ITEM-actions" className={styles.itemActions}>
+      <FocusGroup reveal focusKey="ITEM-actions" className={styles.itemActions}>
         {vm.next && (
           <Button primary focusKey="ITEM-play" icon={<IconPlay />} onPress={() => vm.play(vm.next!)}>
             {vm.playLabel}
@@ -83,7 +83,7 @@ export const ItemScreen = observer(function ItemScreen() {
       </FocusGroup>
 
       {vm.isSerial && (
-        <FocusGroup focusKey="ITEM-seasons" className={styles.itemSeasons}>
+        <FocusGroup reveal focusKey="ITEM-seasons" className={styles.itemSeasons}>
           {vm.seasons.map((season, index) => (
             <Button
               key={season.id}
