@@ -4,7 +4,7 @@ import { itemFocusKey, rowNavigation } from '@/shared/lib/index-navigation'
 import { cx } from '@/shared/lib/cx'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { useOptionalPage } from '@/shared/ui/page/page-context'
+import { usePage } from '@/shared/ui/page/page'
 import { RowViewModel } from './row.view-model'
 import styles from './row.module.css'
 
@@ -17,13 +17,10 @@ export interface RowProps {
   renderItem: (index: number, focusKey: string) => ReactNode
   /** Read only once, when the row is created. */
   imageOf?: (index: number) => string | undefined
-  /** Opens scrolled to this item and focuses it first; without it the row restores its last offset. */
-  initialIndex?: number
 }
 
-export const Row = observer(function Row({ focusKey, title, count, item, renderItem, imageOf, initialIndex }: RowProps) {
-  // Outside a page (e.g. over the player) there is nothing to scroll and no history entry to remember offsets for.
-  const context = useOptionalPage()
+export const Row = observer(function Row({ focusKey, title, count, item, renderItem, imageOf }: RowProps) {
+  const { page, locationKey } = usePage()
   const vm = useViewModel(
     ({ focusMemory, images }) =>
       new RowViewModel({
@@ -31,11 +28,8 @@ export const Row = observer(function Row({ focusKey, title, count, item, renderI
         imageOf,
         count,
         width: item.width,
-        initialIndex,
-        initialOffset: context ? focusMemory.offset(context.locationKey, focusKey) : 0,
-        saveOffset: (offset) => {
-          if (context) focusMemory.saveOffset(context.locationKey, focusKey, offset)
-        },
+        initialOffset: focusMemory.offset(locationKey, focusKey),
+        saveOffset: (offset) => focusMemory.saveOffset(locationKey, focusKey, offset),
       }),
   )
   const [navigation] = useState(() => rowNavigation(focusKey))
@@ -48,8 +42,7 @@ export const Row = observer(function Row({ focusKey, title, count, item, renderI
         {title && <h2 className={styles.rowTitle}>{title}</h2>}
         <FocusGroup
           focusKey={focusKey}
-          onChildFocus={() => context?.page.reveal(vm.root)}
-          preferredChildFocusKey={initialIndex === undefined ? undefined : itemFocusKey(focusKey, initialIndex)}
+          onChildFocus={() => page.reveal(vm.root)}
           nextFocusResolver={navigation}
           className={styles.rowViewport}
         >

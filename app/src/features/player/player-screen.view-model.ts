@@ -13,8 +13,10 @@ import { HlsStream, type StreamAudio, type StreamFailure } from './stream/hls-st
 import { SubtitleTracks, type SubtitleKind } from './tracks/subtitle-tracks'
 import { StallWatchdog, type StallKind } from './watchdog/stall-watchdog'
 
-export type PlayerPanel = null | 'audio' | 'subtitles' | 'quality'
-export type HudTarget = 'controls' | 'bar' | 'episodes'
+export type PlayerPanelKind = 'tracks' | 'quality' | 'episodes'
+export type PlayerPanel = null | PlayerPanelKind
+/** What gets focus when the HUD appears: the progress bar, or the button whose panel was just closed. */
+export type HudTarget = 'bar' | PlayerPanelKind
 
 export interface PlayerParams {
   itemId: number
@@ -23,6 +25,11 @@ export interface PlayerParams {
   quality?: QualityPreference
   trailerUrl?: string
   autoplayChain?: number
+}
+
+export interface EpisodeSeason {
+  number: number
+  videos: Video[]
 }
 
 export interface PanelOption {
@@ -40,6 +47,7 @@ const SEEK_STEP_MIN = 10
 const SEEK_STEP_MAX = 120
 const SEEK_COMMIT_MS = 500
 const FLASH_MS = 700
+const PAUSE_SCREEN_MS = 8000
 
 const FAILED_MESSAGE =
   'Видео не воспроизводится: не помогли ни смена качества, ни обновление ссылок, ни запасной способ. Проверьте интернет и попробуйте ещё раз.'
@@ -56,11 +64,11 @@ export class PlayerScreenViewModel {
   time: number
   duration = 0
   hudVisible = true
-  hudTarget: HudTarget = 'controls'
+  hudTarget: HudTarget = 'bar'
   flash: 'play' | 'pause' | null = null
   panel: PlayerPanel = null
-  /** The season's episode strip under the controls. */
-  episodesOpen = false
+  /** Netflix-style «Вы смотрите» screen after a long pause. */
+  pauseScreen = false
   error = ''
   seekPreview: number | null = null
   /** Fallback: the direct file in the TV's native player, which decodes what MSE can't (e.g. multichannel audio). */
@@ -71,6 +79,7 @@ export class PlayerScreenViewModel {
   private hudTimer: number | null = null
   private flashTimer: number | null = null
   private seekTimer: number | null = null
+  private pauseTimer: number | null = null
   private seekStep = SEEK_STEP_MIN
   private lastMarkAt = 0
   private wantsToPlay = true
@@ -117,6 +126,7 @@ export class PlayerScreenViewModel {
       | 'hudTimer'
       | 'flashTimer'
       | 'seekTimer'
+      | 'pauseTimer'
       | 'seekStep'
       | 'lastMarkAt'
       | 'wantsToPlay'
@@ -137,6 +147,7 @@ export class PlayerScreenViewModel {
         hudTimer: false,
         flashTimer: false,
         seekTimer: false,
+        pauseTimer: false,
         seekStep: false,
         lastMarkAt: false,
         wantsToPlay: false,
@@ -271,6 +282,10 @@ export class PlayerScreenViewModel {
     return this.isTrailer ? `Трейлер: ${title}` : title
   }
 
+  get plot(): string {
+    return this.isTrailer ? '' : (this.item.data?.plot ?? '')
+  }
+
   get subtitle(): string {
     const video = this.video
 
@@ -295,19 +310,28 @@ export class PlayerScreenViewModel {
     return index >= 0 ? (flat[index + 1] ?? null) : null
   }
 
-  /** Episodes of the playing season; for a multi-part movie, its parts. */
-  get episodeList(): { videos: Video[]; season: number } | null {
+  /** All seasons for the episodes panel; a multi-part movie is one season numbered 0. */
+  get episodeSeasons(): EpisodeSeason[] {
     const item = this.item.data
-    const current = this.video
 
-    if (!item || !current || this.isTrailer) return null
-    if (item.seasons) {
-      const season = item.seasons.find((s) => s.episodes.some((e) => e.id === current.id))
+    if (!item || this.isTrailer) return []
+    if (item.seasons) return item.seasons.map((season) => ({ number: season.number, videos: season.episodes }))
 
-      return season && season.episodes.length > 1 ? { videos: season.episodes, season: season.number } : null
-    }
+    return (item.videos?.length ?? 0) > 1 ? [{ number: 0, videos: item.videos! }] : []
+  }
 
-    return (item.videos?.length ?? 0) > 1 ? { videos: item.videos!, season: 0 } : null
+  get hasEpisodes() {
+    return this.episodeSeasons.reduce((total, season) => total + season.videos.length, 0) > 1
+  }
+
+  get tracksLabel() {
+    if (this.hasAudioChoice && this.hasSubtitles) return 'Аудио и субтитры'
+
+    return this.hasAudioChoice ? 'Аудио' : 'Субтитры'
+  }
+
+  get hasTracks() {
+    return this.hasAudioChoice || this.hasSubtitles
   }
 
   get shownTime() {
@@ -399,17 +423,16 @@ export class PlayerScreenViewModel {
     return options
   }
 
-  get panelOptions(): PanelOption[] {
-    if (this.panel === 'audio') return this.audioOptions
-    if (this.panel === 'subtitles') return this.subtitleOptions
+  /** Columns of the open option panel: audio and subtitles side by side, or quality alone. */
+  get panelColumns(): { key: string; title: string; options: PanelOption[] }[] {
+    if (this.panel === 'quality') return [{ key: 'quality', title: 'Качество', options: this.qualityOptions }]
 
-    return this.qualityOptions
-  }
+    const columns = []
 
-  get activePanelIndex() {
-    const index = this.panelOptions.findIndex((option) => option.active)
+    if (this.hasAudioChoice) columns.push({ key: 'audio', title: 'Аудио', options: this.audioOptions })
+    if (this.hasSubtitles) columns.push({ key: 'subtitles', title: 'Субтитры', options: this.subtitleOptions })
 
-    return index < 0 ? 0 : index
+    return columns
   }
 
   get qualityLabel() {
@@ -482,11 +505,13 @@ export class PlayerScreenViewModel {
   private onPlay() {
     this.playing = true
     this.buffering = false
+    this.cancelPauseScreen()
   }
 
   private onPause() {
     this.playing = false
     this.markTime(true)
+    this.schedulePauseScreen()
   }
 
   private onWaiting() {
@@ -616,32 +641,22 @@ export class PlayerScreenViewModel {
     this.seekStep = SEEK_STEP_MIN
   }
 
-  openPanel(panel: PlayerPanel) {
+  openPanel(panel: PlayerPanelKind) {
     this.panel = panel
     this.showHud(PANEL_MS)
   }
 
+  /** Focus returns to the button that opened the panel. */
   closePanel() {
+    const panel = this.panel
+
     this.panel = null
-    this.showHud()
-  }
-
-  openEpisodes() {
-    if (!this.episodeList) return
-
-    this.episodesOpen = true
-    this.showHud(PANEL_MS)
-  }
-
-  /** Focus goes back to the «Серии» button, so the strip is one press away again. */
-  closeEpisodes() {
-    this.episodesOpen = false
-    this.showHud(HUD_MS, 'episodes')
+    this.showHud(HUD_MS, panel ?? undefined)
   }
 
   playEpisode(video: Video) {
     if (video.id === this.video?.id) {
-      this.closeEpisodes()
+      this.closePanel()
 
       return
     }
@@ -665,7 +680,7 @@ export class PlayerScreenViewModel {
 
     if (audio && !this.isTrailer) this.services.trackMemory.rememberAudio(this.params.itemId, shortAudioName(audio.name))
 
-    this.closePanel()
+    this.showHud(PANEL_MS)
   }
 
   selectSubtitle(index: number) {
@@ -674,7 +689,7 @@ export class PlayerScreenViewModel {
     this.applySubtitle(index)
     if (!this.isTrailer) this.services.trackMemory.rememberSubtitle(this.params.itemId, track ? SubtitleTracks.key(track) : null)
 
-    this.closePanel()
+    this.showHud(PANEL_MS)
   }
 
   selectQuality(quality: QualityPreference) {
@@ -787,18 +802,36 @@ export class PlayerScreenViewModel {
 
   showHud(ms?: number, target?: HudTarget) {
     if (target) this.hudTarget = target
-    else if (!this.hudVisible) this.hudTarget = 'controls'
+    else if (!this.hudVisible) this.hudTarget = 'bar'
 
     this.hudVisible = true
     if (this.hudTimer) clearTimeout(this.hudTimer)
 
-    this.hudTimer = window.setTimeout(this.hideHud, ms ?? (this.episodesOpen ? PANEL_MS : HUD_MS))
+    this.hudTimer = window.setTimeout(this.hideHud, ms ?? (this.panel ? PANEL_MS : HUD_MS))
   }
 
   private hideHud() {
     this.hudVisible = false
     this.panel = null
-    this.episodesOpen = false
+  }
+
+  /** Restarted on every key press while paused, so the screen only appears when nobody is touching the remote. */
+  private schedulePauseScreen() {
+    if (this.pauseTimer) clearTimeout(this.pauseTimer)
+
+    this.pauseTimer = window.setTimeout(() => {
+      if (this.playing || this.panel || this.error || this.nextUp.visible || this.isTrailer) return
+
+      this.pauseScreen = true
+      this.hideHud()
+    }, PAUSE_SCREEN_MS)
+  }
+
+  private cancelPauseScreen() {
+    if (this.pauseTimer) clearTimeout(this.pauseTimer)
+
+    this.pauseTimer = null
+    this.pauseScreen = false
   }
 
   private markTime(force: boolean) {
@@ -816,6 +849,15 @@ export class PlayerScreenViewModel {
     const back = RemoteService.isBack(event)
 
     this.nextUp.userActive()
+    if (!this.playing) this.schedulePauseScreen()
+    if (this.pauseScreen) {
+      this.pauseScreen = false
+      if (back) this.exit()
+      else if (isPlayKey(event.keyCode)) this.togglePlay()
+      else this.showHud()
+
+      return true
+    }
     if (this.error) {
       if (back) {
         this.exit()
@@ -840,15 +882,6 @@ export class PlayerScreenViewModel {
       else this.exit()
 
       return true
-    }
-    if (this.episodesOpen) {
-      if (back || event.keyCode === RemoteKey.Up) {
-        this.closeEpisodes()
-
-        return true
-      }
-      // The strip is the lowest row: there is nothing below it to move to.
-      if (event.keyCode === RemoteKey.Down) return true
     }
     if (back) {
       this.exit()
@@ -900,7 +933,7 @@ export class PlayerScreenViewModel {
           return false
         }
 
-        this.showHud(HUD_MS, 'controls')
+        this.showHud(HUD_MS, 'bar')
 
         return true
       default:
@@ -918,6 +951,7 @@ export class PlayerScreenViewModel {
     if (this.hudTimer) clearTimeout(this.hudTimer)
     if (this.flashTimer) clearTimeout(this.flashTimer)
     if (this.seekTimer) clearTimeout(this.seekTimer)
+    if (this.pauseTimer) clearTimeout(this.pauseTimer)
 
     this.scope.dispose()
     runInAction(() => {
@@ -925,6 +959,10 @@ export class PlayerScreenViewModel {
       void this.services.queryClient.invalidateQueries({ queryKey: itemQueryKey(this.params.itemId) })
     })
   }
+}
+
+function isPlayKey(code: number) {
+  return code === RemoteKey.Enter || code === RemoteKey.Play || code === RemoteKey.Pause || code === RemoteKey.PlayPause
 }
 
 function shortAudioName(name: string) {

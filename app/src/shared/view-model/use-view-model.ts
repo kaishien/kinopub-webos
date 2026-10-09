@@ -5,11 +5,11 @@ export interface ViewModel {
   dispose?(): void
 }
 
-export function useViewModel<T extends ViewModel>(factory: (services: Services) => T): T {
+export function useViewModel<T extends object>(factory: (services: Services) => T): T {
   const services = useServices()
   const [vm] = useState(() => factory(services))
 
-  useEffect(() => () => vm.dispose?.(), [vm])
+  useEffect(() => () => (vm as ViewModel).dispose?.(), [vm])
 
   return vm
 }

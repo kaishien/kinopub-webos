@@ -8,27 +8,26 @@ import { cx } from '@/shared/lib/cx'
 import { Button } from '@/shared/ui/button/button'
 import { FocusGroup } from '@/shared/ui/focus/focus-group'
 import { Pressable } from '@/shared/ui/focus/pressable'
-import { IconNext, IconPause, IconPlay, IconSeries, IconSound, IconSpark, IconSubs } from '@/shared/ui/icons/icons'
+import { IconNext, IconPause, IconPlay, IconSpark, IconStack, IconSubs } from '@/shared/ui/icons/icons'
 import { useViewModel } from '@/shared/view-model/use-view-model'
-import { EpisodesRow } from '@/features/item/episodes/episodes-row'
 import { ControlButton } from './controls/control-button'
+import { EpisodesPanel } from './episodes-panel/episodes-panel'
 import { NEXT_UP_FOCUS_KEY, NextUpCard } from './next-up/next-up-card'
+import { PauseScreen } from './pause-screen/pause-screen'
 import { PlayerPanel } from './panel/player-panel'
 import { PlayerScreenViewModel } from './player-screen.view-model'
 import styles from './player-screen.module.css'
 import { Spinner } from '@/shared/ui/spinner/spinner'
 
 const FOCUS = {
-  play: 'PLAYER-play',
   bar: 'PLAYER-bar',
-  episodes: 'PLAYER-episodes-button',
-  episodesRow: 'PLAYER-episodes',
+  tracks: 'PLAYER-tracks',
+  quality: 'PLAYER-quality',
+  episodes: 'PLAYER-episodes',
   next: NEXT_UP_FOCUS_KEY,
   back: 'PLAYER-back',
   retry: 'PLAYER-retry',
 }
-
-const HUD_FOCUS = { controls: FOCUS.play, bar: FOCUS.bar, episodes: FOCUS.episodes }
 
 /** Quality and episode changes replace the route; keying by history entry recreates the player and its view-model. */
 export function PlayerScreen() {
@@ -68,27 +67,11 @@ const PlayerContent = observer(function PlayerContent() {
       return () => cancelAnimationFrame(frame)
     }
     if (vm.panel) return
-    if (vm.episodesOpen) {
-      // The row lands on the playing episode by itself (its preferred child).
-      const frame = requestAnimationFrame(() => setFocus(FOCUS.episodesRow))
-
-      return () => cancelAnimationFrame(frame)
-    }
-    if (vm.hudVisible) setFocus(HUD_FOCUS[vm.hudTarget])
-  }, [vm.nextUp.visible, vm.hudVisible, vm.hudTarget, vm.hasSource, vm.error, vm.panel, vm.episodesOpen])
-
-  const episodes = vm.episodeList
-  // Down from any control opens the strip instead of searching for something below.
-  const openEpisodesOnDown = (direction: string) => {
-    if (direction !== 'down' || !episodes) return true
-
-    vm.openEpisodes()
-
-    return false
-  }
+    if (vm.hudVisible) setFocus(FOCUS[vm.hudTarget])
+  }, [vm.nextUp.visible, vm.hudVisible, vm.hudTarget, vm.hasSource, vm.error, vm.panel])
 
   return (
-    <div className={cx(styles.player, (vm.hudVisible || vm.nextUp.visible) && styles.hudOpen, vm.episodesOpen && styles.episodesOpen)}>
+    <div className={cx(styles.player, (vm.hudVisible || vm.nextUp.visible) && styles.hudOpen)}>
       {vm.hasSource && (
         // Fallback needs a fresh element: the old one is bound to hls.js's MediaSource.
         <video key={vm.fallback ? 'file' : 'stream'} ref={vm.attach} src={vm.src} autoPlay playsInline crossOrigin="anonymous">
@@ -124,19 +107,15 @@ const PlayerContent = observer(function PlayerContent() {
         </div>
       )}
 
-      <div className={cx(styles.playerHud, vm.hudVisible && styles.isVisible)}>
-        <header className={styles.playerHead}>
-          <div>
-            <div className={styles.playerTitle}>{vm.title}</div>
-            {vm.subtitle && <div className={styles.playerSubtitle}>{vm.subtitle}</div>}
-          </div>
-          {!vm.isTrailer && vm.qualityLabel && <div className={styles.playerChip}>{vm.qualityLabel}</div>}
-        </header>
-
+      {/* Panels cover the HUD completely: it would show through their dimmed backdrop. */}
+      <div className={cx(styles.playerHud, vm.hudVisible && !vm.panel && styles.isVisible)}>
         <div className={styles.playerDock}>
+          <div className={styles.playerTitle}>{vm.title}</div>
+          {vm.subtitle && <div className={styles.playerSubtitle}>{vm.subtitle}</div>}
+
           <Pressable
             focusKey={FOCUS.bar}
-            className={styles.playerBarHit}
+            className={styles.playerProgress}
             onPress={vm.togglePlay}
             onArrow={(direction) => {
               if (direction === 'left' || direction === 'right') {
@@ -151,95 +130,49 @@ const PlayerContent = observer(function PlayerContent() {
             <div className={styles.playerBar}>
               <div className={styles.playerBarFill} style={{ width: `${vm.progress}%` }} />
               <div className={styles.playerBarKnob} style={{ left: `${vm.progress}%` }}>
-                {vm.seekPreview !== null && <span className={styles.playerBarTip}>{formatClock(vm.seekPreview)}</span>}
+                <span className={styles.playerBarTip}>{formatClock(vm.shownTime)}</span>
               </div>
             </div>
-            <div className={styles.playerTimes}>
-              <span>{formatClock(vm.shownTime)}</span>
-              <span className={styles.playerTimesRemaining}>−{formatClock(vm.remaining)}</span>
-            </div>
+            <span className={styles.playerRemaining}>{formatClock(vm.remaining)}</span>
           </Pressable>
 
           <FocusGroup
             focusKey="PLAYER-controls"
             className={styles.playerControls}
-            preferredChildFocusKey={FOCUS.play}
             isFocusBoundary
-            focusBoundaryDirections={['left', 'right']}
+            focusBoundaryDirections={['left', 'right', 'down']}
           >
-            <ControlButton
-              onArrow={openEpisodesOnDown}
-              primary
-              focusKey={FOCUS.play}
-              icon={vm.playing ? <IconPause /> : <IconPlay />}
-              label={vm.playing ? 'Пауза' : 'Играть'}
-              onPress={vm.togglePlay}
-            />
-            {vm.hasAudioChoice && (
-              <ControlButton
-                onArrow={openEpisodesOnDown}
-                icon={<IconSound />}
-                label="Звук"
-                value={vm.audioLabel}
-                onPress={() => vm.openPanel('audio')}
-              />
+            {vm.hasEpisodes && (
+              <ControlButton focusKey={FOCUS.episodes} icon={<IconStack />} label="Серии" onPress={() => vm.openPanel('episodes')} />
             )}
-            {vm.hasSubtitles && (
-              <ControlButton
-                onArrow={openEpisodesOnDown}
-                icon={<IconSubs />}
-                label="Субтитры"
-                value={vm.subtitleLabel}
-                onPress={() => vm.openPanel('subtitles')}
-              />
+            {vm.hasTracks && (
+              <ControlButton focusKey={FOCUS.tracks} icon={<IconSubs />} label={vm.tracksLabel} onPress={() => vm.openPanel('tracks')} />
             )}
             {vm.hasQualityChoice && (
               <ControlButton
-                onArrow={openEpisodesOnDown}
+                focusKey={FOCUS.quality}
                 icon={<IconSpark />}
                 label="Качество"
                 value={vm.qualityLabel}
                 onPress={() => vm.openPanel('quality')}
               />
             )}
-            {episodes && (
-              <ControlButton
-                onArrow={openEpisodesOnDown}
-                focusKey={FOCUS.episodes}
-                icon={<IconSeries />}
-                label="Серии"
-                value={episodes.season ? `${episodes.season} сезон` : undefined}
-                onPress={vm.openEpisodes}
-              />
-            )}
             {vm.next && (
               <ControlButton
-                onArrow={openEpisodesOnDown}
                 icon={<IconNext />}
-                label="Следующая"
+                label="Следующая серия"
                 value={episodeLabel(vm.next.season, vm.next.video.number)}
                 onPress={vm.playNext}
               />
             )}
           </FocusGroup>
         </div>
-
-        {vm.episodesOpen && episodes && (
-          <div className={styles.playerEpisodes}>
-            <EpisodesRow
-              focusKey={FOCUS.episodesRow}
-              title={episodes.season ? `Сезон ${episodes.season}` : 'Части'}
-              videos={episodes.videos}
-              season={episodes.season}
-              currentId={vm.video?.id}
-              onPlay={vm.playEpisode}
-            />
-          </div>
-        )}
       </div>
 
       {vm.nextUp.visible && vm.next && <NextUpCard nextUp={vm.nextUp} next={vm.next} onExit={vm.exit} />}
-      {vm.panel && <PlayerPanel vm={vm} />}
+      {vm.pauseScreen && <PauseScreen vm={vm} />}
+      {vm.panel === 'episodes' && <EpisodesPanel player={vm} />}
+      {(vm.panel === 'tracks' || vm.panel === 'quality') && <PlayerPanel vm={vm} />}
     </div>
   )
 })

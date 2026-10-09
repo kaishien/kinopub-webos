@@ -1,0 +1,48 @@
+.pause-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--gutter);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.75) 45%, rgba(0, 0, 0, 0.35) 100%);
+  animation: pause-in 600ms var(--ease);
+}
+
+@keyframes pause-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.pause-screen-body {
+  max-width: 980px;
+}
+
+.pause-screen-label {
+  margin-bottom: 18px;
+  font-size: 26px;
+  color: var(--mute);
+}
+
+.pause-screen-title {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1.1;
+}
+
+.pause-screen-episode {
+  margin-top: 16px;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.pause-screen-plot {
+  display: -webkit-box;
+  margin-top: 24px;
+  font-size: 26px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.78);
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

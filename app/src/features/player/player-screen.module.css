@@ -30,11 +30,7 @@
 }
 
 .hud-open video::-webkit-media-text-track-container {
-  transform: translateY(-300px);
-}
-
-.episodes-open video::-webkit-media-text-track-container {
-  transform: translateY(-700px);
+  transform: translateY(-340px);
 }
 
 .player-center {
@@ -82,7 +78,7 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 24%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.9) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.55) 72%, rgba(0, 0, 0, 0.92) 100%);
   transition: opacity 220ms var(--ease);
 }
 
@@ -90,83 +86,47 @@
   opacity: 1;
 }
 
-.player-head {
-  position: absolute;
-  left: var(--gutter);
-  right: var(--gutter);
-  top: 52px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.player-title {
-  font-family: var(--font-display);
-  font-size: 40px;
-  font-weight: 600;
-}
-
-.player-subtitle {
-  margin-top: 6px;
-  font-size: 26px;
-  color: var(--mute);
-}
-
-.player-chip {
-  padding: 6px 16px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.14);
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
 .player-dock {
   position: absolute;
   left: var(--gutter);
   right: var(--gutter);
-  bottom: 48px;
-  transition: transform 260ms var(--ease);
+  bottom: 52px;
 }
 
-/* The controls make room for the episode strip that slides in under them. */
-.episodes-open .player-dock {
-  transform: translateY(-400px);
+.player-title {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.episodes-open .player-hud {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 24%, rgba(0, 0, 0, 0.5) 45%, rgba(0, 0, 0, 0.95) 100%);
+.player-subtitle {
+  margin-top: 6px;
+  font-size: 28px;
+  color: rgba(255, 255, 255, 0.75);
 }
 
-.player-episodes {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  animation: episodes-in 260ms var(--ease);
-}
-
-@keyframes episodes-in {
-  from {
-    opacity: 0;
-    transform: translateY(80px);
-  }
-}
-
-.player-bar-hit {
-  padding: 14px 0 8px;
+.player-progress {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 40px;
+  padding: 16px 0;
 }
 
 .player-bar {
   position: relative;
+  flex: 1;
   height: 6px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.25);
   transition: height 120ms var(--ease);
 }
 
-.player-bar-hit:global(.is-focused) .player-bar {
-  height: 10px;
+.player-progress:global(.is-focused) .player-bar {
+  height: 8px;
 }
 
 .player-bar-fill {
@@ -178,55 +138,46 @@
 .player-bar-knob {
   position: absolute;
   top: 50%;
-  width: 18px;
-  height: 18px;
-  margin: -9px 0 0 -9px;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
   border-radius: 50%;
   background: var(--amber);
+  opacity: 0;
   transition:
-    transform 120ms var(--ease),
-    box-shadow 120ms var(--ease);
+    opacity 120ms var(--ease),
+    transform 120ms var(--ease);
 }
 
-.player-bar-hit:global(.is-focused) .player-bar-knob {
-  transform: scale(1.5);
-  box-shadow: 0 0 0 8px rgba(245, 184, 46, 0.25);
+.player-progress:global(.is-focused) .player-bar-knob {
+  opacity: 1;
+  transform: scale(1.2);
 }
 
+/* Current time rides above the knob while the bar is focused, like Netflix. */
 .player-bar-tip {
   position: absolute;
-  bottom: 28px;
+  bottom: 30px;
   left: 50%;
-  transform: translateX(-50%) scale(0.66);
-  padding: 6px 14px;
-  border-radius: 10px;
-  background: var(--paper);
-  color: #111;
-  font-size: 24px;
+  transform: translateX(-50%) scale(0.84);
+  font-size: 26px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
 }
 
-.player-times {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 14px;
-  font-size: 24px;
+.player-remaining {
+  min-width: 96px;
+  font-size: 26px;
   font-variant-numeric: tabular-nums;
-  color: var(--paper);
-}
-
-.player-times-remaining {
-  color: var(--mute);
+  text-align: right;
 }
 
 .player-controls {
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 8px;
+  margin: 14px 0 0 -26px;
 }
 
 .player-error {
