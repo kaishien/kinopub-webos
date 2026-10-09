@@ -1,0 +1,46 @@
+name: Release
+
+# A tag like v0.2.0 builds the .ipk and attaches it to a GitHub release of the same name.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefix app
+          npm install --global @webos-tools/cli
+
+      # webOS takes the version from appinfo.json, so the tag is the single source of it.
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          node -e "
+            const fs = require('fs')
+            const path = 'app/webos/appinfo.json'
+            const info = JSON.parse(fs.readFileSync(path, 'utf8'))
+            info.version = process.argv[1]
+            fs.writeFileSync(path, JSON.stringify(info, null, 2) + '\n')
+          " "$VERSION"
+
+      - name: Build package
+        run: bash scripts/package.sh
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" build/*.ipk --title "$GITHUB_REF_NAME" --generate-notes
