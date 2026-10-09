@@ -1,6 +1,8 @@
 interface ScreenMemory {
   focusKey?: string
   offsets: Map<string, number>
+  /** Screen-specific state that must survive a remount on Back, e.g. catalog filters. */
+  state: Map<string, unknown>
 }
 
 // Lists are virtualized: without restoring scroll offsets the remembered item isn't rendered yet on return.
@@ -23,6 +25,14 @@ export class FocusMemoryService {
     return this.screens.get(locationKey)?.offsets.get(areaKey) ?? 0
   }
 
+  saveState(locationKey: string, key: string, value: unknown) {
+    this.screen(locationKey).state.set(key, value)
+  }
+
+  state<T>(locationKey: string, key: string): T | undefined {
+    return this.screens.get(locationKey)?.state.get(key) as T | undefined
+  }
+
   forget(locationKey: string) {
     this.screens.delete(locationKey)
   }
@@ -31,7 +41,7 @@ export class FocusMemoryService {
     let screen = this.screens.get(locationKey)
 
     if (!screen) {
-      screen = { offsets: new Map() }
+      screen = { offsets: new Map(), state: new Map() }
       this.screens.set(locationKey, screen)
     }
 

@@ -186,6 +186,11 @@ export interface TokenResponse {
   expires_in: number
 }
 
+export interface Country {
+  id: number
+  title: string
+}
+
 export interface Genre {
   id: number
   title: string

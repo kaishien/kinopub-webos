@@ -1,12 +1,13 @@
 import { observer } from 'mobx-react-lite'
+import type { CatalogScreenViewModel } from '@/features/catalog/catalog-screen.view-model'
+import { FILTER_TITLES, type FilterKind } from '@/features/catalog/filters'
+import { FRESH_TYPES } from '@/features/catalog/sections'
 import { Button } from '@/shared/ui/button/button'
 import { FocusGroup } from '@/shared/ui/focus/focus-group'
 import { IconChevronDown, IconFilter, IconSort } from '@/shared/ui/icons/icons'
-import type { CatalogScreenViewModel } from '@/features/catalog/catalog-screen.view-model'
-import { FRESH_TYPES } from '@/features/catalog/sections'
 import styles from './catalog-toolbar.module.css'
 
-export const TOOLBAR_FOCUS = { sort: 'CATALOG-sort', genre: 'CATALOG-genre' } as const
+export const filterButtonKey = (kind: FilterKind) => `CATALOG-${kind}`
 
 export const CatalogToolbar = observer(function CatalogToolbar({ vm }: { vm: CatalogScreenViewModel }) {
   if (vm.section.fresh) {
@@ -23,27 +24,19 @@ export const CatalogToolbar = observer(function CatalogToolbar({ vm }: { vm: Cat
 
   return (
     <FocusGroup reveal focusKey="CATALOG-toolbar" className={styles.catalogToolbar}>
-      <Button
-        size="sm"
-        focusKey={TOOLBAR_FOCUS.sort}
-        icon={<IconSort />}
-        trailing={<IconChevronDown />}
-        onPress={() => vm.openSheet('sort')}
-      >
-        <span className={styles.catalogToolbarLabel}>Сортировка</span> {vm.sortTitle}
-      </Button>
-      {vm.hasGenres && (
+      {vm.kinds.map((kind) => (
         <Button
+          key={kind}
           size="sm"
-          focusKey={TOOLBAR_FOCUS.genre}
-          icon={<IconFilter />}
+          focusKey={filterButtonKey(kind)}
+          icon={kind === 'sort' ? <IconSort /> : <IconFilter />}
           trailing={<IconChevronDown />}
-          active={vm.genre !== undefined}
-          onPress={() => vm.openSheet('genre')}
+          active={vm.isNarrowed(kind)}
+          onPress={() => vm.openSheet(kind)}
         >
-          <span className={styles.catalogToolbarLabel}>Жанр</span> {vm.genreTitle}
+          <span className={styles.catalogToolbarLabel}>{FILTER_TITLES[kind]}</span> {vm.titleOf(kind)}
         </Button>
-      )}
+      ))}
     </FocusGroup>
   )
 })

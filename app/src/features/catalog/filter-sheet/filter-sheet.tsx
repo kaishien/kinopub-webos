@@ -1,53 +1,34 @@
 import { observer } from 'mobx-react-lite'
+import type { CatalogScreenViewModel } from '@/features/catalog/catalog-screen.view-model'
+import { FILTER_TITLES } from '@/features/catalog/filters'
+import { filterButtonKey } from '@/features/catalog/toolbar/catalog-toolbar'
 import { Sheet } from '@/shared/ui/sheet/sheet'
 import { SheetOption } from '@/shared/ui/sheet/sheet-option/sheet-option'
-import { SORT_OPTIONS, type CatalogScreenViewModel } from '@/features/catalog/catalog-screen.view-model'
-import { TOOLBAR_FOCUS } from '@/features/catalog/toolbar/catalog-toolbar'
 
 export const FilterSheet = observer(function FilterSheet({ vm }: { vm: CatalogScreenViewModel }) {
-  if (vm.sheet === 'sort') {
-    const active = Math.max(
-      0,
-      SORT_OPTIONS.findIndex((option) => option.id === vm.sort),
-    )
+  const kind = vm.sheet
 
-    return (
-      <Sheet title="Сортировка" onClose={vm.closeSheet} initialFocusKey={`SHEET-sort-${active}`} returnFocusKey={TOOLBAR_FOCUS.sort}>
-        {SORT_OPTIONS.map((option, index) => (
-          <SheetOption
-            key={option.id}
-            focusKey={`SHEET-sort-${index}`}
-            active={option.id === vm.sort}
-            onPress={() => vm.setSort(option.id)}
-          >
-            {option.title}
-          </SheetOption>
-        ))}
-      </Sheet>
-    )
-  }
-  if (vm.sheet === 'genre') {
-    const genres = vm.genres.data ?? []
-    const active = vm.genre === undefined ? 'all' : String(vm.genre)
+  if (!kind) return null
 
-    return (
-      <Sheet title="Жанр" onClose={vm.closeSheet} initialFocusKey={`SHEET-genre-${active}`} returnFocusKey={TOOLBAR_FOCUS.genre}>
-        <SheetOption focusKey="SHEET-genre-all" active={vm.genre === undefined} onPress={() => vm.setGenre(undefined)}>
-          Все жанры
+  const active = vm.activeIndex(kind)
+
+  return (
+    <Sheet
+      title={FILTER_TITLES[kind]}
+      onClose={vm.closeSheet}
+      initialFocusKey={`SHEET-${kind}-${active}`}
+      returnFocusKey={filterButtonKey(kind)}
+    >
+      {vm.options(kind).map((option, index) => (
+        <SheetOption
+          key={String(option.value ?? 'all')}
+          focusKey={`SHEET-${kind}-${index}`}
+          active={index === active}
+          onPress={() => vm.select(kind, option.value)}
+        >
+          {option.title}
         </SheetOption>
-        {genres.map((genre) => (
-          <SheetOption
-            key={genre.id}
-            focusKey={`SHEET-genre-${genre.id}`}
-            active={genre.id === vm.genre}
-            onPress={() => vm.setGenre(genre.id)}
-          >
-            {genre.title}
-          </SheetOption>
-        ))}
-      </Sheet>
-    )
-  }
-
-  return null
+      ))}
+    </Sheet>
+  )
 })

@@ -1,4 +1,5 @@
 import type {
+  Country,
   Device,
   DeviceSettingKey,
   DeviceSettings,
@@ -189,8 +190,16 @@ export class ApiService {
     return this.get<{ items: Genre[] }>('/v1/genres', { type }, signal).then((r) => r.items)
   }
 
-  items(params: { type?: string; sort?: string; genre?: number; quality?: number; page?: number }, signal?: AbortSignal) {
+  /** `year` is a single year («2024») or an inclusive range («2010-2019»). */
+  items(
+    params: { type?: string; sort?: string; genre?: number; quality?: number; year?: string; country?: number; page?: number },
+    signal?: AbortSignal,
+  ) {
     return this.get<ItemsPage>('/v1/items', { perpage: PER_PAGE, ...params }, signal)
+  }
+
+  countries(signal?: AbortSignal) {
+    return this.get<{ items: Country[] }>('/v1/countries', {}, signal).then((r) => r.items)
   }
 
   /** Kinopub requires `type` here. */

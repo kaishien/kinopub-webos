@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import type { ItemShort } from '@/services/api/api.types'
-import { qualityBadge, splitTitle } from '@/shared/lib/format'
+import { formatRating, qualityBadge, splitTitle } from '@/shared/lib/format'
 import { cx } from '@/shared/lib/cx'
 import { Pressable, type FocusLayout } from '@/shared/ui/focus/pressable'
 import styles from './card.module.css'
@@ -24,6 +24,8 @@ export interface CardProps {
 export const Card = memo(function Card({ item, wide, focusKey, progress, subtitle, caption = true, onPress, onFocus, onBlur }: CardProps) {
   const quality = qualityBadge(item.quality)
   const fresh = (item.new ?? 0) > 0
+  const kp = formatRating(item.kinopoisk_rating)
+  const imdb = formatRating(item.imdb_rating)
 
   return (
     <Pressable
@@ -40,6 +42,12 @@ export const Card = memo(function Card({ item, wide, focusKey, progress, subtitl
           <Badge tone="amber" className={styles.cardNew}>
             +{item.new}
           </Badge>
+        )}
+        {(kp || imdb) && (
+          <div className={styles.cardRatings}>
+            {kp && <Badge>КП {kp}</Badge>}
+            {imdb && <Badge>IMDb {imdb}</Badge>}
+          </div>
         )}
         {progress !== undefined && progress > 0 && (
           <div className={styles.cardProgress}>
