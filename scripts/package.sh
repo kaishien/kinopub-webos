@@ -3,7 +3,7 @@
 set -e
 cd "$(dirname "$0")/../app"
 
-npm run build
+pnpm run build
 cp webos/appinfo.json webos/*.png dist/
 mkdir -p ../build
 rm -f ../build/*.ipk
