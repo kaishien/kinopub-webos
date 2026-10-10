@@ -45,6 +45,12 @@ export const SettingsScreen = observer(function SettingsScreen() {
           value={yesNo(v.autoplayNext)}
           onPress={() => vm.toggle('autoplayNext')}
         />
+        <Setting
+          name="Трейлер при наведении"
+          description="Задержитесь на карточке, и за описанием без звука пойдёт трейлер"
+          value={yesNo(v.trailerPreview)}
+          onPress={() => vm.toggle('trailerPreview')}
+        />
         <Setting name="Скрыть ряд «Продолжить» на главной" value={yesNo(v.hideContinueRow)} onPress={() => vm.toggle('hideContinueRow')} />
         <Setting name="Сервер API" description="Автоматически: первый отвечающий из списка" value={vm.hostLabel} onPress={vm.cycleHost} />
         <Setting name="Выйти из аккаунта" description="Понадобится заново ввести код устройства" value="" onPress={vm.logout} />

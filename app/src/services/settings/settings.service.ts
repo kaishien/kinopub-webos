@@ -12,6 +12,8 @@ export interface Settings {
   subtitlesByDefault: boolean
   autoplayNext: boolean
   hideContinueRow: boolean
+  /** Play the muted trailer behind the hero after focus dwells on a card. */
+  trailerPreview: boolean
   /** '' means pick the host automatically */
   apiHost: string
 }
@@ -22,10 +24,11 @@ const DEFAULTS: Settings = {
   subtitlesByDefault: false,
   autoplayNext: true,
   hideContinueRow: false,
+  trailerPreview: true,
   apiHost: '',
 }
 
-export type ToggleSetting = 'subtitlesByDefault' | 'autoplayNext' | 'hideContinueRow'
+export type ToggleSetting = 'subtitlesByDefault' | 'autoplayNext' | 'hideContinueRow' | 'trailerPreview'
 
 const STORAGE_KEY = 'settings'
 
