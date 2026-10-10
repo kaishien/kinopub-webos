@@ -74,4 +74,12 @@ bash scripts/deploy.sh                 # собрать, установить и
 bash scripts/deploy.sh --device=имя    # другое устройство из ares-setup-device
 ```
 
+### Релиз
+
+```bash
+bash scripts/release.sh 1.2.2   # версия в appinfo.json, коммит, тег v1.2.2 и push
+```
+
+По тегу GitHub Actions прогоняет проверки, собирает `.ipk` и публикует релиз.
+
 Отладка на телевизоре: `ares-inspect --device tv --app ru.vrnn.kinopub` выдаёт адрес DevTools.
