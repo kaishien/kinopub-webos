@@ -2,9 +2,9 @@ import { memo } from 'react'
 import type { ItemShort } from '@/services/api/api.types'
 import { formatRating, qualityBadge, splitTitle } from '@/shared/lib/format'
 import { cx } from '@/shared/lib/cx'
-import { Pressable, type FocusLayout } from '@/shared/ui/focus/pressable'
+import { Pressable, type FocusLayout } from '@/shared/ui/focus'
 import styles from './card.module.css'
-import { Badge } from '@/shared/ui/badge/badge'
+import { Badge } from '@/shared/ui/badge'
 
 export interface CardProps {
   item: ItemShort

@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import type { Video } from '@/services/api/api.types'
-import type { EpisodeSeason } from '@/features/player/player-screen.view-model'
+import type { EpisodeSeason } from '../player-screen.view-model'
 
 export class EpisodesPanelViewModel {
   seasonIndex: number

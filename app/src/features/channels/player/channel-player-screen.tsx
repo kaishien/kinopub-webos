@@ -3,8 +3,8 @@ import { useParams } from 'react-router'
 import { cx } from '@/shared/lib/cx'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { ChannelPlayerScreenViewModel } from './channel-player-screen.view-model'
-import styles from '@/features/player/player-screen.module.css'
-import { Spinner } from '@/shared/ui/spinner/spinner'
+import { playerShell as styles } from '@/shared/ui/player-shell'
+import { Spinner } from '@/shared/ui/spinner'
 
 /** Switching channels replaces the route; keying by channel recreates the screen and its view-model. */
 export function ChannelPlayerScreen() {

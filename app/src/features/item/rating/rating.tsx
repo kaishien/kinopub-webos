@@ -1,4 +1,4 @@
-import { IconStar } from '@/shared/ui/icons/icons'
+import { IconStar } from '@/shared/ui/icons'
 import styles from './rating.module.css'
 
 export function Rating({ value, source }: { value: number; source: string }) {

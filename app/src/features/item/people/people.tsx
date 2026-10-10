@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react'
 import type { PersonRole } from '@/services/api/api.types'
 import { useServices } from '@/services/services'
 import { link } from '@/app/routes'
-import { Row } from '@/shared/ui/row/row'
+import { Row } from '@/shared/ui/row'
 import { PersonCard } from './person-card/person-card'
 import { PERSON_CARD } from './person-card/person-card-metrics'
 

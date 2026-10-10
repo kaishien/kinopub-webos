@@ -1,5 +1,5 @@
 import { memo, type ReactNode } from 'react'
-import { Pressable } from '@/shared/ui/focus/pressable'
+import { Pressable } from '@/shared/ui/focus'
 import styles from './control-button.module.css'
 
 export interface ControlButtonProps {

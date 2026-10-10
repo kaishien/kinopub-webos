@@ -4,9 +4,9 @@ import { RemoteKey } from '@/services/remote/remote.service'
 import type { Settings } from '@/services/settings/settings.service'
 import { fakeServices } from '@/test/fake-services'
 import { PlayerScreenViewModel, type PlayerParams } from './player-screen.view-model'
-import { FakeErrorTypes, FakeHls } from './stream/fake-hls'
+import { FakeErrorTypes, FakeHls } from '@/shared/lib/hls-stream/fake-hls'
 
-vi.mock('hls.js', async () => (await import('./stream/fake-hls')).fakeHlsModule())
+vi.mock('hls.js', async () => (await import('@/shared/lib/hls-stream/fake-hls')).fakeHlsModule())
 
 const ITEM_ID = 7
 const HUD_MS = 4000

@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite'
-import { ItemsRow } from '@/shared/ui/items-row/items-row'
-import { Page } from '@/shared/ui/page/page'
-import { Status } from '@/shared/ui/status/status'
+import { ItemsRow } from '@/shared/ui/items-row'
+import { Page } from '@/shared/ui/page'
+import { Status } from '@/shared/ui/status'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { WatchingScreenViewModel } from './watching-screen.view-model'
-import { Empty } from '@/shared/ui/empty/empty'
+import { Empty } from '@/shared/ui/empty'
 
 export const WatchingScreen = observer(function WatchingScreen() {
   const vm = useViewModel((services) => new WatchingScreenViewModel(services))

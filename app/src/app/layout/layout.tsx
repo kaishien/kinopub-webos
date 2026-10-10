@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { Outlet } from 'react-router'
-import { PairScreen } from '@/features/pair/pair-screen'
+import { PairScreen } from '@/features/pair'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { Backdrop } from './backdrop/backdrop'
 import { LayoutViewModel } from './layout.view-model'
 import { Rail } from './rail/rail'
 import { Toast } from './toast/toast'
-import { Spinner } from '@/shared/ui/spinner/spinner'
+import { Spinner } from '@/shared/ui/spinner'
 
 export const Layout = observer(function Layout() {
   const vm = useViewModel((services) => new LayoutViewModel(services))

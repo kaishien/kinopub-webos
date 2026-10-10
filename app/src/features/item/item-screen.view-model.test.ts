@@ -3,7 +3,8 @@ import { ApiError } from '@/services/api/api.service'
 import type { Item, ItemShort, Season, Video } from '@/services/api/api.types'
 import type { RouterService } from '@/services/router/router.service'
 import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
-import { ItemScreenViewModel, resumePoint } from './item-screen.view-model'
+import { resumePoint } from '@/shared/lib/resume-point'
+import { ItemScreenViewModel } from './item-screen.view-model'
 
 const posters = { small: '', medium: 'https://cdn.test/poster/item/medium/1.jpg', big: '' }
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { Button } from '@/shared/ui/button/button'
-import type { FocusLayout } from '@/shared/ui/focus/pressable'
+import { Button } from '@/shared/ui/button'
+import type { FocusLayout } from '@/shared/ui/focus'
 
 export interface SheetOptionProps {
   children: ReactNode

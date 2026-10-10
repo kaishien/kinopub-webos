@@ -1,8 +1,8 @@
 import { memo } from 'react'
 import type { ItemShort } from '@/services/api/api.types'
-import { Card } from '@/shared/ui/card/card'
-import type { FocusLayout } from '@/shared/ui/focus/pressable'
-import type { GridViewModel } from '@/shared/ui/grid/grid.view-model'
+import { Card } from '@/shared/ui/card'
+import type { FocusLayout } from '@/shared/ui/focus'
+import type { GridViewModel } from '../grid.view-model'
 
 export interface GridCellProps {
   vm: GridViewModel

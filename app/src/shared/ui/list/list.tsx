@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { Pressable, type PressableProps } from '@/shared/ui/focus/pressable'
+import { FocusGroup, Pressable, type PressableProps } from '@/shared/ui/focus'
 import styles from './list.module.css'
 
 export function List({ children, focusKey }: { children: ReactNode; focusKey: string }) {

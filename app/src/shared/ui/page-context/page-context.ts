@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { PageViewModel } from './page.view-model'
+import type { PageViewModel } from '@/shared/ui/page'
 
 export interface PageContextValue {
   page: PageViewModel

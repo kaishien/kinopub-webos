@@ -1,9 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import type { CatalogScreenViewModel } from '@/features/catalog/catalog-screen.view-model'
-import { FILTER_TITLES } from '@/features/catalog/filters'
-import { filterButtonKey } from '@/features/catalog/toolbar/catalog-toolbar'
-import { Sheet } from '@/shared/ui/sheet/sheet'
-import { SheetOption } from '@/shared/ui/sheet/sheet-option/sheet-option'
+import type { CatalogScreenViewModel } from '../catalog-screen.view-model'
+import { FILTER_TITLES } from '../filters'
+import { filterButtonKey } from '../toolbar/catalog-toolbar'
+import { Sheet, SheetOption } from '@/shared/ui/sheet'
 
 export const FilterSheet = observer(function FilterSheet({ vm }: { vm: CatalogScreenViewModel }) {
   const kind = vm.sheet

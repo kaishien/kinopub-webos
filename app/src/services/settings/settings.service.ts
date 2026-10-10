@@ -1,6 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import type { ApiService } from '@/services/api/api.service'
-import { API_HOSTS } from '@/services/api/api.service'
+import { API_HOSTS, type ApiService } from '@/services/api/api.service'
 import type { StreamKind } from '@/services/api/api.types'
 import type { StorageService } from '@/services/storage/storage.service'
 

@@ -1,12 +1,12 @@
 import { memo, useCallback } from 'react'
 import type { Video } from '@/services/api/api.types'
 import { episodeLabel, formatDuration } from '@/shared/lib/format'
-import { WIDE } from '@/shared/ui/card/card-metrics'
-import { Pressable } from '@/shared/ui/focus/pressable'
-import { IconCheck } from '@/shared/ui/icons/icons'
-import { Row, useRowItemFocus } from '@/shared/ui/row/row'
+import { WIDE } from '@/shared/ui/card'
+import { Pressable } from '@/shared/ui/focus'
+import { IconCheck } from '@/shared/ui/icons'
+import { Row, useRowItemFocus } from '@/shared/ui/row'
 import styles from './episodes-row.module.css'
-import { Badge } from '@/shared/ui/badge/badge'
+import { Badge } from '@/shared/ui/badge'
 
 export interface EpisodesRowProps {
   videos: Video[]

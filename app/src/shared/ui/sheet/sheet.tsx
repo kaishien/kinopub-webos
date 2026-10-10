@@ -2,7 +2,7 @@ import { doesFocusableExist, setFocus } from '@noriginmedia/norigin-spatial-navi
 import { useEffect, type ReactNode } from 'react'
 import { useServices } from '@/services/services'
 import { RemoteKey, RemoteService } from '@/services/remote/remote.service'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
+import { FocusGroup } from '@/shared/ui/focus'
 import styles from './sheet.module.css'
 
 export interface SheetProps {

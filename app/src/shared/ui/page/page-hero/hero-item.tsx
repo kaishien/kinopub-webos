@@ -1,7 +1,7 @@
 import type { ItemShort } from '@/services/api/api.types'
 import { formatRating, qualityBadge, splitTitle } from '@/shared/lib/format'
-import { IconStar } from '@/shared/ui/icons/icons'
-import { Badge } from '@/shared/ui/badge/badge'
+import { IconStar } from '@/shared/ui/icons'
+import { Badge } from '@/shared/ui/badge'
 import styles from './page-hero.module.css'
 
 export function HeroItem({ item, note }: { item: ItemShort; note?: string }) {

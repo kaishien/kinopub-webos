@@ -2,9 +2,8 @@ import { setFocus } from '@noriginmedia/norigin-spatial-navigation'
 import { observer } from 'mobx-react-lite'
 import type { ReactNode } from 'react'
 import { useServices } from '@/services/services'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
+import { FocusGroup, Pressable, type FocusLayout } from '@/shared/ui/focus'
 import { cx } from '@/shared/lib/cx'
-import { Pressable, type FocusLayout } from '@/shared/ui/focus/pressable'
 import {
   Icon3d,
   IconAnime,
@@ -26,7 +25,7 @@ import {
   IconStack,
   IconTv,
   IconUhd,
-} from '@/shared/ui/icons/icons'
+} from '@/shared/ui/icons'
 import { link } from '@/app/routes'
 import styles from './rail.module.css'
 

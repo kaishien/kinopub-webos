@@ -1,6 +1,6 @@
 import { memo, type CSSProperties, type SyntheticEvent } from 'react'
-import { Pressable } from '@/shared/ui/focus/pressable'
-import { useRowItemFocus } from '@/shared/ui/row/row'
+import { Pressable } from '@/shared/ui/focus'
+import { useRowItemFocus } from '@/shared/ui/row'
 import type { PersonEntry } from '../people'
 import styles from './person-card.module.css'
 

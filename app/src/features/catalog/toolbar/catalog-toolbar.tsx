@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite'
-import type { CatalogScreenViewModel } from '@/features/catalog/catalog-screen.view-model'
-import type { FilterKind } from '@/features/catalog/filters'
-import { FRESH_TYPES } from '@/features/catalog/sections'
-import { Button } from '@/shared/ui/button/button'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { IconChevronDown, IconFilter, IconSort } from '@/shared/ui/icons/icons'
+import type { CatalogScreenViewModel } from '../catalog-screen.view-model'
+import type { FilterKind } from '../filters'
+import { FRESH_TYPES } from '../sections'
+import { Button } from '@/shared/ui/button'
+import { FocusGroup } from '@/shared/ui/focus'
+import { IconChevronDown, IconFilter, IconSort } from '@/shared/ui/icons'
 import styles from './catalog-toolbar.module.css'
 
 export const filterButtonKey = (kind: FilterKind) => `CATALOG-${kind}`

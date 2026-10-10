@@ -1,7 +1,7 @@
 import { FocusContext, useFocusable, type UseFocusableConfig } from '@noriginmedia/norigin-spatial-navigation'
 import type { CSSProperties, ReactNode } from 'react'
 import { cx } from '@/shared/lib/cx'
-import { useOptionalPage } from '@/shared/ui/page/page-context'
+import { useOptionalPage } from '@/shared/ui/page-context'
 
 export interface FocusGroupProps {
   children: ReactNode

@@ -5,6 +5,8 @@ import type { Services } from '@/services/services'
 import { episodeLabel, formatDuration, splitTitle, widePosterUrl } from '@/shared/lib/format'
 import { Scope } from '@/shared/view-model/use-view-model'
 import { link } from '@/app/routes'
+import { itemQueryKey } from '@/services/query/item-query-key'
+import { resumePoint } from '@/shared/lib/resume-point'
 import { findPhoto, type PersonPhoto } from '@/services/people-photos/people-photos.service'
 import type { PersonEntry } from './people/people'
 
@@ -17,8 +19,6 @@ export interface PlayTarget {
   season: number
   resumeFrom: number
 }
-
-export const itemQueryKey = (id: number) => ['item', id] as const
 
 export class ItemScreenViewModel {
   private readonly scope = new Scope()
@@ -304,12 +304,6 @@ export class ItemScreenViewModel {
 }
 
 /** Views of a minute or less don't count as a resume point. */
-export function resumePoint(video: Video): number {
-  const time = video.watching?.time ?? 0
-
-  return video.watched !== 1 && time > 60 ? time : 0
-}
-
 function splitNames(value: string | undefined): string[] {
   return (value ?? '')
     .split(',')

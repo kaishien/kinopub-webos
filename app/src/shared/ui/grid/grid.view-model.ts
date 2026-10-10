@@ -2,7 +2,7 @@ import { makeAutoObservable, observable, reaction } from 'mobx'
 import type { ImageService } from '@/services/images/image.service'
 import type { ItemShort } from '@/services/api/api.types'
 import { VirtualList } from '@/shared/lib/virtual-list'
-import type { PageViewModel } from '@/shared/ui/page/page.view-model'
+import type { PageViewModel } from '@/shared/ui/page'
 
 /** Request the next page this many rows early so it arrives before focus reaches the end. */
 const NEXT_PAGE_ROWS = 4

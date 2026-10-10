@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { API_HOSTS } from '@/services/api/api.service'
+import { API_HOSTS, type ApiService } from '@/services/api/api.service'
 import { StorageService } from '@/services/storage/storage.service'
 import { fakeApi } from '@/test/fake-services'
 import { SettingsService } from './settings.service'
-import type { ApiService } from '@/services/api/api.service'
 
 function create() {
   const storage = new StorageService()

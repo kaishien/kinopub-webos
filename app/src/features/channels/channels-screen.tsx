@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite'
-import { Page } from '@/shared/ui/page/page'
-import { Status } from '@/shared/ui/status/status'
+import { Page } from '@/shared/ui/page'
+import { Status } from '@/shared/ui/status'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { ChannelsGrid } from './channels-grid/channels-grid'
 import { ChannelsScreenViewModel } from './channels-screen.view-model'
-import { PageTitle } from '@/shared/ui/page-title/page-title'
+import { PageTitle } from '@/shared/ui/page-title'
 
 export const ChannelsScreen = observer(function ChannelsScreen() {
   const vm = useViewModel((services) => new ChannelsScreenViewModel(services))

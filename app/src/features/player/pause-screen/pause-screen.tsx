@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import type { PlayerScreenViewModel } from '@/features/player/player-screen.view-model'
+import type { PlayerScreenViewModel } from '../player-screen.view-model'
 import styles from './pause-screen.module.css'
 
 export const PauseScreen = observer(function PauseScreen({ vm }: { vm: PlayerScreenViewModel }) {

@@ -1,9 +1,9 @@
 import { setFocus } from '@noriginmedia/norigin-spatial-navigation'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { SheetOption } from '@/shared/ui/sheet/sheet-option/sheet-option'
-import type { PlayerScreenViewModel } from '@/features/player/player-screen.view-model'
+import { FocusGroup } from '@/shared/ui/focus'
+import { SheetOption } from '@/shared/ui/sheet'
+import type { PlayerScreenViewModel } from '../player-screen.view-model'
 import styles from './player-panel.module.css'
 
 const optionKey = (column: string, index: number) => `PANEL-${column}-${index}`

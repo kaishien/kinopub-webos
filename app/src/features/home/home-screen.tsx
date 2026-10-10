@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite'
-import { ItemsRow } from '@/shared/ui/items-row/items-row'
-import { Page } from '@/shared/ui/page/page'
+import { ItemsRow } from '@/shared/ui/items-row'
+import { Page } from '@/shared/ui/page'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { CONTINUE_SHELF_KEY, HomeScreenViewModel } from './home-screen.view-model'
-import { Spinner } from '@/shared/ui/spinner/spinner'
-import { Status } from '@/shared/ui/status/status'
+import { Spinner } from '@/shared/ui/spinner'
+import { Status } from '@/shared/ui/status'
 
 export const HomeScreen = observer(function HomeScreen() {
   const vm = useViewModel((services) => new HomeScreenViewModel(services))

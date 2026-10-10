@@ -2,9 +2,9 @@ import { observer } from 'mobx-react-lite'
 import type { Video } from '@/services/api/api.types'
 import { cx } from '@/shared/lib/cx'
 import { formatDuration } from '@/shared/lib/format'
-import { Badge } from '@/shared/ui/badge/badge'
-import { Pressable, type FocusLayout } from '@/shared/ui/focus/pressable'
-import { IconCheck } from '@/shared/ui/icons/icons'
+import { Badge } from '@/shared/ui/badge'
+import { Pressable, type FocusLayout } from '@/shared/ui/focus'
+import { IconCheck } from '@/shared/ui/icons'
 import styles from './episode-row.module.css'
 
 export const episodeKey = (id: number) => `EPISODES-video-${id}`

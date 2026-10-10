@@ -5,13 +5,13 @@ import { link } from '@/app/routes'
 import { widePosterUrl } from '@/shared/lib/format'
 import { gridNavigation, itemFocusKey } from '@/shared/lib/index-navigation'
 import { useViewModel } from '@/shared/view-model/use-view-model'
-import { gridCard } from '@/shared/ui/card/card-metrics'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { usePage } from '@/shared/ui/page/page'
+import { gridCard } from '@/shared/ui/card'
+import { FocusGroup } from '@/shared/ui/focus'
+import { usePage } from '@/shared/ui/page'
 import { GridCell } from './grid-cell/grid-cell'
 import { GridViewModel } from './grid.view-model'
 import styles from './grid.module.css'
-import { Spinner } from '@/shared/ui/spinner/spinner'
+import { Spinner } from '@/shared/ui/spinner'
 
 export interface GridProps {
   items: ItemShort[]

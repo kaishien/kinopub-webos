@@ -4,7 +4,7 @@ import { KEY_REPEAT_MS } from '@/shared/ui/motion'
 import { configure } from 'mobx'
 import { useState } from 'react'
 import { RouterProvider } from 'react-router'
-import { createServices, ServicesContext, type Services } from '@/services/services'
+import { ServicesContext, createServices, type Services } from '@/services/services'
 import { createAppRouter } from './router'
 import './styles/global.css'
 

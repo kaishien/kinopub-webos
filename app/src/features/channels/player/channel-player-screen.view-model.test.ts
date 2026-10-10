@@ -2,10 +2,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { TvChannel } from '@/services/api/api.types'
 import { RemoteKey } from '@/services/remote/remote.service'
 import { fakeServices } from '@/test/fake-services'
-import { FakeErrorTypes, FakeHls } from '@/features/player/stream/fake-hls'
+import { FakeErrorTypes, FakeHls } from '@/shared/lib/hls-stream/fake-hls'
 import { ChannelPlayerScreenViewModel } from './channel-player-screen.view-model'
 
-vi.mock('hls.js', async () => (await import('@/features/player/stream/fake-hls')).fakeHlsModule())
+vi.mock('hls.js', async () => (await import('@/shared/lib/hls-stream/fake-hls')).fakeHlsModule())
 
 const HUD_MS = 3500
 const START_TIMEOUT_MS = 20000

@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useViewModel } from '@/shared/view-model/use-view-model'
-import { Setting } from '@/features/settings/setting/setting'
+import { Setting } from '../setting/setting'
 import { DeviceSettingsViewModel } from './device-settings.view-model'
 
 const yesNo = (value: boolean) => (value ? 'Да' : 'Нет')

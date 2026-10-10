@@ -1,6 +1,6 @@
-import { Button } from '@/shared/ui/button/button'
-import { IconRefresh } from '@/shared/ui/icons/icons'
-import { Spinner } from '@/shared/ui/spinner/spinner'
+import { Button } from '@/shared/ui/button'
+import { IconRefresh } from '@/shared/ui/icons'
+import { Spinner } from '@/shared/ui/spinner'
 import styles from './status.module.css'
 
 export interface StatusProps {

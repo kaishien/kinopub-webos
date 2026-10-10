@@ -3,11 +3,9 @@ import type { ItemShort } from '@/services/api/api.types'
 import { useServices } from '@/services/services'
 import { link } from '@/app/routes'
 import { widePosterUrl } from '@/shared/lib/format'
-import { Card } from '@/shared/ui/card/card'
-import { POSTER, POSTER_BARE, POSTER_RANKED, POSTER_RANKED_BARE } from '@/shared/ui/card/card-metrics'
-import { MoreCard } from '@/shared/ui/card/more-card/more-card'
-import { usePage } from '@/shared/ui/page/page'
-import { Row, useRowItemFocus } from '@/shared/ui/row/row'
+import { Card, MoreCard, POSTER, POSTER_BARE, POSTER_RANKED, POSTER_RANKED_BARE } from '@/shared/ui/card'
+import { usePage } from '@/shared/ui/page'
+import { Row, useRowItemFocus } from '@/shared/ui/row'
 
 export interface ItemsRowProps {
   title: string

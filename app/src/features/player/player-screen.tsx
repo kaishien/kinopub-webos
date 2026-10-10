@@ -5,9 +5,9 @@ import { useLocation, useParams, useSearchParams } from 'react-router'
 import type { QualityPreference } from '@/services/settings/settings.service'
 import { episodeLabel } from '@/shared/lib/format'
 import { cx } from '@/shared/lib/cx'
-import { Button } from '@/shared/ui/button/button'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { IconNext, IconPause, IconPlay, IconSpark, IconStack, IconSubs } from '@/shared/ui/icons/icons'
+import { Button } from '@/shared/ui/button'
+import { FocusGroup } from '@/shared/ui/focus'
+import { IconNext, IconPause, IconPlay, IconSpark, IconStack, IconSubs } from '@/shared/ui/icons'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { ControlButton } from './controls/control-button'
 import { EpisodesPanel } from './episodes-panel/episodes-panel'
@@ -16,8 +16,9 @@ import { PauseScreen } from './pause-screen/pause-screen'
 import { PlayerPanel } from './panel/player-panel'
 import { PlayerScreenViewModel } from './player-screen.view-model'
 import { ProgressBar } from './progress-bar/progress-bar'
+import { playerShell as shell } from '@/shared/ui/player-shell'
 import styles from './player-screen.module.css'
-import { Spinner } from '@/shared/ui/spinner/spinner'
+import { Spinner } from '@/shared/ui/spinner'
 
 const ICON = { episodes: <IconStack />, tracks: <IconSubs />, quality: <IconSpark />, next: <IconNext /> }
 
@@ -73,7 +74,7 @@ const PlayerContent = observer(function PlayerContent() {
   }, [vm.nextUp.visible, vm.hudVisible, vm.hudTarget, vm.hasSource, vm.error, vm.panel])
 
   return (
-    <div className={cx(styles.player, (vm.hudVisible || vm.nextUp.visible) && styles.hudOpen)}>
+    <div className={cx(shell.player, (vm.hudVisible || vm.nextUp.visible) && styles.hudOpen)}>
       {vm.hasSource && (
         // Fallback needs a fresh element: the old one is bound to hls.js's MediaSource.
         <video key={vm.fallback ? 'file' : 'stream'} ref={vm.attach} src={vm.src} autoPlay playsInline crossOrigin="anonymous">
@@ -84,21 +85,21 @@ const PlayerContent = observer(function PlayerContent() {
       )}
 
       {vm.buffering && !vm.error && (
-        <div className={styles.playerCenter}>
+        <div className={shell.playerCenter}>
           <Spinner />
         </div>
       )}
       {vm.flash && (
-        <div className={styles.playerCenter} key={vm.flash}>
+        <div className={shell.playerCenter} key={vm.flash}>
           <div className={styles.playerFlash}>{vm.flash === 'play' ? <IconPlay /> : <IconPause />}</div>
         </div>
       )}
 
       {vm.error && (
-        <div className={styles.playerError}>
+        <div className={shell.playerError}>
           <h3>Не удалось запустить видео</h3>
           <p>{vm.error}</p>
-          <FocusGroup focusKey="PLAYER-error" className={styles.playerErrorActions} preferredChildFocusKey={FOCUS.retry} isFocusBoundary>
+          <FocusGroup focusKey="PLAYER-error" className={shell.playerErrorActions} preferredChildFocusKey={FOCUS.retry} isFocusBoundary>
             <Button primary focusKey={FOCUS.retry} onPress={vm.retry}>
               Повторить
             </Button>
@@ -110,10 +111,10 @@ const PlayerContent = observer(function PlayerContent() {
       )}
 
       {/* Panels cover the HUD completely: it would show through their dimmed backdrop. */}
-      <div className={cx(styles.playerHud, vm.hudVisible && !vm.panel && styles.isVisible)}>
-        <div className={styles.playerDock}>
-          <div className={styles.playerTitle}>{vm.title}</div>
-          {vm.subtitle && <div className={styles.playerSubtitle}>{vm.subtitle}</div>}
+      <div className={cx(shell.playerHud, vm.hudVisible && !vm.panel && shell.isVisible)}>
+        <div className={shell.playerDock}>
+          <div className={shell.playerTitle}>{vm.title}</div>
+          {vm.subtitle && <div className={shell.playerSubtitle}>{vm.subtitle}</div>}
 
           <ProgressBar vm={vm} focusKey={FOCUS.bar} />
 

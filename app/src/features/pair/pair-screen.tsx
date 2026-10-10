@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { useServices } from '@/services/services'
-import { Button } from '@/shared/ui/button/button'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { IconRefresh } from '@/shared/ui/icons/icons'
+import { Button } from '@/shared/ui/button'
+import { FocusGroup } from '@/shared/ui/focus'
+import { IconRefresh } from '@/shared/ui/icons'
 import styles from './pair-screen.module.css'
 
 export const PairScreen = observer(function PairScreen() {

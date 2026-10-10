@@ -1,7 +1,7 @@
 import { makeAutoObservable, reaction } from 'mobx'
 import type { ImageService } from '@/services/images/image.service'
 import { VirtualList } from '@/shared/lib/virtual-list'
-import { CARD_GAP, ROW_END_GUTTER, ROW_VIEWPORT } from '@/shared/ui/card/card-metrics'
+import { CARD_GAP, ROW_END_GUTTER, ROW_VIEWPORT } from '@/shared/ui/card'
 import { GlideDetector } from '@/shared/ui/motion'
 
 export interface RowParams {

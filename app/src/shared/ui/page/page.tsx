@@ -4,10 +4,10 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { useServices } from '@/services/services'
 import { cx } from '@/shared/lib/cx'
 import { useViewModel } from '@/shared/view-model/use-view-model'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { HERO_HEIGHT, SCREEN_HEIGHT } from '@/shared/ui/card/card-metrics'
+import { FocusGroup } from '@/shared/ui/focus'
+import { HERO_HEIGHT, SCREEN_HEIGHT } from '@/shared/ui/card'
 import { PageHero } from './page-hero/page-hero'
-import { PageContext, type PageContextValue } from './page-context'
+import { PageContext, type PageContextValue } from '@/shared/ui/page-context'
 import { PageViewModel } from './page.view-model'
 import styles from './page.module.css'
 
@@ -108,4 +108,4 @@ export const Page = observer(function Page({
   )
 })
 
-export { usePage, useReveal } from './page-context'
+export { usePage, useReveal } from '@/shared/ui/page-context'

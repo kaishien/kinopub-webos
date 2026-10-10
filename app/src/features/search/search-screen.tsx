@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite'
-import { Grid } from '@/shared/ui/grid/grid'
-import { Page } from '@/shared/ui/page/page'
+import { Grid } from '@/shared/ui/grid'
+import { Page } from '@/shared/ui/page'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { SEARCH_INPUT_FOCUS_KEY, SearchInput } from './search-input/search-input'
 import { SearchScreenViewModel } from './search-screen.view-model'
 import styles from './search-screen.module.css'
-import { Empty } from '@/shared/ui/empty/empty'
+import { Empty } from '@/shared/ui/empty'
 
 const GRID_FOCUS_KEY = 'GRID-search'
 

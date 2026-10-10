@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
-import { findPhoto, PeoplePhotosService, type PersonPhoto } from './people-photos.service'
+import { PeoplePhotosService, findPhoto, type PersonPhoto } from './people-photos.service'
 
 type FetchMock = Mock<typeof fetch>
 

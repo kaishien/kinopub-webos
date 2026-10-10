@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { cx } from '@/shared/lib/cx'
-import { Pressable, type PressableProps } from '@/shared/ui/focus/pressable'
-import { IconCheck } from '@/shared/ui/icons/icons'
+import { Pressable, type PressableProps } from '@/shared/ui/focus'
+import { IconCheck } from '@/shared/ui/icons'
 import styles from './button.module.css'
 
 export interface ButtonProps extends Omit<PressableProps, 'children'> {

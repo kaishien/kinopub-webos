@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { useLocation, useParams } from 'react-router'
-import { Grid } from '@/shared/ui/grid/grid'
-import { Page } from '@/shared/ui/page/page'
-import { Status } from '@/shared/ui/status/status'
+import { Grid } from '@/shared/ui/grid'
+import { Page } from '@/shared/ui/page'
+import { Status } from '@/shared/ui/status'
 import { useViewModel } from '@/shared/view-model/use-view-model'
 import { BookmarkFolderScreenViewModel } from './bookmark-folder-screen.view-model'
-import { Empty } from '@/shared/ui/empty/empty'
+import { Empty } from '@/shared/ui/empty'
 
 export const BookmarkFolderScreen = observer(function BookmarkFolderScreen() {
   const { id = '0' } = useParams()

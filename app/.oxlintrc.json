@@ -73,6 +73,21 @@
       {
         "exceptAfterSingleLine": true
       }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "regex": "^@/features/[^/]+/.+",
+            "message": "Import a feature through its index: @/features/<name>"
+          },
+          {
+            "regex": "^@/shared/ui/[^/]+/.+",
+            "message": "Import a UI module through its index: @/shared/ui/<name>"
+          }
+        ]
+      }
     ]
   },
   "ignorePatterns": ["dist", "node_modules", "webos"],

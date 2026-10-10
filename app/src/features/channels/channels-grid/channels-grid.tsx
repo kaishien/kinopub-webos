@@ -1,8 +1,7 @@
 import { observer } from 'mobx-react-lite'
-import { FocusGroup } from '@/shared/ui/focus/focus-group'
-import { Pressable } from '@/shared/ui/focus/pressable'
-import { useReveal } from '@/shared/ui/page/page'
-import type { ChannelsScreenViewModel } from '@/features/channels/channels-screen.view-model'
+import { FocusGroup, Pressable } from '@/shared/ui/focus'
+import { useReveal } from '@/shared/ui/page'
+import type { ChannelsScreenViewModel } from '../channels-screen.view-model'
 import styles from './channels-grid.module.css'
 
 export const ChannelsGrid = observer(function ChannelsGrid({ vm }: { vm: ChannelsScreenViewModel }) {

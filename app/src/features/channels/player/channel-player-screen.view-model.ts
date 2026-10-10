@@ -5,8 +5,8 @@ import { RemoteKey, RemoteService } from '@/services/remote/remote.service'
 import type { Services } from '@/services/services'
 import { Scope } from '@/shared/view-model/use-view-model'
 import { link } from '@/app/routes'
-import { HlsStream } from '@/features/player/stream/hls-stream'
-import { channelsQueryKey } from '@/features/channels/channels-screen.view-model'
+import { HlsStream } from '@/shared/lib/hls-stream/hls-stream'
+import { channelsQueryKey } from '../channels-screen.view-model'
 
 const HUD_MS = 3500
 /** If the stream hasn't started by then, the channels server is likely unreachable from this network. */

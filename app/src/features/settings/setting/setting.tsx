@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ListItem } from '@/shared/ui/list/list'
+import { ListItem } from '@/shared/ui/list'
 
 export interface SettingProps {
   name: string

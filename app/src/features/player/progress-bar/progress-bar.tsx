@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { formatClock } from '@/shared/lib/format'
-import { Pressable } from '@/shared/ui/focus/pressable'
+import { Pressable } from '@/shared/ui/focus'
 import type { PlayerScreenViewModel } from '../player-screen.view-model'
 import styles from './progress-bar.module.css'
 
