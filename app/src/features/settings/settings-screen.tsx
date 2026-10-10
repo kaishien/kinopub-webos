@@ -46,8 +46,8 @@ export const SettingsScreen = observer(function SettingsScreen() {
           onPress={() => vm.toggle('autoplayNext')}
         />
         <Setting
-          name="Трейлер при наведении"
-          description="Задержитесь на карточке, и за описанием без звука пойдёт трейлер"
+          name="Трейлер на странице фильма"
+          description="Через пару секунд за описанием без звука пойдёт трейлер"
           value={yesNo(v.trailerPreview)}
           onPress={() => vm.toggle('trailerPreview')}
         />

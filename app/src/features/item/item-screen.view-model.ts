@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, reaction } from 'mobx'
 import { Mutation, Query } from 'mobx-tanstack-query'
 import type { BookmarkFolder, Item, ItemShort, Video } from '@/services/api/api.types'
 import type { Services } from '@/services/services'
@@ -60,6 +60,8 @@ export class ItemScreenViewModel {
     )
 
     ui.setBackdrop(widePosterUrl(id, preview?.posters))
+    this.scope.defer(reaction(() => this.data?.trailer?.url ?? '', ui.setTrailer, { fireImmediately: true }))
+    this.scope.defer(ui.clearTrailer)
 
     this.item = new Query<Item>({
       queryClient,

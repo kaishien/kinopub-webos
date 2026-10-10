@@ -12,6 +12,8 @@ export interface FocusedItem {
 
 export class UiService {
   backdrop = ''
+  /** Trailer the current screen wants behind its hero; the backdrop plays it once focus is off the cards. */
+  trailer = ''
   toast = ''
   pageFocusKey = ''
   focused: FocusedItem | null = null
@@ -79,6 +81,14 @@ export class UiService {
 
   clearBackdrop() {
     this.setBackdrop('')
+  }
+
+  setTrailer(url: string) {
+    if (url !== this.trailer) this.trailer = url
+  }
+
+  clearTrailer() {
+    this.setTrailer('')
   }
 
   showToast(text: string, ms = TOAST_MS) {

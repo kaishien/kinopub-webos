@@ -12,7 +12,7 @@ export interface Settings {
   subtitlesByDefault: boolean
   autoplayNext: boolean
   hideContinueRow: boolean
-  /** Play the muted trailer behind the hero after focus dwells on a card. */
+  /** Play the muted trailer behind the item screen's hero. */
   trailerPreview: boolean
   /** '' means pick the host automatically */
   apiHost: string

@@ -19,6 +19,9 @@ export const HERO_HEIGHT = 310
 /** Screen width minus the rail and the left gutter. */
 export const ROW_VIEWPORT = 1920 - 112 - 80
 
+/** A row stops with its last card this far from the screen edge: room for the focus scale and TV overscan. */
+export const ROW_END_GUTTER = 80
+
 export const SCREEN_HEIGHT = 1080
 
 /** Content width of a full-page grid: the screen minus the rail and both gutters. */
