@@ -25,13 +25,18 @@
   opacity: 1;
 }
 
-/* Trailer sits above the frame and below the shade, so the hero text reads the same over both. */
+/*
+ * Trailer sits above the frame and below the shade, so the hero text reads the same over both.
+ * Scaled up: cinema trailers are 2.39:1 inside a 16:9 file, and the scale pushes their baked-in
+ * letterbox bars (about 12% top and bottom) off the screen. A clean 16:9 trailer just loses its edges.
+ */
 .backdrop-trailer {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.28);
   opacity: 0;
   transition: opacity 600ms ease-in-out;
 }
