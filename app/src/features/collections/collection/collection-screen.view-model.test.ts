@@ -1,11 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { ApiError } from '@/services/api/api.service'
-import type { Services } from '@/services/services'
-import { fakeServices, type FakeServices } from '@/test/fake-services'
+import { fakeServices } from '@/test/fake-services'
 import { CollectionScreenViewModel } from './collection-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const posters = { small: '', medium: '', big: '' }
 
@@ -18,7 +14,7 @@ describe('CollectionScreenViewModel', () => {
     }
 
     services.api.collectionItems.mockResolvedValue(payload)
-    const vm = new CollectionScreenViewModel(svc(services), 3)
+    const vm = new CollectionScreenViewModel(services, 3)
 
     await vi.waitFor(() => expect(vm.data.data).toEqual(payload))
     expect(services.api.collectionItems).toHaveBeenCalledWith(3, expect.any(AbortSignal))
@@ -30,7 +26,7 @@ describe('CollectionScreenViewModel', () => {
     const services = fakeServices()
 
     services.api.collectionItems.mockRejectedValue(new ApiError(404, 'Нет подборки'))
-    const vm = new CollectionScreenViewModel(svc(services), 4)
+    const vm = new CollectionScreenViewModel(services, 4)
 
     await vi.waitFor(() => expect(vm.data.error?.message).toBe('Нет подборки'))
     vm.dispose()

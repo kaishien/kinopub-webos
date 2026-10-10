@@ -1,12 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '@/services/api/api.service'
 import type { Device, DeviceSettings } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
 import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
 import { DeviceSettingsViewModel } from './device-settings.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 function settings(overrides: Partial<DeviceSettings> = {}): DeviceSettings {
   return {
@@ -40,7 +36,7 @@ describe('DeviceSettingsViewModel', () => {
   })
 
   it('loads the device and derives servers and toggles', async () => {
-    const vm = new DeviceSettingsViewModel(svc(services))
+    const vm = new DeviceSettingsViewModel(services)
 
     expect(vm.settings).toBeUndefined()
     expect(vm.servers).toEqual([])
@@ -63,7 +59,7 @@ describe('DeviceSettingsViewModel', () => {
         }),
       ),
     )
-    const vm = new DeviceSettingsViewModel(svc(services))
+    const vm = new DeviceSettingsViewModel(services)
 
     await vi.waitFor(() => expect(vm.settings).toBeDefined())
     vm.cycleServer()
@@ -74,7 +70,7 @@ describe('DeviceSettingsViewModel', () => {
   })
 
   it('wraps the server cycle in both directions and ignores a single option', async () => {
-    const vm = new DeviceSettingsViewModel(svc(services))
+    const vm = new DeviceSettingsViewModel(services)
 
     await vi.waitFor(() => expect(vm.settings).toBeDefined())
     vm.cycleServer(-1)
@@ -88,7 +84,7 @@ describe('DeviceSettingsViewModel', () => {
     services.api.device.mockResolvedValue(
       device(settings({ serverLocation: { type: 'list', label: '', value: [{ id: 9, label: 'X', description: '', selected: 1 }] } })),
     )
-    const single = new DeviceSettingsViewModel(svc(services))
+    const single = new DeviceSettingsViewModel(services)
 
     await vi.waitFor(() => expect(single.server?.id).toBe(9))
     services.api.saveDeviceSettings.mockClear()
@@ -103,7 +99,7 @@ describe('DeviceSettingsViewModel', () => {
     const invalidate = vi.spyOn(services.queryClient, 'invalidateQueries')
 
     services.api.saveDeviceSettings.mockResolvedValue(saved)
-    const vm = new DeviceSettingsViewModel(svc(services))
+    const vm = new DeviceSettingsViewModel(services)
 
     await vi.waitFor(() => expect(vm.settings).toBeDefined())
     vm.toggle('supportHevc')
@@ -116,7 +112,7 @@ describe('DeviceSettingsViewModel', () => {
 
   it('does nothing before the device is loaded', async () => {
     services.api.device.mockReturnValue(new Promise(() => {}))
-    const vm = new DeviceSettingsViewModel(svc(services))
+    const vm = new DeviceSettingsViewModel(services)
 
     vm.toggle('supportHdr')
     vm.cycleServer()
@@ -129,7 +125,7 @@ describe('DeviceSettingsViewModel', () => {
   // (device-settings.view-model.ts:83) that vitest would report.
   it('rolls back by refetching and toasts when saving fails', async () => {
     services.api.saveDeviceSettings.mockRejectedValue(new ApiError(500, 'нет сети'))
-    const vm = new DeviceSettingsViewModel(svc(services))
+    const vm = new DeviceSettingsViewModel(services)
 
     await vi.waitFor(() => expect(vm.settings).toBeDefined())
     vm.device.setData((current) => current && { ...current, settings: { ...current.settings, supportHdr: { value: 1, label: 'HDR' } } })

@@ -1,17 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Collection } from '@/services/api/api.types'
-import type { RouterService } from '@/services/router/router.service'
-import type { Services } from '@/services/services'
 import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
 import { CollectionsScreenViewModel } from './collections-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
-
-/** RouterService methods are MobX-bound (non-configurable) so they cannot be spied; a class instance (not a plain object) survives makeAutoObservable untouched. */
-class StubRouter {
-  constructor(readonly navigate: ReturnType<typeof vi.fn>) {}
-}
 
 const posters = { small: 's', medium: 'm', big: 'b' }
 const collection = (id: number, views: number): Collection => ({
@@ -37,7 +27,7 @@ describe('CollectionsScreenViewModel', () => {
 
   it('maps collections to cards with a views subtitle', async () => {
     services.api.collections.mockResolvedValue(page([collection(1, 1), collection(2, 3), collection(3, 25)], 1, 1))
-    const vm = new CollectionsScreenViewModel(svc(services))
+    const vm = new CollectionsScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.cards).toHaveLength(3))
     expect(services.api.collections).toHaveBeenCalledWith(1, expect.any(AbortSignal))
@@ -48,12 +38,11 @@ describe('CollectionsScreenViewModel', () => {
   })
 
   it('opens a collection with its title in the navigation state', async () => {
-    // RouterService.navigate is a MobX-bound action (non-configurable), so a stub replaces spying.
-    const navigate = vi.fn()
+    services = fakeServices()
+    const navigate = vi.spyOn(services.router, 'navigate')
 
-    services = fakeServices({ router: new StubRouter(navigate) as unknown as RouterService })
     services.api.collections.mockResolvedValue(page([collection(5, 0)], 1, 1))
-    const vm = new CollectionsScreenViewModel(svc(services))
+    const vm = new CollectionsScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.cards).toHaveLength(1))
     vm.open(vm.cards[0])
@@ -65,7 +54,7 @@ describe('CollectionsScreenViewModel', () => {
     services.api.collections.mockImplementation((pageNo: number) =>
       Promise.resolve(pageNo === 2 ? page([collection(2, 0)], 2, 2) : page([collection(1, 0)], 1, 2)),
     )
-    const vm = new CollectionsScreenViewModel(svc(services))
+    const vm = new CollectionsScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.cards).toHaveLength(1))
     vm.loadMore()

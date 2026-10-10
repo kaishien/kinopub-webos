@@ -1,11 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ItemShort } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
 import { fakeServices, type FakeServices } from '@/test/fake-services'
 import { TrailerPreviewViewModel } from './trailer-preview.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const DWELL_MS = 1500
 const card: ItemShort = { id: 1, type: 'movie', subtype: '', title: 'Card', year: 2020, posters: { small: '', medium: '', big: '' } }
@@ -19,7 +15,7 @@ describe('TrailerPreviewViewModel', () => {
   })
 
   it('starts the trailer only after the page settles', () => {
-    const vm = new TrailerPreviewViewModel(svc(services))
+    const vm = new TrailerPreviewViewModel(services)
 
     services.ui.setTrailer('https://cdn/trailer.mp4')
     vi.advanceTimersByTime(DWELL_MS - 1)
@@ -33,7 +29,7 @@ describe('TrailerPreviewViewModel', () => {
   })
 
   it('does not start when a quick Back clears the trailer within the dwell', () => {
-    const vm = new TrailerPreviewViewModel(svc(services))
+    const vm = new TrailerPreviewViewModel(services)
 
     services.ui.setTrailer('https://cdn/trailer.mp4')
     vi.advanceTimersByTime(1000)
@@ -44,7 +40,7 @@ describe('TrailerPreviewViewModel', () => {
   })
 
   it('stops while a card has focus and resumes once focus leaves', () => {
-    const vm = new TrailerPreviewViewModel(svc(services))
+    const vm = new TrailerPreviewViewModel(services)
 
     services.ui.setTrailer('https://cdn/trailer.mp4')
     vi.advanceTimersByTime(DWELL_MS)
@@ -64,7 +60,7 @@ describe('TrailerPreviewViewModel', () => {
 
   it('respects the trailerPreview setting', () => {
     services.settings.set('trailerPreview', false)
-    const vm = new TrailerPreviewViewModel(svc(services))
+    const vm = new TrailerPreviewViewModel(services)
 
     services.ui.setTrailer('https://cdn/trailer.mp4')
     vi.advanceTimersByTime(DWELL_MS)
@@ -80,7 +76,7 @@ describe('TrailerPreviewViewModel', () => {
   })
 
   it('clear() resets playback and dispose stops reacting', () => {
-    const vm = new TrailerPreviewViewModel(svc(services))
+    const vm = new TrailerPreviewViewModel(services)
 
     services.ui.setTrailer('https://cdn/trailer.mp4')
     vi.advanceTimersByTime(DWELL_MS)

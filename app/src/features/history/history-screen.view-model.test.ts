@@ -1,11 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { HistoryEntry, HistoryPage, ItemShort } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
 import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
 import { HistoryScreenViewModel } from './history-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const item = (id: number): ItemShort => ({
   id,
@@ -41,7 +37,7 @@ describe('HistoryScreenViewModel', () => {
 
   it('flattens entries into items and formats a subtitle per item', async () => {
     services.api.history.mockResolvedValue(page([entry(1, 3725, { number: 3, snumber: 2 }), entry(2, 95)], 1, 1))
-    const vm = new HistoryScreenViewModel(svc(services))
+    const vm = new HistoryScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.entries).toHaveLength(2))
     expect(services.api.history).toHaveBeenCalledWith(1, expect.any(AbortSignal))
@@ -56,7 +52,7 @@ describe('HistoryScreenViewModel', () => {
     services.api.history.mockImplementation((pageNo: number) =>
       Promise.resolve(pageNo === 2 ? page([entry(3, 10)], 2, 2) : page([entry(1, 10), entry(2, 10)], 1, 2)),
     )
-    const vm = new HistoryScreenViewModel(svc(services))
+    const vm = new HistoryScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.items).toHaveLength(2))
     vm.loadMore()

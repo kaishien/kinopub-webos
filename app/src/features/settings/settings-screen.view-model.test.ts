@@ -1,12 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { API_HOSTS } from '@/services/api/api.service'
-import type { AuthService } from '@/services/auth/auth.service'
-import type { Services } from '@/services/services'
 import { fakeServices, type FakeServices } from '@/test/fake-services'
 import { QUALITY_OPTIONS, STREAM_OPTIONS, SettingsScreenViewModel } from './settings-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 describe('SettingsScreenViewModel', () => {
   let services: FakeServices
@@ -14,7 +9,7 @@ describe('SettingsScreenViewModel', () => {
 
   beforeEach(() => {
     services = fakeServices()
-    vm = new SettingsScreenViewModel(svc(services))
+    vm = new SettingsScreenViewModel(services)
   })
 
   it('reflects the current settings and version', () => {
@@ -86,11 +81,9 @@ describe('SettingsScreenViewModel', () => {
   })
 
   it('logs out through the auth service', () => {
-    // AuthService.logout is a MobX-bound action (non-configurable), so a stub replaces spying.
-    const logout = vi.fn()
-    const stubbed = new SettingsScreenViewModel(svc(fakeServices({ auth: { user: null, logout } as unknown as AuthService })))
+    const logout = vi.spyOn(services.auth, 'logout').mockImplementation(() => {})
 
-    stubbed.logout()
+    new SettingsScreenViewModel(services).logout()
     expect(logout).toHaveBeenCalledTimes(1)
   })
 })

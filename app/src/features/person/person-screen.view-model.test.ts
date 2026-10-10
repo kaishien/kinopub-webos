@@ -1,11 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { ItemShort } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
-import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
+import { fakeServices, flush } from '@/test/fake-services'
 import { PersonScreenViewModel } from './person-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const item = (id: number): ItemShort => ({
   id,
@@ -27,7 +23,7 @@ describe('PersonScreenViewModel', () => {
     services.api.byPerson.mockImplementation((_role: string, _name: string, pageNo: number) =>
       Promise.resolve(pageNo === 2 ? page([3], 2, 2) : page([1, 2], 1, 2)),
     )
-    const vm = new PersonScreenViewModel(svc(services), 'director', 'Нолан')
+    const vm = new PersonScreenViewModel(services, 'director', 'Нолан')
 
     expect(vm.role).toBe('director')
     expect(vm.name).toBe('Нолан')
@@ -46,7 +42,7 @@ describe('PersonScreenViewModel', () => {
     const services = fakeServices()
 
     services.api.byPerson.mockResolvedValue({ items: [item(1)] })
-    const vm = new PersonScreenViewModel(svc(services), 'cast', 'Актёр')
+    const vm = new PersonScreenViewModel(services, 'cast', 'Актёр')
 
     await vi.waitFor(() => expect(vm.list).toHaveLength(1))
     expect(vm.pages.hasNextPage).toBe(false)

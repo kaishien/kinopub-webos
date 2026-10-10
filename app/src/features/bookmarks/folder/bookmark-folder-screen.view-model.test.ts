@@ -1,11 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { ItemShort } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
-import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
+import { fakeServices, flush } from '@/test/fake-services'
 import { BookmarkFolderScreenViewModel } from './bookmark-folder-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const item = (id: number): ItemShort => ({
   id,
@@ -29,7 +25,7 @@ describe('BookmarkFolderScreenViewModel', () => {
     services.api.bookmarkFolderItems.mockImplementation((_id: number, pageNo: number) =>
       Promise.resolve(pageNo === 2 ? page([3], 2, 2) : page([1, 2], 1, 2)),
     )
-    const vm = new BookmarkFolderScreenViewModel(svc(services), 3)
+    const vm = new BookmarkFolderScreenViewModel(services, 3)
 
     expect(vm.title).toBeUndefined()
     await vi.waitFor(() => expect(vm.list).toHaveLength(2))

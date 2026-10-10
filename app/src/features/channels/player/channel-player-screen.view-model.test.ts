@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { TvChannel } from '@/services/api/api.types'
 import { RemoteKey } from '@/services/remote/remote.service'
-import type { RouterService } from '@/services/router/router.service'
-import type { Services } from '@/services/services'
 import { fakeServices } from '@/test/fake-services'
 import { FakeErrorTypes, FakeHls } from '@/features/player/stream/fake-hls'
 import { ChannelPlayerScreenViewModel } from './channel-player-screen.view-model'
@@ -33,12 +31,15 @@ async function settle() {
 }
 
 async function setup(channelId = 2, channels = CHANNELS) {
-  const router = { replace: vi.fn(() => Promise.resolve()), back: vi.fn(() => true) }
-  const services = fakeServices({ router: router as unknown as RouterService })
+  const services = fakeServices()
+  const router = {
+    replace: vi.spyOn(services.router, 'replace').mockResolvedValue(undefined),
+    back: vi.spyOn(services.router, 'back').mockReturnValue(true),
+  }
 
   services.api.tvChannels.mockResolvedValue(channels)
   const push = vi.spyOn(services.remote, 'push')
-  const vm = new ChannelPlayerScreenViewModel(services as unknown as Services, channelId)
+  const vm = new ChannelPlayerScreenViewModel(services, channelId)
   const onKey = push.mock.calls[0][0] as (event: KeyboardEvent) => boolean
   const element = {} as HTMLVideoElement
 

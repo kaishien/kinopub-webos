@@ -1,12 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '@/services/api/api.service'
 import type { ItemShort } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
 import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
 import { CONTINUE_SHELF_KEY, HomeScreenViewModel } from './home-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const item = (id: number): ItemShort => ({
   id,
@@ -26,7 +22,7 @@ describe('HomeScreenViewModel', () => {
   })
 
   it('lays the shelves out in the fixed order with their titles and links', () => {
-    const vm = new HomeScreenViewModel(svc(services))
+    const vm = new HomeScreenViewModel(services)
 
     expect(vm.shelves.map((s) => [s.key, s.title])).toEqual([
       [CONTINUE_SHELF_KEY, 'Продолжить'],
@@ -50,7 +46,7 @@ describe('HomeScreenViewModel', () => {
     services.api.watchingSerials.mockResolvedValue(items(2))
     services.api.shelf.mockImplementation((shelf: string) => Promise.resolve(shelf === 'hot' ? items(25) : items(3)))
     services.api.items.mockResolvedValue({ items: items(4, 100) })
-    const vm = new HomeScreenViewModel(svc(services))
+    const vm = new HomeScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.shelves.every((s) => s.query.isSuccess)).toBe(true))
 
@@ -78,7 +74,7 @@ describe('HomeScreenViewModel', () => {
     services.api.watchingSerials.mockResolvedValue(items(1))
     services.api.shelf.mockImplementation((_shelf: string, type: string) => Promise.resolve(type === 'movie' ? items(2) : []))
     services.api.items.mockResolvedValue({ items: [] })
-    const vm = new HomeScreenViewModel(svc(services))
+    const vm = new HomeScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.shelves.every((s) => s.query.isSuccess)).toBe(true))
     expect(vm.visibleShelves.map((s) => s.key)).toEqual([CONTINUE_SHELF_KEY, 'fresh-movie', 'top-movie'])
@@ -96,7 +92,7 @@ describe('HomeScreenViewModel', () => {
     services.api.watchingSerials.mockReturnValue(new Promise((resolve) => (resolveContinue = resolve)))
     services.api.shelf.mockReturnValue(new Promise(() => {}))
     services.api.items.mockReturnValue(new Promise(() => {}))
-    const vm = new HomeScreenViewModel(svc(services))
+    const vm = new HomeScreenViewModel(services)
 
     await flush()
     expect(vm.isLoading).toBe(true)
@@ -113,7 +109,7 @@ describe('HomeScreenViewModel', () => {
     services.api.watchingSerials.mockRejectedValue(new ApiError(500, 'Сервер недоступен'))
     services.api.shelf.mockResolvedValue([])
     services.api.items.mockResolvedValue({ items: [] })
-    const vm = new HomeScreenViewModel(svc(services))
+    const vm = new HomeScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.error).toBe('Сервер недоступен'))
     expect(vm.isLoading).toBe(false)
@@ -132,7 +128,7 @@ describe('HomeScreenViewModel', () => {
     services.api.watchingSerials.mockRejectedValue(new ApiError(500, 'boom'))
     services.api.shelf.mockResolvedValue(items(1))
     services.api.items.mockResolvedValue({ items: [] })
-    const vm = new HomeScreenViewModel(svc(services))
+    const vm = new HomeScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.shelves[0].query.error).toBeTruthy())
     await vi.waitFor(() => expect(vm.visibleShelves.length).toBeGreaterThan(0))

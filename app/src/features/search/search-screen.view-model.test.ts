@@ -1,11 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ItemShort, ItemsPage } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
 import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
 import { SearchScreenViewModel } from './search-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const item = (id: number): ItemShort => ({
   id,
@@ -29,7 +25,7 @@ describe('SearchScreenViewModel', () => {
   })
 
   it('does not search until the trimmed query has two characters', async () => {
-    const vm = new SearchScreenViewModel(svc(services))
+    const vm = new SearchScreenViewModel(services)
 
     expect(vm.query).toBe('')
     vm.setQuery(' a ')
@@ -42,7 +38,7 @@ describe('SearchScreenViewModel', () => {
   })
 
   it('searches with the normalized query, flattens pages and persists the query', async () => {
-    const vm = new SearchScreenViewModel(svc(services))
+    const vm = new SearchScreenViewModel(services)
 
     vm.setQuery('  матрица ')
     expect(services.storage.get('search-query', '')).toBe('  матрица ')
@@ -54,7 +50,7 @@ describe('SearchScreenViewModel', () => {
 
   it('restores the saved query and runs it on construction', async () => {
     services.storage.set('search-query', 'дюна')
-    const vm = new SearchScreenViewModel(svc(services))
+    const vm = new SearchScreenViewModel(services)
 
     expect(vm.query).toBe('дюна')
     await vi.waitFor(() => expect(vm.list).toHaveLength(2))
@@ -65,7 +61,7 @@ describe('SearchScreenViewModel', () => {
   it('reports an empty result once the search has finished with nothing', async () => {
     services.api.search.mockResolvedValue({ items: [] })
     services.storage.set('search-query', 'nothing')
-    const vm = new SearchScreenViewModel(svc(services))
+    const vm = new SearchScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.isEmptyResult).toBe(true))
     vm.dispose()
@@ -76,7 +72,7 @@ describe('SearchScreenViewModel', () => {
       Promise.resolve(pageNo === 2 ? page([3], 2, 2) : page([1, 2], 1, 2)),
     )
     services.storage.set('search-query', 'дюна')
-    const vm = new SearchScreenViewModel(svc(services))
+    const vm = new SearchScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.list).toHaveLength(2))
     vm.loadMore()

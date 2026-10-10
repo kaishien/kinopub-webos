@@ -1,18 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest'
 import { ApiError } from '@/services/api/api.service'
 import type { Item, ItemShort, Season, Video } from '@/services/api/api.types'
 import type { RouterService } from '@/services/router/router.service'
-import type { Services } from '@/services/services'
 import { fakeServices, flush, type FakeServices } from '@/test/fake-services'
 import { ItemScreenViewModel, resumePoint } from './item-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
-
-/** RouterService methods are MobX-bound (non-configurable) so they cannot be spied; a class instance (not a plain object) survives makeAutoObservable untouched. */
-class StubRouter {
-  constructor(readonly navigate: ReturnType<typeof vi.fn>) {}
-}
 
 const posters = { small: '', medium: 'https://cdn.test/poster/item/medium/1.jpg', big: '' }
 
@@ -99,18 +90,17 @@ function serial(): Item {
 
 describe('ItemScreenViewModel', () => {
   let services: FakeServices
-  let navigate: ReturnType<typeof vi.fn>
+  let navigate: MockInstance<RouterService['navigate']>
 
   beforeEach(() => {
-    // RouterService.navigate is a MobX-bound action (non-configurable), so a stub replaces spying.
-    navigate = vi.fn()
-    services = fakeServices({ router: new StubRouter(navigate) as unknown as RouterService })
+    services = fakeServices()
+    navigate = vi.spyOn(services.router, 'navigate')
     services.api.similar.mockResolvedValue([])
   })
 
   async function load(item: Item, preview?: ItemShort) {
     services.api.item.mockResolvedValue(item)
-    const vm = new ItemScreenViewModel(svc(services), item.id, preview)
+    const vm = new ItemScreenViewModel(services, item.id, preview)
 
     await vi.waitFor(() => expect(vm.data).toBeDefined())
 
@@ -123,7 +113,7 @@ describe('ItemScreenViewModel', () => {
    */
   it('exposes data without throwing right after construction', async () => {
     services.api.item.mockResolvedValue(movie())
-    const vm = new ItemScreenViewModel(svc(services), 1)
+    const vm = new ItemScreenViewModel(services, 1)
 
     expect(() => vm.data).not.toThrow()
     await vi.waitFor(() => expect(vm.data?.id).toBe(1))
@@ -133,7 +123,7 @@ describe('ItemScreenViewModel', () => {
   it('sets the wide poster backdrop from the preview on construction', () => {
     services.api.item.mockReturnValue(new Promise(() => {}))
     const preview: ItemShort = { id: 7, type: 'movie', subtype: '', title: 'Превью / Preview', year: 2020, posters }
-    const vm = new ItemScreenViewModel(svc(services), 7, preview)
+    const vm = new ItemScreenViewModel(services, 7, preview)
 
     expect(services.ui.backdrop).toBe('https://cdn.test/poster/item/wide/7.jpg')
     expect(vm.title).toEqual({ ru: 'Превью', original: 'Preview' })
@@ -142,7 +132,7 @@ describe('ItemScreenViewModel', () => {
     expect(vm.playLabel).toBe('Смотреть')
     vm.dispose()
 
-    const bare = new ItemScreenViewModel(svc(services), 8)
+    const bare = new ItemScreenViewModel(services, 8)
 
     expect(services.ui.backdrop).toBe('https://m.boramoraboom.ru/poster/item/wide/8.jpg')
     bare.dispose()

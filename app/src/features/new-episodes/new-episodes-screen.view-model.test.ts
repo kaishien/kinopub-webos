@@ -1,12 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { ApiError } from '@/services/api/api.service'
 import type { ItemShort } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
-import { fakeServices, type FakeServices } from '@/test/fake-services'
+import { fakeServices } from '@/test/fake-services'
 import { NewEpisodesScreenViewModel } from './new-episodes-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const item = (id: number, fresh?: number): ItemShort => ({
   id,
@@ -23,7 +19,7 @@ describe('NewEpisodesScreenViewModel', () => {
     const services = fakeServices()
 
     services.api.watchingSerials.mockResolvedValue([item(1, 2), item(2, 0), item(3), item(4, 1)])
-    const vm = new NewEpisodesScreenViewModel(svc(services))
+    const vm = new NewEpisodesScreenViewModel(services)
 
     expect(vm.isEmpty).toBe(false)
     await vi.waitFor(() => expect(vm.list.map((i) => i.id)).toEqual([1, 4]))
@@ -40,7 +36,7 @@ describe('NewEpisodesScreenViewModel', () => {
     const services = fakeServices()
 
     services.api.watchingSerials.mockRejectedValue(new ApiError(500, 'Сбой'))
-    const vm = new NewEpisodesScreenViewModel(svc(services))
+    const vm = new NewEpisodesScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.error).toBe('Сбой'))
     vm.dispose()

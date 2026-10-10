@@ -1,12 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ItemShort, ItemsPage } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
 import { fakeServices, type FakeServices } from '@/test/fake-services'
 import { CatalogScreenViewModel } from './catalog-screen.view-model'
 import { DEFAULT_SORT, QUALITY_OPTIONS, SORT_OPTIONS } from './filters'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const item = (id: number): ItemShort => ({
   id,
@@ -36,7 +32,7 @@ describe('CatalogScreenViewModel', () => {
   })
 
   it('starts from the route parameters and the default sort', async () => {
-    const vm = new CatalogScreenViewModel(svc(services), 'movie', { genre: 2 }, 'loc-1')
+    const vm = new CatalogScreenViewModel(services, 'movie', { genre: 2 }, 'loc-1')
 
     expect(vm.title).toBe('Фильмы')
     expect(vm.filter).toEqual({ sort: DEFAULT_SORT, genre: 2 })
@@ -50,7 +46,7 @@ describe('CatalogScreenViewModel', () => {
   })
 
   it('offers the filters the section leaves open, with labels for narrowed and open values', async () => {
-    const vm = new CatalogScreenViewModel(svc(services), 'movie', {}, 'loc-2')
+    const vm = new CatalogScreenViewModel(services, 'movie', {}, 'loc-2')
 
     await vi.waitFor(() => expect(vm.kinds).toEqual(['sort', 'genre', 'quality', 'year', 'country']))
     expect(vm.options('sort')).toBe(SORT_OPTIONS)
@@ -85,7 +81,7 @@ describe('CatalogScreenViewModel', () => {
   })
 
   it('skips the genre filter in a genre section and the quality filter in the 4K section', async () => {
-    const anime = new CatalogScreenViewModel(svc(services), 'anime', {}, 'loc-anime')
+    const anime = new CatalogScreenViewModel(services, 'anime', {}, 'loc-anime')
 
     await vi.waitFor(() => expect(anime.kinds).toContain('country'))
     expect(anime.kinds).toEqual(['sort', 'quality', 'year', 'country'])
@@ -93,7 +89,7 @@ describe('CatalogScreenViewModel', () => {
     expect(services.api.items).toHaveBeenCalledWith(expect.objectContaining({ type: undefined, genre: 25 }), expect.any(AbortSignal))
     anime.dispose()
 
-    const uhd = new CatalogScreenViewModel(svc(services), '4k', {}, 'loc-4k')
+    const uhd = new CatalogScreenViewModel(services, '4k', {}, 'loc-4k')
 
     await vi.waitFor(() => expect(uhd.kinds).toContain('genre'))
     expect(uhd.kinds).toEqual(['sort', 'genre', 'year', 'country'])
@@ -102,7 +98,7 @@ describe('CatalogScreenViewModel', () => {
   })
 
   it('refetches with the new parameters when a filter changes and resets sort to the default on clear', async () => {
-    const vm = new CatalogScreenViewModel(svc(services), 'serial', {}, 'loc-3')
+    const vm = new CatalogScreenViewModel(services, 'serial', {}, 'loc-3')
 
     await vi.waitFor(() => expect(vm.list).toHaveLength(2))
     vm.openSheet('quality')
@@ -122,7 +118,7 @@ describe('CatalogScreenViewModel', () => {
   })
 
   it('remembers filters and the fresh tab per location in focus memory and restores them on remount', async () => {
-    const first = new CatalogScreenViewModel(svc(services), 'movie', {}, 'loc-4')
+    const first = new CatalogScreenViewModel(services, 'movie', {}, 'loc-4')
 
     first.select('year', '2020')
     first.select('country', 7)
@@ -130,25 +126,25 @@ describe('CatalogScreenViewModel', () => {
 
     expect(services.focusMemory.state('loc-4', 'filter')).toEqual({ sort: DEFAULT_SORT, genre: undefined, year: '2020', country: 7 })
 
-    const again = new CatalogScreenViewModel(svc(services), 'movie', { sort: 'views-' }, 'loc-4')
+    const again = new CatalogScreenViewModel(services, 'movie', { sort: 'views-' }, 'loc-4')
 
     expect(again.filter).toEqual({ sort: DEFAULT_SORT, genre: undefined, year: '2020', country: 7 })
     again.dispose()
 
-    const other = new CatalogScreenViewModel(svc(services), 'movie', { sort: 'views-' }, 'loc-other')
+    const other = new CatalogScreenViewModel(services, 'movie', { sort: 'views-' }, 'loc-other')
 
     expect(other.filter).toEqual({ sort: 'views-', genre: undefined })
     other.dispose()
 
-    const fresh = new CatalogScreenViewModel(svc(services), 'fresh', {}, 'loc-fresh')
+    const fresh = new CatalogScreenViewModel(services, 'fresh', {}, 'loc-fresh')
 
     fresh.setFreshType('serial')
     fresh.dispose()
-    expect(new CatalogScreenViewModel(svc(services), 'fresh', {}, 'loc-fresh').freshType).toBe('serial')
+    expect(new CatalogScreenViewModel(services, 'fresh', {}, 'loc-fresh').freshType).toBe('serial')
   })
 
   it('uses the fresh endpoint and type tabs for the «Новинки» section with no filters', async () => {
-    const vm = new CatalogScreenViewModel(svc(services), 'fresh', {}, 'loc-5')
+    const vm = new CatalogScreenViewModel(services, 'fresh', {}, 'loc-5')
 
     expect(vm.title).toBe('Новинки')
     expect(vm.freshType).toBe('movie')
@@ -170,7 +166,7 @@ describe('CatalogScreenViewModel', () => {
     services.api.items.mockImplementation((params: { page?: number }) =>
       Promise.resolve(params.page === 2 ? page([3, 4], 2, 2) : page([1, 2], 1, 2)),
     )
-    const vm = new CatalogScreenViewModel(svc(services), 'movie', {}, 'loc-6')
+    const vm = new CatalogScreenViewModel(services, 'movie', {}, 'loc-6')
 
     await vi.waitFor(() => expect(vm.list).toHaveLength(2))
     expect(vm.items.hasNextPage).toBe(true)
@@ -188,7 +184,7 @@ describe('CatalogScreenViewModel', () => {
     const { ApiError } = await import('@/services/api/api.service')
 
     services.api.items.mockRejectedValue(new ApiError(500, 'Ошибка каталога'))
-    const vm = new CatalogScreenViewModel(svc(services), 'movie', {}, 'loc-7')
+    const vm = new CatalogScreenViewModel(services, 'movie', {}, 'loc-7')
 
     await vi.waitFor(() => expect(vm.error).toBe('Ошибка каталога'))
     expect(vm.list).toEqual([])
@@ -196,7 +192,7 @@ describe('CatalogScreenViewModel', () => {
   })
 
   it('falls back to a plain section for an unknown id', () => {
-    const vm = new CatalogScreenViewModel(svc(services), 'weird', {}, 'loc-8')
+    const vm = new CatalogScreenViewModel(services, 'weird', {}, 'loc-8')
 
     expect(vm.section).toEqual({ id: 'weird', title: 'weird', type: 'weird' })
     vm.dispose()

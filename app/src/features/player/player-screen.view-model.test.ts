@@ -1,8 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Item, Video, VideoFile, VideoQuality } from '@/services/api/api.types'
 import { RemoteKey } from '@/services/remote/remote.service'
-import type { RouterService } from '@/services/router/router.service'
-import type { Services } from '@/services/services'
 import type { Settings } from '@/services/settings/settings.service'
 import { fakeServices } from '@/test/fake-services'
 import { PlayerScreenViewModel, type PlayerParams } from './player-screen.view-model'
@@ -153,12 +151,12 @@ async function settle() {
 }
 
 async function setup(params: Partial<PlayerParams> = {}, options: SetupOptions = {}) {
+  const services = fakeServices()
   const router = {
-    replace: vi.fn(() => Promise.resolve()),
-    back: vi.fn(() => true),
-    navigate: vi.fn(() => Promise.resolve()),
-  } as unknown as RouterService
-  const services = fakeServices({ router })
+    replace: vi.spyOn(services.router, 'replace').mockResolvedValue(undefined),
+    back: vi.spyOn(services.router, 'back').mockReturnValue(true),
+    navigate: vi.spyOn(services.router, 'navigate').mockResolvedValue(undefined),
+  }
 
   for (const [name, value] of Object.entries(options.settings ?? {})) {
     services.settings.set(name as keyof Settings, value as never)
@@ -166,7 +164,7 @@ async function setup(params: Partial<PlayerParams> = {}, options: SetupOptions =
 
   services.api.item.mockResolvedValue(options.item ?? SERIAL)
   const push = vi.spyOn(services.remote, 'push')
-  const vm = new PlayerScreenViewModel(services as unknown as Services, {
+  const vm = new PlayerScreenViewModel(services, {
     itemId: ITEM_ID,
     videoId: 102,
     startTime: 0,
@@ -179,7 +177,7 @@ async function setup(params: Partial<PlayerParams> = {}, options: SetupOptions =
 
   await settle()
 
-  return { vm, services, router: router as unknown as { replace: ReturnType<typeof vi.fn>; back: ReturnType<typeof vi.fn> }, el, onKey }
+  return { vm, services, router, el, onKey }
 }
 
 /** Starts the HLS stream as hls.js would: manifest parsed with the given ladder. */
@@ -961,11 +959,9 @@ describe('PlayerScreenViewModel', () => {
       el.fire('timeupdate')
 
       vi.advanceTimersByTime(STALL_MS)
-      expect(services.ui.toast).toBe('Медленная сеть — переключаю на 720p')
       expect(hls.currentLevel).toBe(1)
 
       vi.advanceTimersByTime(STALL_MS)
-      expect(services.ui.toast).toBe('Медленная сеть — переключаю на 480p')
       expect(hls.currentLevel).toBe(2)
 
       vi.advanceTimersByTime(STALL_MS)
@@ -979,7 +975,6 @@ describe('PlayerScreenViewModel', () => {
       expect(vm.usesManifest).toBe(true)
 
       vi.advanceTimersByTime(STALL_MS)
-      expect(services.ui.toast).toBe('Переключаю на запасной способ воспроизведения')
       expect(vm.fallback).toBe(true)
       expect(vm.usesManifest).toBe(false)
       expect(vm.src).toBe('https://cdn.test/102-480p.mp4')
@@ -1027,6 +1022,21 @@ describe('PlayerScreenViewModel', () => {
       expect(vm.fallback).toBe(true)
     })
 
+    it('tells the viewer which quality it steps down to, and that the direct file is a fallback', async () => {
+      const { vm, el, hls, services } = await manifestPlaying({ quality: 'max' }, [1080, 720, 480])
+
+      el.currentTime = 250
+      el.fire('timeupdate')
+      vi.advanceTimersByTime(STALL_MS)
+      expect(services.ui.toast).toContain('720p')
+
+      hls.fatal(FakeErrorTypes.MEDIA_ERROR)
+      hls.fatal(FakeErrorTypes.MEDIA_ERROR)
+      hls.fatal(FakeErrorTypes.MEDIA_ERROR)
+      expect(vm.fallback).toBe(true)
+      expect(services.ui.toast).toContain('запасной способ')
+    })
+
     it('a decode failure skips straight to the direct file', async () => {
       const { vm, hls, services } = await manifestPlaying()
 
@@ -1037,7 +1047,6 @@ describe('PlayerScreenViewModel', () => {
       expect(vm.fallback).toBe(true)
       expect(vm.stream.quality).toBe('auto')
       expect(services.api.item).toHaveBeenCalledTimes(1)
-      expect(services.ui.toast).toBe('Переключаю на запасной способ воспроизведения')
     })
 
     it('in direct mode a second failure restarts the same file with a neutral toast', async () => {

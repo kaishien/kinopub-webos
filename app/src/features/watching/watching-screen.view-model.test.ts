@@ -1,12 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { ApiError } from '@/services/api/api.service'
 import type { ItemShort } from '@/services/api/api.types'
-import type { Services } from '@/services/services'
-import { fakeServices, type FakeServices } from '@/test/fake-services'
+import { fakeServices } from '@/test/fake-services'
 import { WatchingScreenViewModel } from './watching-screen.view-model'
-
-/** FakeServices is not assignable to Services (see src/test/fake-services.ts); view-models only use what the fake provides. */
-const svc = (s: FakeServices) => s as unknown as Services
 
 const item = (id: number, extra: Partial<ItemShort> = {}): ItemShort => ({
   id,
@@ -24,7 +20,7 @@ describe('WatchingScreenViewModel', () => {
 
     services.api.watchingSerials.mockResolvedValue([])
     services.api.watchingMovies.mockResolvedValue([])
-    const vm = new WatchingScreenViewModel(svc(services))
+    const vm = new WatchingScreenViewModel(services)
 
     expect(vm.isLoading).toBe(true)
     await vi.waitFor(() => expect(vm.isEmpty).toBe(true))
@@ -45,7 +41,7 @@ describe('WatchingScreenViewModel', () => {
 
     services.api.watchingSerials.mockResolvedValue([])
     services.api.watchingMovies.mockRejectedValue(new ApiError(500, 'Ошибка фильмов'))
-    const vm = new WatchingScreenViewModel(svc(services))
+    const vm = new WatchingScreenViewModel(services)
 
     await vi.waitFor(() => expect(vm.error).toBe('Ошибка фильмов'))
     expect(vm.isEmpty).toBe(false)
