@@ -173,6 +173,18 @@ describe('ApiService', () => {
       expect(api.currentHost).toBe(API_HOSTS[1])
     })
 
+    it('throws right away for an already aborted signal without touching the network', async () => {
+      const api = new ApiService()
+      const controller = new AbortController()
+
+      controller.abort()
+
+      const error = await api.request('/v1/a', {}, { signal: controller.signal }).catch((e: unknown) => e)
+
+      expect((error as DOMException).name).toBe('AbortError')
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+
     it('rethrows the abort error without failing over when the outer signal is aborted', async () => {
       const api = new ApiService()
       const controller = new AbortController()

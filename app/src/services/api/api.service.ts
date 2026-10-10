@@ -94,6 +94,9 @@ export class ApiService {
     const start = this.hostIndex
     let lastError: unknown = null
 
+    // An `abort` listener on an already-aborted signal never fires, so check up front or the request goes out anyway.
+    if (signal?.aborted) throw signal.reason instanceof Error ? signal.reason : new DOMException('Aborted', 'AbortError')
+
     for (let attempt = 0; attempt < this.hosts.length; attempt++) {
       const index = (start + attempt) % this.hosts.length
       const url = `${this.hosts[index]}${path}${toQueryString(query)}`

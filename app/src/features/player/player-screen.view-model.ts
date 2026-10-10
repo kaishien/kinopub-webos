@@ -741,7 +741,10 @@ export class PlayerScreenViewModel {
       return
     }
     if (!this.fallback && this.files.some((file) => file.url.http)) {
-      this.services.ui.showToast('Переключаю на запасной способ воспроизведения')
+      // With the stream kind set to MP4 the direct file is already playing: this is a plain restart, not a switch.
+      const alreadyDirect = !this.usesManifest && this.src === this.directFile?.url.http
+
+      this.services.ui.showToast(alreadyDirect ? 'Перезапускаю воспроизведение' : 'Переключаю на запасной способ воспроизведения')
       this.stream.dispose()
       this.resumeAt = at
       this.fallback = true

@@ -1040,6 +1040,18 @@ describe('PlayerScreenViewModel', () => {
       expect(services.ui.toast).toBe('Переключаю на запасной способ воспроизведения')
     })
 
+    it('in direct mode a second failure restarts the same file with a neutral toast', async () => {
+      const { vm, el, services } = await setup({}, { settings: { stream: 'http' } })
+
+      el.fire('error')
+      await settle()
+      expect(services.api.item).toHaveBeenCalledTimes(2)
+
+      el.fire('error')
+      expect(vm.fallback).toBe(true)
+      expect(services.ui.toast).toBe('Перезапускаю воспроизведение')
+    })
+
     it('unplayable multichannel audio falls back to the direct file', async () => {
       const { vm, hls } = await manifestPlaying()
 

@@ -107,7 +107,7 @@ describe('AuthService', () => {
       expect(api.pollDeviceToken).toHaveBeenCalledTimes(1)
     })
 
-    it('shows other API errors but keeps polling', async () => {
+    it('shows a terminal API error and requests a fresh code instead of polling the dead one', async () => {
       const { api, auth } = create()
 
       api.requestDeviceCode.mockResolvedValue(device)
@@ -116,9 +116,13 @@ describe('AuthService', () => {
 
       await vi.advanceTimersByTimeAsync(5000)
       expect(auth.pairingError).toBe('access_denied')
+      expect(api.requestDeviceCode).toHaveBeenCalledTimes(2)
+      expect(auth.device).toEqual(device)
 
+      // The new code is polled on its own schedule; the old one is never asked about again.
       await vi.advanceTimersByTimeAsync(5000)
       expect(api.pollDeviceToken).toHaveBeenCalledTimes(2)
+      expect(api.pollDeviceToken).toHaveBeenLastCalledWith(device.code, expect.any(AbortSignal))
     })
 
     it('keeps polling silently through network errors', async () => {

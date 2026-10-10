@@ -68,10 +68,11 @@ export class AuthService {
     }
   }
 
-  async startPairing() {
+  /** `message` is shown over the new code: a terminal poll error means the old code is dead, not that pairing is over. */
+  async startPairing(message = '') {
     this.stopPairing()
     this.status = 'pairing'
-    this.pairingError = ''
+    this.pairingError = message
     this.device = null
     const controller = new AbortController()
 
@@ -114,11 +115,12 @@ export class AuthService {
 
         return
       } catch (error) {
-        // 400 means the user hasn't entered the code yet; keep polling
+        // 400 means the user hasn't entered the code yet; keep polling. Anything else (expired, denied, blocked)
+        // is final for this code: polling it further only spams the API, so ask for a new one.
         if (error instanceof ApiError && error.status !== 400 && !error.isNetwork) {
-          runInAction(() => {
-            this.pairingError = error.message
-          })
+          void this.startPairing(error.message)
+
+          return
         }
       }
 
