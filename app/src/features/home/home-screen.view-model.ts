@@ -44,12 +44,12 @@ export class HomeScreenViewModel {
       shelf('fresh-movie', 'Новые фильмы', (s) => api.shelf('fresh', 'movie', s), {
         moreLink: link.catalog('movie', { sort: 'created-' }),
       }),
-      shelf('fresh-serial', 'Новые сериалы', (s) => api.shelf('fresh', 'serial', s), {
-        moreLink: link.catalog('serial', { sort: 'created-' }),
-      }),
       // «hot» is what Kinopub ranks by current views: the same data as a Top-10, just numbered.
       shelf('top-movie', 'Топ-10 фильмов', (s) => api.shelf('hot', 'movie', s).then((items) => items.slice(0, TOP_COUNT)), {
         ranked: true,
+      }),
+      shelf('fresh-serial', 'Новые сериалы', (s) => api.shelf('fresh', 'serial', s), {
+        moreLink: link.catalog('serial', { sort: 'created-' }),
       }),
       shelf('top-serial', 'Топ-10 сериалов', (s) => api.shelf('hot', 'serial', s).then((items) => items.slice(0, TOP_COUNT)), {
         ranked: true,
