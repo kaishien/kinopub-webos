@@ -18,7 +18,14 @@ import { Rating } from './rating/rating'
 import styles from './item-screen.module.css'
 import { Badge } from '@/shared/ui/badge/badge'
 
-export const ItemScreen = observer(function ItemScreen() {
+/** «Similar» navigates item to item on the same route: keying by history entry recreates the screen and its view-model. */
+export function ItemScreen() {
+  const location = useLocation()
+
+  return <ItemContent key={location.key} />
+}
+
+const ItemContent = observer(function ItemContent() {
   const { id = '0' } = useParams()
   const location = useLocation()
   const preview = (location.state as { preview?: ItemShort } | null)?.preview
