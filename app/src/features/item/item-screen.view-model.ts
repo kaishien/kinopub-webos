@@ -41,10 +41,11 @@ export class ItemScreenViewModel {
   ) {
     const { api, queryClient, ui, peoplePhotos } = services
 
-    makeAutoObservable<this, 'scope'>(
+    makeAutoObservable<this, 'scope' | 'services'>(
       this,
       {
         scope: false,
+        services: false,
         id: false,
         preview: false,
         item: false,
@@ -60,8 +61,6 @@ export class ItemScreenViewModel {
     )
 
     ui.setBackdrop(widePosterUrl(id, preview?.posters))
-    this.scope.defer(reaction(() => this.data?.trailer?.url ?? '', ui.setTrailer, { fireImmediately: true }))
-    this.scope.defer(ui.clearTrailer)
 
     this.item = new Query<Item>({
       queryClient,
@@ -71,6 +70,9 @@ export class ItemScreenViewModel {
       staleTime: 0,
       onDone: (item) => this.selectSeasonForNext(item),
     })
+    // After `item` exists: `data` reads it, and a computed that threw once stays thrown while observed.
+    this.scope.defer(reaction(() => this.data?.trailer?.url ?? '', ui.setTrailer, { fireImmediately: true }))
+    this.scope.defer(ui.clearTrailer)
     this.similar = new Query<ItemShort[]>({
       queryClient,
       abortSignal: this.scope.signal,
@@ -282,7 +284,8 @@ export class ItemScreenViewModel {
   markMovieWatched() {
     const video = this.data?.videos?.[0]
 
-    if (video) void this.toggleWatched.mutate({ video: video.number })
+    // Failures reach the viewer through onError; the rejected promise itself would only be an unhandled rejection.
+    if (video) this.toggleWatched.mutate({ video: video.number }).catch(() => {})
   }
 
   dispose() {

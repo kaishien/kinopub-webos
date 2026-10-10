@@ -27,7 +27,7 @@ export const STREAM_OPTIONS: Option<StreamKind>[] = [
 
 export class SettingsScreenViewModel {
   constructor(private readonly services: Services) {
-    makeAutoObservable(this, {}, { autoBind: true })
+    makeAutoObservable<this, 'services'>(this, { services: false }, { autoBind: true })
   }
 
   get values() {

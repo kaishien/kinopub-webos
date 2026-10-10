@@ -63,9 +63,16 @@ export function fakeApi(): FakeApi {
 /** Assignable to `Services`; `api` methods are also mocks, so `services.api.item.mockResolvedValue(...)` type-checks. */
 export type FakeServices = Services & { api: ApiService & FakeApi }
 
+const remotes: RemoteService[] = []
+
+/** Called from setup.ts after each test: RemoteService listens on window and would otherwise leak across tests. */
+export function disposeFakeServices() {
+  remotes.splice(0).forEach((remote) => remote.dispose())
+}
+
 /**
  * Real storage, settings, auth, ui, focus and track memory on top of a fake API; router is unattached,
- * so `navigate`/`replace` are no-ops you can spy on. Images and photos are stubs.
+ * so `navigate`/`replace` are no-ops (spy with vi.spyOn, enabled by safeDescriptors off in setup). Images and photos are stubs.
  */
 export function fakeServices(overrides: Partial<Services> = {}): FakeServices {
   const storage = new StorageService()
@@ -74,6 +81,9 @@ export function fakeServices(overrides: Partial<Services> = {}): FakeServices {
   const settings = new SettingsService(storage, real)
   const images = { resized: vi.fn((url: string) => Promise.resolve(url)), prefetch: vi.fn() } as unknown as ImageService
   const peoplePhotos = { byImdb: vi.fn(() => Promise.resolve([])) } as unknown as PeoplePhotosService
+  const remote = new RemoteService()
+
+  remotes.push(remote)
 
   return {
     storage,
@@ -82,7 +92,7 @@ export function fakeServices(overrides: Partial<Services> = {}): FakeServices {
     settings,
     auth: new AuthService(storage, real),
     router: new RouterService(),
-    remote: new RemoteService(),
+    remote,
     ui: new UiService(),
     focusMemory: new FocusMemoryService(),
     images,

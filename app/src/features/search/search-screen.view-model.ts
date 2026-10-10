@@ -17,7 +17,7 @@ export class SearchScreenViewModel {
     const { api, queryClient, storage } = services
 
     this.query = storage.get(STORAGE_KEY, '')
-    makeAutoObservable<this, 'scope'>(this, { scope: false, results: false }, { autoBind: true })
+    makeAutoObservable<this, 'scope' | 'services'>(this, { scope: false, services: false, results: false }, { autoBind: true })
 
     this.results = new InfiniteQuery<ItemsPage, Error, number>(queryClient, () => ({
       abortSignal: this.scope.signal,

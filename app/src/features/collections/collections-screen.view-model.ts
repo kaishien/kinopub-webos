@@ -24,7 +24,7 @@ export class CollectionsScreenViewModel {
       initialPageParam: 1,
       getNextPageParam: nextPage,
     })
-    makeAutoObservable<this, 'scope'>(this, { scope: false, pages: false }, { autoBind: true })
+    makeAutoObservable<this, 'scope' | 'services'>(this, { scope: false, services: false, pages: false }, { autoBind: true })
   }
 
   /** Mapped to cards because the grid can only render ItemShort. */

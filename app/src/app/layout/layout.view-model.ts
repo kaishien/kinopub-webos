@@ -13,9 +13,9 @@ export class LayoutViewModel {
   private readonly unsubscribe: () => void
 
   constructor(private readonly services: Services) {
-    makeAutoObservable<this, 'exitArmed' | 'exitTimer' | 'unsubscribe'>(
+    makeAutoObservable<this, 'exitArmed' | 'exitTimer' | 'unsubscribe' | 'services'>(
       this,
-      { exitArmed: false, exitTimer: false, unsubscribe: false },
+      { exitArmed: false, exitTimer: false, unsubscribe: false, services: false },
       { autoBind: true },
     )
     this.unsubscribe = services.remote.push(this.onKey)

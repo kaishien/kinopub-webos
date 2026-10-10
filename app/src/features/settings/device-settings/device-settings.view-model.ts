@@ -83,7 +83,7 @@ export class DeviceSettingsViewModel {
     if (!this.device.data) return
 
     this.device.setData((device) => device && { ...device, settings: optimistic(device.settings) })
-    void this.save.mutate(change)
+    this.save.mutate(change).catch(() => {}) // onError already reports it
   }
 
   dispose() {

@@ -62,7 +62,7 @@ export class HomeScreenViewModel {
         moreLink: link.catalog('documovie', { sort: 'created-' }),
       }),
     ]
-    makeAutoObservable<this, 'scope'>(this, { scope: false, shelves: false }, { autoBind: true })
+    makeAutoObservable<this, 'scope' | 'services'>(this, { scope: false, services: false, shelves: false }, { autoBind: true })
   }
 
   get visibleShelves(): HomeShelf[] {
