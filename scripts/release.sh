@@ -28,7 +28,8 @@ node -e "
 " "$VERSION"
 
 git add app/webos/appinfo.json
-git commit -q -m "chore: bump version to $VERSION"
+# The file may already carry this version (bumped by hand): then there is nothing to commit, only to tag.
+git diff --cached --quiet || git commit -q -m "chore: bump version to $VERSION"
 git tag "v$VERSION"
 git push origin HEAD "v$VERSION"
 echo "Релиз v$VERSION запущен: https://github.com/kaishien/kinopub-webos/actions"
