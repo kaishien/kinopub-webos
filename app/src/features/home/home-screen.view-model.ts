@@ -10,9 +10,11 @@ export interface HomeShelf {
   title: string
   query: Query<ItemShort[]>
   moreLink?: string
+  ranked?: boolean
 }
 
 export const CONTINUE_SHELF_KEY = 'continue'
+const TOP_COUNT = 10
 
 export class HomeScreenViewModel {
   private readonly scope = new Scope()
@@ -45,9 +47,12 @@ export class HomeScreenViewModel {
       shelf('fresh-serial', 'Новые сериалы', (s) => api.shelf('fresh', 'serial', s), {
         moreLink: link.catalog('serial', { sort: 'created-' }),
       }),
-      shelf('hot-movie', 'Горячие фильмы', (s) => api.shelf('hot', 'movie', s), { moreLink: link.catalog('movie', { sort: 'views-' }) }),
-      shelf('popular-serial', 'Популярные сериалы', (s) => api.shelf('popular', 'serial', s), {
-        moreLink: link.catalog('serial', { sort: 'views-' }),
+      // «hot» is what Kinopub ranks by current views: the same data as a Top-10, just numbered.
+      shelf('top-movie', 'Топ-10 фильмов', (s) => api.shelf('hot', 'movie', s).then((items) => items.slice(0, TOP_COUNT)), {
+        ranked: true,
+      }),
+      shelf('top-serial', 'Топ-10 сериалов', (s) => api.shelf('hot', 'serial', s).then((items) => items.slice(0, TOP_COUNT)), {
+        ranked: true,
       }),
       shelf('fresh-4k', 'Новое в 4K', (s) => api.items({ quality: UHD_QUALITY, sort: 'created-' }, s).then((page) => page.items), {
         moreLink: link.catalog('4k', { sort: 'created-' }),

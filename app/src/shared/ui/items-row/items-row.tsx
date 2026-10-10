@@ -4,7 +4,7 @@ import { useServices } from '@/services/services'
 import { link } from '@/app/routes'
 import { widePosterUrl } from '@/shared/lib/format'
 import { Card } from '@/shared/ui/card/card'
-import { POSTER, POSTER_BARE } from '@/shared/ui/card/card-metrics'
+import { POSTER, POSTER_BARE, POSTER_RANKED, POSTER_RANKED_BARE } from '@/shared/ui/card/card-metrics'
 import { MoreCard } from '@/shared/ui/card/more-card/more-card'
 import { usePage } from '@/shared/ui/page/page'
 import { Row, useRowItemFocus } from '@/shared/ui/row/row'
@@ -16,9 +16,11 @@ export interface ItemsRowProps {
   moreLink?: string
   progressOf?: (item: ItemShort) => number | undefined
   subtitleOf?: (item: ItemShort) => string | undefined
+  /** Top-10: cards get their position as a big number. */
+  ranked?: boolean
 }
 
-export const ItemsRow = memo(function ItemsRow({ title, items, focusKey, moreLink, progressOf, subtitleOf }: ItemsRowProps) {
+export const ItemsRow = memo(function ItemsRow({ title, items, focusKey, moreLink, progressOf, subtitleOf, ranked }: ItemsRowProps) {
   const { hero } = usePage()
   const count = items.length + (moreLink ? 1 : 0)
   const renderItem = useCallback(
@@ -35,16 +37,17 @@ export const ItemsRow = memo(function ItemsRow({ title, items, focusKey, moreLin
           caption={!hero}
           progress={progressOf?.(item)}
           subtitle={subtitleOf?.(item)}
+          rank={ranked ? index + 1 : undefined}
         />
       )
     },
-    [items, moreLink, hero, progressOf, subtitleOf],
+    [items, moreLink, hero, progressOf, subtitleOf, ranked],
   )
   const imageOf = useCallback((index: number) => items[index]?.posters.medium, [items])
 
-  return (
-    <Row title={title} focusKey={focusKey} count={count} item={hero ? POSTER_BARE : POSTER} renderItem={renderItem} imageOf={imageOf} />
-  )
+  const metrics = ranked ? (hero ? POSTER_RANKED_BARE : POSTER_RANKED) : hero ? POSTER_BARE : POSTER
+
+  return <Row title={title} focusKey={focusKey} count={count} item={metrics} renderItem={renderItem} imageOf={imageOf} />
 })
 
 const RowCard = memo(function RowCard({
@@ -54,6 +57,7 @@ const RowCard = memo(function RowCard({
   caption,
   progress,
   subtitle,
+  rank,
 }: {
   index: number
   item: ItemShort
@@ -61,6 +65,7 @@ const RowCard = memo(function RowCard({
   caption: boolean
   progress?: number
   subtitle?: string
+  rank?: number
 }) {
   const { router, ui } = useServices()
   const notify = useRowItemFocus()
@@ -72,6 +77,7 @@ const RowCard = memo(function RowCard({
       caption={caption}
       progress={progress}
       subtitle={subtitle}
+      rank={rank}
       onPress={(it) => router.navigate(link.item(it.id), { state: { preview: it } })}
       onFocus={(it) => {
         notify(index)

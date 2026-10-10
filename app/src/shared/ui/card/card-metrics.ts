@@ -6,6 +6,11 @@ export const POSTER = { width: 232, height: 420 } as const
 export const WIDE = { width: 400, height: 300 } as const
 
 export const POSTER_BARE = { width: 232, height: 348 } as const
+
+/** Poster plus the `--rank-w` gutter for the Top-10 number. */
+export const RANK_GUTTER = 112
+export const POSTER_RANKED = { width: POSTER.width + RANK_GUTTER, height: POSTER.height } as const
+export const POSTER_RANKED_BARE = { width: POSTER_BARE.width + RANK_GUTTER, height: POSTER_BARE.height } as const
 export const WIDE_BARE = { width: 400, height: 225 } as const
 
 /** Must match `--hero-h`. */

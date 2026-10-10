@@ -23,6 +23,8 @@
   --card-h: 348px;
   --wide-w: 400px;
   --wide-h: 225px;
+  /* Number gutter of a ranked (Top-10) card; must match card-metrics.ts */
+  --rank-w: 112px;
   --radius: 10px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   /* Must match the held-arrow step in shared/ui/motion.ts */

@@ -35,6 +35,7 @@ export const HomeScreen = observer(function HomeScreen() {
           title={shelf.title}
           items={shelf.query.data ?? []}
           moreLink={shelf.moreLink}
+          ranked={shelf.ranked}
           progressOf={shelf.key === CONTINUE_SHELF_KEY ? continueProgress : undefined}
           subtitleOf={shelf.key === CONTINUE_SHELF_KEY ? continueSubtitle : undefined}
         />

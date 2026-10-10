@@ -117,3 +117,38 @@
 .card:global(.is-focused) .card-title {
   color: var(--paper);
 }
+
+/* Top-10: the number sits in the left gutter and tucks under the poster, Netflix-style. */
+.card-ranked {
+  width: calc(var(--card-w) + var(--rank-w));
+  padding-left: var(--rank-w);
+}
+
+.card-ranked .card-img {
+  z-index: 1;
+}
+
+.card-rank {
+  position: absolute;
+  left: 0;
+  bottom: -14px;
+  width: calc(var(--rank-w) + 12px);
+  font-family: var(--font-display);
+  font-size: 200px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-align: right;
+  color: var(--black);
+  -webkit-text-stroke: 4px #5a5d68;
+  transition: -webkit-text-stroke-color 160ms var(--ease);
+}
+
+.card-rank-wide {
+  font-size: 172px;
+  letter-spacing: -0.12em;
+}
+
+.card:global(.is-focused) .card-rank {
+  -webkit-text-stroke-color: var(--amber);
+}
