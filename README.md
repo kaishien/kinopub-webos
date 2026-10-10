@@ -49,7 +49,7 @@ bash scripts/renew-devmode.sh                  # лог: ~/Library/Logs/webos-de
 
 ## Разработка
 
-Понадобятся Node.js 20+, [pnpm](https://pnpm.io) и [webOS CLI](https://webostv.developer.lge.com/develop/tools/cli-installation): `npm i -g @webos-tools/cli`.
+Понадобятся Node.js 24, [pnpm](https://pnpm.io) и [webOS CLI](https://webostv.developer.lge.com/develop/tools/cli-installation): `npm i -g @webos-tools/cli`.
 
 ```bash
 cd app
