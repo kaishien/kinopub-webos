@@ -109,7 +109,11 @@ const ItemContent = observer(function ItemContent() {
         <EpisodesRow key={vm.episodes.season} videos={vm.episodes.videos} season={vm.episodes.season} onPlay={vm.playEpisode} />
       )}
 
-      {(vm.similar.data?.length ?? 0) > 0 && <ItemsRow title="Похожее" items={vm.similar.data!} focusKey="ROW-similar" />}
+      {(vm.similar.data?.length ?? 0) > 0 && (
+        // Keyed by item: with one key per screen, navigation unmounts the focused card and norigin restores focus
+        // onto the same-named card of the next screen's row, which then sets the backdrop to the wrong film.
+        <ItemsRow title="Похожее" items={vm.similar.data!} focusKey={`ROW-similar-${vm.id}`} />
+      )}
       {vm.people.length > 0 && <People people={vm.people} />}
       <div className={styles.itemBottomSpace} />
 
