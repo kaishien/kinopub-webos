@@ -29,6 +29,10 @@ jobs:
           pnpm install --frozen-lockfile --dir app
           npm install --global @webos-tools/cli
 
+      # A tag on red tests must not become a release.
+      - name: Check
+        run: pnpm --dir app check
+
       # webOS takes the version from appinfo.json, so the tag is the single source of it.
       - name: Set version from tag
         run: |
