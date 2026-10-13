@@ -30,9 +30,10 @@ export default defineConfig({
     modules: { localsConvention: 'camelCaseOnly' },
   },
   build: {
-    // webOS 22 (2022) ships Chromium 87: the oldest platform this build is meant to run on. Syntax is lowered
-    // to it; runtime APIs are kept to what 87 has (no toSorted, findLast, structuredClone, Array.at).
-    target: 'chrome87',
+    // Syntax is lowered to webOS 6 (2021, Chromium 79): left as-is, `?.` and `??` are a SyntaxError there and
+    // the whole bundle never runs, leaving a black screen. Runtime APIs are still kept to what webOS 22
+    // (Chromium 87) has (no toSorted, findLast, structuredClone, Array.at); webOS 6 also lacks flex `gap`.
+    target: 'chrome79',
     modulePreload: false,
     cssCodeSplit: false,
     sourcemap: false,
