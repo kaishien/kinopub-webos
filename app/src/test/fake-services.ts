@@ -11,6 +11,7 @@ import type { Services } from '@/services/services'
 import { SettingsService } from '@/services/settings/settings.service'
 import { StorageService } from '@/services/storage/storage.service'
 import { TrackMemoryService } from '@/services/track-memory/track-memory.service'
+import { LocalHistoryService } from '@/services/local-history/local-history.service'
 import { UiService } from '@/services/ui/ui.service'
 
 type Fn = (...args: never[]) => unknown
@@ -101,6 +102,7 @@ export function fakeServices(overrides: Partial<Services> = {}): FakeServices {
     images,
     peoplePhotos,
     trackMemory: new TrackMemoryService(storage),
+    localHistory: new LocalHistoryService(storage),
     ...overrides,
   } as unknown as FakeServices
 }

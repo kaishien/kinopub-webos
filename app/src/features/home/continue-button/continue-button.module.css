@@ -1,0 +1,4 @@
+/* Lined up with the rows' titles; the top padding leaves room for the focused button's scale. */
+.continue {
+  padding: 10px 0 36px var(--gutter);
+}

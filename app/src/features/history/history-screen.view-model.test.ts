@@ -28,11 +28,54 @@ const page = (entries: HistoryEntry[], current: number, total: number): HistoryP
   pagination: { current, total, perpage: entries.length, total_items: 0 },
 })
 
+function watchedHere(
+  services: FakeServices,
+  id: number,
+  extra: { season?: number; episode?: number; time?: number; finished?: boolean } = {},
+) {
+  services.localHistory.remember({
+    item: item(id),
+    videoId: id * 100,
+    season: extra.season ?? 0,
+    episode: extra.episode ?? 1,
+    episodeTitle: '',
+    time: extra.time ?? 0,
+    duration: 5400,
+    finished: extra.finished,
+  })
+}
+
 describe('HistoryScreenViewModel', () => {
   let services: FakeServices
 
   beforeEach(() => {
     services = fakeServices()
+  })
+
+  describe("with this TV's own history", () => {
+    it('lists the device titles first, newest first, then the account history without those titles', async () => {
+      watchedHere(services, 3, { season: 1, episode: 4, time: 754 })
+      watchedHere(services, 9, { finished: true })
+      services.api.history.mockResolvedValue(page([entry(1, 95), entry(3, 10), entry(2, 30), entry(9, 60)], 1, 1))
+      const vm = new HistoryScreenViewModel(services)
+
+      await flush()
+      expect(vm.items.map((i) => i.id)).toEqual([9, 3, 1, 2])
+      expect(vm.subtitle(item(3))).toBe('S1 E4 · 12:34')
+      expect(vm.subtitle(item(9))).toBe('просмотрено')
+      expect(vm.subtitle(item(1))).toBe('01:35')
+      vm.dispose()
+    })
+
+    it('still shows the device titles when the account history fails to load', async () => {
+      watchedHere(services, 3, { time: 60 })
+      services.api.history.mockRejectedValue(new Error('offline'))
+      const vm = new HistoryScreenViewModel(services)
+
+      await flush()
+      expect(vm.items.map((i) => i.id)).toEqual([3])
+      vm.dispose()
+    })
   })
 
   it('flattens entries into items and formats a subtitle per item', async () => {

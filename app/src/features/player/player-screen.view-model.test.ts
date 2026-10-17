@@ -908,6 +908,57 @@ describe('PlayerScreenViewModel', () => {
     })
   })
 
+  describe('local continue point', () => {
+    it('keeps the item, episode and position in the device history whenever progress is reported', async () => {
+      const { el, services } = await setup({ videoId: 102 })
+
+      el.currentTime = 100
+      el.fire('timeupdate')
+      expect(services.localHistory.entries[0]).toMatchObject({ videoId: 102, season: 1, episode: 2, time: 100, item: { id: ITEM_ID } })
+      expect(services.localHistory.entries[0]?.item).not.toHaveProperty('seasons')
+
+      el.currentTime = 160
+      el.fire('timeupdate')
+      el.fire('pause')
+      expect(services.localHistory.entries[0]?.time).toBe(160)
+    })
+
+    it('moves on to the next episode from its start once the current one is nearly over', async () => {
+      const { el, services } = await setup({ videoId: 102 })
+
+      el.currentTime = 2300
+      el.fire('timeupdate')
+
+      expect(services.localHistory.entries[0]).toMatchObject({ videoId: 103, season: 1, episode: 3, time: 0 })
+    })
+
+    it('keeps a movie watched to the end as finished, so home stops offering it, and never records a trailer', async () => {
+      const movie = await setup({ videoId: 301 }, { item: MOVIE })
+
+      movie.el.currentTime = 100
+      movie.el.fire('timeupdate')
+      expect(movie.services.localHistory.resumable?.videoId).toBe(301)
+
+      movie.el.ended = true
+      movie.el.fire('ended')
+      expect(movie.services.localHistory.entries[0]).toMatchObject({ videoId: 301, finished: true, time: 2400 })
+      expect(movie.services.localHistory.resumable).toBeNull()
+
+      // Leaving the screen reports the position once more; the movie stays finished.
+      movie.vm.dispose()
+      expect(movie.services.localHistory.entries).toHaveLength(1)
+      expect(movie.services.localHistory.resumable).toBeNull()
+
+      // Storage is the real localStorage: start the trailer from an empty history.
+      localStorage.clear()
+      const trailer = await setup({ trailerUrl: 'https://cdn.test/t.mp4' })
+
+      trailer.el.currentTime = 30
+      trailer.el.fire('pause')
+      expect(trailer.services.localHistory.entries).toEqual([])
+    })
+  })
+
   describe('marking progress', () => {
     it('reports the position at most once per interval and immediately on pause', async () => {
       const { el, services } = await setup({ videoId: 102 })

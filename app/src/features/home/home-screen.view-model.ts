@@ -1,7 +1,9 @@
 import { makeAutoObservable } from 'mobx'
 import { Query } from 'mobx-tanstack-query'
 import { UHD_QUALITY, type ItemShort } from '@/services/api/api.types'
+import type { LocalHistoryEntry } from '@/services/local-history/local-history.service'
 import type { Services } from '@/services/services'
+import { episodeLabel, formatClock } from '@/shared/lib/format'
 import { Scope } from '@/shared/view-model/use-view-model'
 import { link } from '@/app/routes'
 
@@ -14,6 +16,7 @@ export interface HomeShelf {
 }
 
 export const CONTINUE_SHELF_KEY = 'continue'
+export const CONTINUE_LOCAL_FOCUS_KEY = 'HOME-continue-local'
 const TOP_COUNT = 10
 
 export class HomeScreenViewModel {
@@ -68,7 +71,47 @@ export class HomeScreenViewModel {
   get visibleShelves(): HomeShelf[] {
     const hideContinue = this.services.settings.values.hideContinueRow
 
-    return this.shelves.filter((s) => (s.query.data?.length ?? 0) > 0 && !(hideContinue && s.key === CONTINUE_SHELF_KEY))
+    return this.shelves.filter((s) => this.itemsOf(s).length > 0 && !(hideContinue && s.key === CONTINUE_SHELF_KEY))
+  }
+
+  itemsOf(shelf: HomeShelf): ItemShort[] {
+    return shelf.key === CONTINUE_SHELF_KEY ? this.continueItems : (shelf.query.data ?? [])
+  }
+
+  /** This TV's unfinished titles first, newest first, then the account's watching list without them. */
+  get continueItems(): ItemShort[] {
+    const local = this.localUnfinished.map((e) => e.item)
+    const shown = new Set(local.map((item) => item.id))
+    const account = this.shelves.find((s) => s.key === CONTINUE_SHELF_KEY)?.query.data ?? []
+
+    return [...local, ...account.filter((item) => !shown.has(item.id))]
+  }
+
+  private get localUnfinished(): LocalHistoryEntry[] {
+    return this.services.localHistory.entries.filter((e) => !e.finished)
+  }
+
+  private get localById(): Map<number, LocalHistoryEntry> {
+    return new Map(this.localUnfinished.map((e) => [e.item.id, e]))
+  }
+
+  /** Watched share: this TV's position for its own titles, watched episodes for the account's serials. */
+  continueProgress(item: ItemShort): number | undefined {
+    const local = this.localById.get(item.id)
+
+    if (local) return local.duration ? local.time / local.duration : undefined
+
+    return item.total ? (item.watched ?? 0) / item.total : undefined
+  }
+
+  continueSubtitle(item: ItemShort): string | undefined {
+    const local = this.localById.get(item.id)
+
+    if (!local) return item.new ? `${item.new} новых` : undefined
+
+    const where = local.time > 0 ? formatClock(local.time) : 'с начала'
+
+    return local.season ? `${episodeLabel(local.season, local.episode)} · ${where}` : where
   }
 
   get isLoading() {
@@ -87,6 +130,21 @@ export class HomeScreenViewModel {
     const first = this.visibleShelves[0]
 
     return first ? `ROW-${first.key}` : undefined
+  }
+
+  /** What this TV was watching last, from the device: the shared account's watching list says what anyone played. */
+  get lastPlayed() {
+    return this.services.localHistory.resumable
+  }
+
+  get initialFocusKey() {
+    return this.lastPlayed ? CONTINUE_LOCAL_FOCUS_KEY : this.firstShelfFocusKey
+  }
+
+  continueLastPlayed() {
+    const last = this.lastPlayed
+
+    if (last) void this.services.router.navigate(link.player(last.item.id, last.videoId, { t: last.time }))
   }
 
   retry() {
