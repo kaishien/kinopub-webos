@@ -71,7 +71,11 @@
   left: 10px;
   bottom: 14px;
   display: flex;
-  gap: 6px;
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.card-ratings > :not(:first-child) {
+  margin-left: 6px;
 }
 
 .card-new {

@@ -10,13 +10,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
   height: 180px;
   border-radius: 16px;
   background: var(--smoke);
   transition:
     transform 160ms var(--ease),
     background 120ms var(--ease);
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.channel > :not(:first-child) {
+  margin-top: 14px;
 }
 
 .channel:global(.is-focused) {

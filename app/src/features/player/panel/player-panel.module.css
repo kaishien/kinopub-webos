@@ -16,8 +16,12 @@
 
 .player-panel-columns {
   display: flex;
-  gap: 120px;
   max-height: 820px;
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.player-panel-columns > :not(:first-child) {
+  margin-left: 120px;
 }
 
 .player-panel-column {
@@ -36,11 +40,14 @@
 .player-panel-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
   min-height: 0;
   padding: 6px 0;
   overflow-y: auto;
   scrollbar-width: none;
+}
+
+.player-panel-list > :not(:first-child) {
+  margin-top: 6px;
 }
 
 .player-panel-list::-webkit-scrollbar {

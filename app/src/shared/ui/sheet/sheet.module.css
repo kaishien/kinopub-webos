@@ -24,11 +24,15 @@
 .sheet-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   min-height: 0;
   padding: 6px 0;
   overflow-y: auto;
   scrollbar-width: none;
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.sheet-list > :not(:first-child) {
+  margin-top: 10px;
 }
 
 .sheet-list::-webkit-scrollbar {

@@ -54,8 +54,12 @@
 .rail-section {
   display: flex;
   flex-direction: column;
-  gap: 2px;
   padding-bottom: 10px;
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.rail-section > :not(:first-child) {
+  margin-top: 2px;
 }
 
 .rail-section-title {
@@ -77,7 +81,6 @@
 .rail-item {
   display: flex;
   align-items: center;
-  gap: 20px;
   width: 64px;
   height: 56px;
   margin: 0 24px;
@@ -90,6 +93,10 @@
     width 220ms var(--ease),
     background 120ms var(--ease),
     color 120ms var(--ease);
+}
+
+.rail-item > :not(:first-child) {
+  margin-left: 20px;
 }
 
 .rail:global(.has-focus) .rail-item {

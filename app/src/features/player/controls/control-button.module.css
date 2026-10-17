@@ -1,7 +1,6 @@
 .control {
   display: flex;
   align-items: center;
-  gap: 14px;
   height: 64px;
   padding: 0 26px;
   border-radius: 32px;
@@ -12,6 +11,11 @@
   transition:
     background 120ms var(--ease),
     color 120ms var(--ease);
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.control > :not(:first-child) {
+  margin-left: 14px;
 }
 
 .control svg {

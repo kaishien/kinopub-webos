@@ -1,7 +1,11 @@
 .actions {
   display: flex;
-  gap: 18px;
   margin: 0 var(--gutter) 40px;
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.actions > :not(:first-child) {
+  margin-left: 18px;
 }
 
 .confirm-hint {

@@ -36,11 +36,18 @@
 
 .player-controls {
   display: flex;
-  gap: 8px;
   margin: 14px 0 0 -26px;
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.player-controls > :not(:first-child) {
+  margin-left: 8px;
 }
 
 .player-error-actions {
   display: flex;
-  gap: 16px;
+}
+
+.player-error-actions > :not(:first-child) {
+  margin-left: 16px;
 }

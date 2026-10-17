@@ -3,10 +3,14 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 32px;
   padding: 14px;
   border-radius: 16px;
   transition: background 120ms var(--ease);
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.episode > :not(:first-child) {
+  margin-left: 32px;
 }
 
 .episode:global(.is-focused) {

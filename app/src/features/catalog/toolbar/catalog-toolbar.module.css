@@ -1,6 +1,11 @@
 .catalog-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin: 0 var(--gutter) 28px;
+  margin: 0 calc(var(--gutter) - 16px) 12px var(--gutter);
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. Every item is spaced right and below, and the container
+   gives the trailing space back, so lines wrap where `gap` would wrap them. */
+.catalog-toolbar > * {
+  margin: 0 16px 16px 0;
 }

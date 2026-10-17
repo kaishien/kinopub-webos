@@ -30,10 +30,14 @@
 .page-hero-meta {
   display: flex;
   align-items: center;
-  gap: 24px;
   margin-top: 12px;
   font-size: 25px;
   white-space: nowrap;
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.page-hero-meta > :not(:first-child) {
+  margin-left: 24px;
 }
 
 .page-hero-note {
@@ -44,7 +48,10 @@
 .page-hero-rating {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+}
+
+.page-hero-rating > svg {
+  margin-right: 6px;
 }
 
 .page-hero-rating svg {

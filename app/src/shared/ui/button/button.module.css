@@ -1,7 +1,6 @@
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
   height: 76px;
   padding: 0 34px;
   border-radius: 38px;
@@ -14,6 +13,11 @@
     background 120ms var(--ease),
     color 120ms var(--ease),
     transform 160ms var(--ease);
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.btn > :not(:first-child) {
+  margin-left: 14px;
 }
 
 .btn-text {

@@ -10,7 +10,11 @@
   position: absolute;
   left: 0;
   display: flex;
-  gap: 28px;
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.grid-row > :not(:first-child) {
+  margin-left: 28px;
 }
 
 .grid-loading {

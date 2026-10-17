@@ -19,11 +19,15 @@
 .plot-more {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   margin-top: 8px;
   font-size: 22px;
   font-weight: 600;
   color: var(--mute);
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.plot-more > svg {
+  margin-left: 6px;
 }
 
 .plot-more svg {

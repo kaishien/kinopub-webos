@@ -1,8 +1,16 @@
 .rating {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   color: var(--paper);
+}
+
+/* Margins, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.rating > svg {
+  margin-right: 8px;
+}
+
+.rating > :not(:first-child) {
+  margin-left: 8px;
 }
 
 .rating svg {
