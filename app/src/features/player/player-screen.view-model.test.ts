@@ -12,6 +12,7 @@ const ITEM_ID = 7
 const HUD_MS = 4000
 const PANEL_MS = 30000
 const PAUSE_SCREEN_MS = 8000
+const OK_ECHO_MS = 300
 const MARK_INTERVAL_MS = 15000
 /** One watchdog tick to record the position plus the stall timeout. */
 const STALL_MS = 13000
@@ -504,6 +505,68 @@ describe('PlayerScreenViewModel', () => {
 
       el.fire('pause')
       expect(vm.playing).toBe(false)
+    })
+  })
+
+  describe('pointer clicks', () => {
+    it('toggle playback like OK and show the HUD', async () => {
+      const { vm, el } = await setup()
+
+      vi.advanceTimersByTime(HUD_MS)
+      vm.onPointerClick()
+      expect(el.play).toHaveBeenCalledTimes(1)
+      expect(vm.flash).toBe('play')
+      expect(vm.hudVisible).toBe(true)
+
+      vi.advanceTimersByTime(OK_ECHO_MS)
+      vm.onPointerClick()
+      expect(el.pause).toHaveBeenCalledTimes(1)
+    })
+
+    it('leave an open panel and an error screen alone', async () => {
+      const { vm, el } = await setup()
+
+      vm.openTracks()
+      vm.onPointerClick()
+      vm.closePanel()
+      vm.error = 'boom'
+      vm.onPointerClick()
+
+      expect(el.play).not.toHaveBeenCalled()
+      expect(el.pause).not.toHaveBeenCalled()
+    })
+
+    it('dismiss the pause screen and resume', async () => {
+      const { vm, el } = await setup()
+
+      el.fire('pause')
+      vi.advanceTimersByTime(PAUSE_SCREEN_MS)
+      expect(vm.pauseScreen).toBe(true)
+
+      vm.onPointerClick()
+      expect(vm.pauseScreen).toBe(false)
+      expect(el.play).toHaveBeenCalledTimes(1)
+    })
+
+    it('count one Magic Remote OK press once, whether the click or the Enter key arrives first', async () => {
+      const clickFirst = await setup()
+
+      clickFirst.vm.onPointerClick()
+      expect(clickFirst.onKey(key(RemoteKey.Enter))).toBe(true)
+      expect(clickFirst.el.play).toHaveBeenCalledTimes(1)
+      expect(clickFirst.el.pause).not.toHaveBeenCalled()
+
+      // Past the echo window Enter is an ordinary key again: with the HUD up, the focus library takes it.
+      vi.advanceTimersByTime(OK_ECHO_MS)
+      expect(clickFirst.onKey(key(RemoteKey.Enter))).toBe(false)
+
+      const enterFirst = await setup()
+
+      vi.advanceTimersByTime(HUD_MS)
+      expect(enterFirst.onKey(key(RemoteKey.Enter))).toBe(true)
+      enterFirst.vm.onPointerClick()
+      expect(enterFirst.el.play).toHaveBeenCalledTimes(1)
+      expect(enterFirst.el.pause).not.toHaveBeenCalled()
     })
   })
 

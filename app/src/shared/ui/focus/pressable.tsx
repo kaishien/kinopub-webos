@@ -44,6 +44,7 @@ function PressableNode({ children, className, style, focusKey, focusable = true,
   return (
     <div
       ref={ref}
+      data-pressable
       className={cx(className, focused && 'is-focused')}
       style={style}
       onMouseMove={() => ui.pointer && !focused && focusSelf()}

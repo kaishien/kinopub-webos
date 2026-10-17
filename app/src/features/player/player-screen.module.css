@@ -34,6 +34,18 @@
   }
 }
 
+/* The play/pause icon lines up with the title: the button's 16px inner offset is pulled into the gutter. */
+.player-timeline {
+  display: flex;
+  align-items: center;
+  margin: 40px 0 0 -16px;
+}
+
+/* A margin, not `gap`: webOS 6 (Chromium 79) has no flex gap. */
+.player-timeline > :not(:first-child) {
+  margin-left: 12px;
+}
+
 .player-controls {
   display: flex;
   gap: 8px;

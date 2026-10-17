@@ -1,6 +1,6 @@
 import { setFocus } from '@noriginmedia/norigin-spatial-navigation'
 import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
+import { useEffect, type MouseEvent } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router'
 import type { QualityPreference } from '@/services/settings/settings.service'
 import { episodeLabel } from '@/shared/lib/format'
@@ -13,6 +13,7 @@ import { ControlButton } from './controls/control-button'
 import { EpisodesPanel } from './episodes-panel/episodes-panel'
 import { NEXT_UP_FOCUS_KEY, NextUpCard } from './next-up/next-up-card'
 import { PauseScreen } from './pause-screen/pause-screen'
+import { PlayPauseButton } from './play-pause/play-pause-button'
 import { PlayerPanel } from './panel/player-panel'
 import { PlayerScreenViewModel } from './player-screen.view-model'
 import { ProgressBar } from './progress-bar/progress-bar'
@@ -73,8 +74,17 @@ const PlayerContent = observer(function PlayerContent() {
     if (vm.hudVisible) setFocus(FOCUS[vm.hudTarget])
   }, [vm.nextUp.visible, vm.hudVisible, vm.hudTarget, vm.hasSource, vm.error, vm.panel])
 
+  // Controls handle their own clicks; anywhere else, the title and empty dock space included, a click is play/pause.
+  const onClick = (event: MouseEvent) => {
+    if (!(event.target as Element).closest('[data-pressable], [role="button"]')) vm.onPointerClick()
+  }
+
   return (
-    <div className={cx(shell.player, (vm.hudVisible || vm.nextUp.visible) && styles.hudOpen)} onMouseMove={vm.onPointerMove}>
+    <div
+      className={cx(shell.player, (vm.hudVisible || vm.nextUp.visible) && styles.hudOpen)}
+      onMouseMove={vm.onPointerMove}
+      onClick={onClick}
+    >
       {vm.hasSource && (
         // Fallback needs a fresh element: the old one is bound to hls.js's MediaSource.
         <video key={vm.fallback ? 'file' : 'stream'} ref={vm.attach} src={vm.src} autoPlay playsInline crossOrigin="anonymous">
@@ -116,7 +126,10 @@ const PlayerContent = observer(function PlayerContent() {
           <div className={shell.playerTitle}>{vm.title}</div>
           {vm.subtitle && <div className={shell.playerSubtitle}>{vm.subtitle}</div>}
 
-          <ProgressBar vm={vm} focusKey={FOCUS.bar} />
+          <div className={styles.playerTimeline}>
+            <PlayPauseButton vm={vm} />
+            <ProgressBar vm={vm} focusKey={FOCUS.bar} />
+          </div>
 
           <FocusGroup
             focusKey="PLAYER-controls"

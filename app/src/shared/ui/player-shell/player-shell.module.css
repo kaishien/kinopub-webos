@@ -62,12 +62,15 @@
   position: absolute;
   inset: 0;
   opacity: 0;
+  /* A hidden HUD lets clicks through to the picture instead of to invisible buttons. */
+  pointer-events: none;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.55) 72%, rgba(0, 0, 0, 0.92) 100%);
   transition: opacity 220ms var(--ease);
 }
 
 .player-hud.is-visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .player-hud.is-visible {

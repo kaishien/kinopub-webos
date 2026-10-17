@@ -49,6 +49,8 @@ const SEEK_STEP_MAX = 120
 const SEEK_COMMIT_MS = 500
 const FLASH_MS = 700
 const PAUSE_SCREEN_MS = 8000
+/** Magic Remote OK in pointer mode may reach the app as both a click and an Enter key: one press, one toggle. */
+const OK_ECHO_MS = 300
 
 const FAILED_MESSAGE =
   'Видео не воспроизводится: не помогли ни смена качества, ни обновление ссылок, ни запасной способ. Проверьте интернет и попробуйте ещё раз.'
@@ -83,6 +85,8 @@ export class PlayerScreenViewModel {
   private pauseTimer: number | null = null
   private seekStep = SEEK_STEP_MIN
   private lastMarkAt = 0
+  private lastClickAt = -Infinity
+  private lastEnterAt = -Infinity
   private wantsToPlay = true
   private linksRefreshed = false
   /** Last real playback position: the element's currentTime resets after a stream restart. */
@@ -130,6 +134,8 @@ export class PlayerScreenViewModel {
       | 'pauseTimer'
       | 'seekStep'
       | 'lastMarkAt'
+      | 'lastClickAt'
+      | 'lastEnterAt'
       | 'wantsToPlay'
       | 'linksRefreshed'
       | 'watchdog'
@@ -151,6 +157,8 @@ export class PlayerScreenViewModel {
         pauseTimer: false,
         seekStep: false,
         lastMarkAt: false,
+        lastClickAt: false,
+        lastEnterAt: false,
         wantsToPlay: false,
         linksRefreshed: false,
         watchdog: false,
@@ -613,6 +621,16 @@ export class PlayerScreenViewModel {
     this.showHud()
   }
 
+  /** A pointer click on the picture or the play/pause button toggles playback, like OK; the pause screen gives way. */
+  onPointerClick() {
+    if (this.panel || this.error || this.nextUp.visible) return
+    if (performance.now() - this.lastEnterAt < OK_ECHO_MS) return
+
+    this.lastClickAt = performance.now()
+    this.pauseScreen = false
+    this.togglePlay()
+  }
+
   onPointerMove() {
     if (this.panel || this.error || this.pauseScreen || this.nextUp.visible) return
 
@@ -886,6 +904,13 @@ export class PlayerScreenViewModel {
 
   private onKey(event: KeyboardEvent): boolean {
     const back = RemoteService.isBack(event)
+
+    if (event.keyCode === RemoteKey.Enter) {
+      // The click this OK press produced has already toggled playback.
+      if (performance.now() - this.lastClickAt < OK_ECHO_MS) return true
+
+      this.lastEnterAt = performance.now()
+    }
 
     this.nextUp.userActive()
     if (!this.playing) this.schedulePauseScreen()
